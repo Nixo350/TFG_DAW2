@@ -1,0 +1,80 @@
+CREATE DATABASE IF NOT EXISTS zarpas;
+
+USE zarpas;
+
+CREATE TABLE USUARIO (
+    id_usuario INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    nombre VARCHAR(255),
+    contrasena VARCHAR(255) NOT NULL,
+    tipo_autenticacion ENUM('correo', 'google', 'otra') DEFAULT 'correo',
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ultimo_login TIMESTAMP
+);
+
+CREATE TABLE PUBLICACION (
+    id_publicacion INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    titulo VARCHAR(255),
+    contenido TEXT,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE
+);
+
+CREATE TABLE COMENTARIO (
+    id_comentario INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    id_publicacion INT NOT NULL,
+    texto TEXT NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_publicacion) REFERENCES PUBLICACION(id_publicacion) ON DELETE CASCADE
+);
+
+CREATE TABLE CHAT (
+    id_chat INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(255),
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE MENSAJE (
+    id_mensaje INT PRIMARY KEY AUTO_INCREMENT,
+    id_chat INT NOT NULL,
+    id_emisor INT NOT NULL,
+    contenido TEXT NOT NULL,
+    fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    leido BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (id_chat) REFERENCES CHAT(id_chat) ON DELETE CASCADE,
+    FOREIGN KEY (id_emisor) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE
+);
+
+CREATE TABLE USUARIO_CHAT (
+    id_usuario INT NOT NULL,
+    id_chat INT NOT NULL,
+    fecha_union TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_usuario, id_chat),
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_chat) REFERENCES CHAT(id_chat) ON DELETE CASCADE
+);
+
+CREATE TABLE PUBLICACION_GUARDADA (
+    id_usuario INT NOT NULL,
+    id_publicacion INT NOT NULL,
+    fecha_guardado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_usuario, id_publicacion),
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_publicacion) REFERENCES PUBLICACION(id_publicacion) ON DELETE CASCADE
+);
+
+CREATE TABLE COMENTARIO_REACCION (
+    id_usuario INT NOT NULL,
+    id_comentario INT NOT NULL,
+    tipo_reaccion ENUM('like', 'dislike') NOT NULL,
+    fecha_reaccion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_usuario, id_comentario),
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_comentario) REFERENCES COMENTARIO(id_comentario) ON DELETE CASCADE
+);

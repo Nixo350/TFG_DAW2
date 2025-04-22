@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario - Zarpas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        header {
+            background-color: #ffffff;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: #00bbff;
+        }
+        .menu {
+            display: flex;
+            gap: 20px;
+        }
+        .menu button {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .menu button:hover {
+            color: #ff4500;
+        }
+        
+        .profile-banner {
+            width: 100%;
+            height: 300px;
+            background-image: url('https://via.placeholder.com/1600x300');
+            background-color: #333;
+            background-size: cover;
+            background-position: center;
+            border-bottom: 5px solid #ffffff;
+            position: relative;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            object-fit: cover;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-info {
+            margin-left: 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .profile-info h2 {
+            margin: 0;
+            font-size: 32px;
+            color: #fff;
+        }
+
+        .profile-info p {
+            font-size: 16px;
+            margin-top: 10px;
+            color: #ddd;
+        }
+
+        .profile-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .profile-buttons button {
+            background-color: #00bbff;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .profile-buttons button:hover {
+            background-color: #0099cc;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-evenly;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .profile-stats div {
+            text-align: center;
+        }
+
+        .profile-stats p {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .profile-stats span {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .followers-section {
+            width: 80%;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .followers-list {
+            width: 45%;
+        }
+
+        .followers-list h3 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .followers-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .followers-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .followers-list li:hover {
+            background-color: #eaeaea;
+        }
+
+        .followers-list img {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .posts-section {
+            width: 80%;
+            margin-top: 50px;
+        }
+
+        .post {
+            background-color: #ffffff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .post h3 {
+            font-size: 22px;
+            color: #333;
+        }
+
+        .post p {
+            font-size: 16px;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        .post img {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: flex-start;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .post-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #00bbff;
+            transition: color 0.3s;
+        }
+
+        .post-actions button:hover {
+            color: #ff4500;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">Zarpas</div>
+    <div class="menu">
+        <button>💬</button>
+        <button>📝</button>
+        <button>👤</button>
+    </div>
+</header>
+
+<div class="profile-banner">
+    <div class="profile-header">
+        <img src="perfil.jpg" alt="Avatar de Usuario" class="profile-avatar">
+        <div class="profile-info">
+            <h2>Juango123</h2>
+            <p>¡Bienvenido a mi perfil! Aquí encontrarás mis publicaciones y más. Conectemos y compartamos ideas.</p>
+            <div class="profile-buttons">
+                <button>Seguir</button>
+                <button>Mensaje</button>
+                <button>Editar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="profile-stats">
+    <div>
+        <p>150</p>
+        <span>Publicaciones</span>
+    </div>
+    <div>
+        <p>230</p>
+        <span>Seguidores</span>
+    </div>
+    <div>
+        <p>180</p>
+        <span>Siguiendo</span>
+    </div>
+</div>
+
+<div class="followers-section">
+    <div class="followers-list">
+        <h3>Seguidores</h3>
+
+    </div>
+    <div class="followers-list">
+        <h3>Siguiendo </h3>
+
+    </div>
+    <div class="followers-list">
+        <h3>Guardados </h3>
+
+    </div>
+</div>
+
+<div class="posts-section">
+    <h3>Publicaciones</h3>
+    <article class="post">
+        <h3>Post Reciente: La evolución de los videojuegos</h3>
+        <p>Los videojuegos están cambiando constantemente, y este año se están destacando con tecnologías como la realidad virtual y aumentada. Los desarrolladores están creando experiencias inmersivas que realmente transportan a los jugadores a nuevos mundos.</p>
+        <img src="https://via.placeholder.com/600x400" alt="Imagen relacionada con videojuegos">
+        <div class="post-actions">
+            <button>👍 50</button>
+            <button>💬 10</button>
+        </div>
+    </article>
+    
+    <article class="post">
+        <h3>Post Reciente: ¿Qué pasará con la Inteligencia Artificial?</h3>
+        <p>La IA está cambiando el mundo de manera rápida, con aplicaciones en la medicina, la automatización, y mucho más. Este post analiza algunos de los posibles desarrollos futuros y cómo afectarán nuestras vidas.</p>
+        <img src="https://via.placeholder.com/600x400" alt="Imagen sobre IA">
+        <div class="post-actions">
+            <button>👍 120</button>
+            <button>💬 30</button>
+        </div>
+    </article>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reddit - Página Principal</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #dae0e6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            background-color: #ffffff;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0px 4px 2px -2px gray;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00bbff;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 5px;
+        }
+        .menu {
+            display: flex;
+            gap: 15px;
+        }
+        .menu button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .menu button:hover {
+            color: #ff4500;
+        }
+        main {
+            display: flex;
+            width: 80%;
+            margin-top: 20px;
+        }
+        .sidebar {
+            width: 25%;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .posts {
+            width: 75%;
+            margin-left: 20px;
+        }
+        .post {
+            background-color: #ffffff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            margin-right: 5px;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+        }
+        .comments {
+            margin-top: 10px;
+            border-top: 1px solid #e6e6e6;
+            padding-top: 10px;
+        }
+        .comment {
+            margin-top: 5px;
+            padding-left: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+        .post img {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+        .subreddit-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .subreddit-list li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .subreddit-list img {
+        margin-right: 10px;
+    }
+
+    .subreddit-list a {
+        font-size: 16px;
+        color: #333;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .subreddit-list a:hover {
+        color: #ff4500;
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Zarpas</div>
+        <input type="text" placeholder="Buscar">
+        <div class="menu">
+            <button>💬</button>
+            <button>📝</button>
+            <button>👤</button>
+        </div>
+    </header>
+    <main>
+        <aside class="sidebar">
+            <h2>Temas Populares</h2>
+            <ul class="subreddit-list">
+                <li>
+                    <img src="https://via.placeholder.com/30x30.png?text=N" alt="Icono ">
+                    <a href="#">r/Noticias</a>
+                </li>
+                <li>
+                    <img src="https://via.placeholder.com/30x30.png?text=T" alt="Icono ">
+                    <a href="#">r/Tecnología</a>
+                </li>
+                <li>
+                    <img src="https://via.placeholder.com/30x30.png?text=M" alt="Icono ">
+                    <a href="#">r/Memes</a>
+                </li>
+                <li>
+                    <img src="https://via.placeholder.com/30x30.png?text=V" alt="Icono">
+                    <a href="#">r/Videojuegos</a>
+                </li>
+            </ul>
+        </aside>
+        <section class="posts">
+            <article class="post">
+                <h3>Título del post 1: El Futuro de la Inteligencia Artificial</h3>
+                <p>En los últimos años, la inteligencia artificial ha experimentado un progreso impresionante. Desde la automatización de tareas simples hasta la creación de sistemas complejos capaces de aprender y mejorar por sí mismos. ¿Qué podemos esperar del futuro de la IA? Algunos predicen avances en áreas como la medicina personalizada, la automatización en el trabajo, y nuevas formas de entretenimiento interactivo.</p>
+                <p>#Tecnologia #Novedad</p>
+                <img src="ia.jpeg" alt="Imagen relacionada con IA">
+            </br>
+                <button>👍 100</button>
+                <button>💬 20</button>
+                <div class="comments">
+                    <div>COMENTARIOS</div>
+                    <div class="comment">Usuario1: ¡Interesante! ¿Alguien sabe más sobre esto?</div>
+                    <div class="comment">Usuario2: Yo he leído algo, ¡deberíamos investigarlo más!</div>
+                </div>
+            </article>
+            <article class="post">
+                
+                <h3>Título del post 2: Tendencias en el Mundo de los Videojuegos</h3>
+                <p>Los videojuegos continúan evolucionando, y cada año hay nuevas tendencias que cambian la forma en que jugamos. Este año, la realidad aumentada y la realidad virtual han comenzado a dominar, ofreciendo experiencias inmersivas como nunca antes. Además, los videojuegos en la nube están ganando terreno, permitiendo que cualquier dispositivo se convierta en una plataforma de juegos.</p>
+                <p>#Videojuegos #Novedad</p>
+                <img src="videojuegos.jpg" alt="Imagen relacionada con videojuegos">
+            </br>
+                <button>👍 200</button>
+                <button>💬 50</button>
+                <div class="comments">
+                    <div>COMENTARIOS</div>
+                    <div class="comment">Usuario3: Este post está genial, quiero ver más cosas como esta.</div>
+                    <div class="comment">Usuario4: Totalmente de acuerdo, es fascinante.</div>
+                </div>
+            </article>
+        </section>
+    </main>
+</body>
+</html>
