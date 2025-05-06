@@ -1,4 +1,4 @@
-package com.gestion.zarpas.zarpas_backend;
+package com.gestion.zarpas_backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
