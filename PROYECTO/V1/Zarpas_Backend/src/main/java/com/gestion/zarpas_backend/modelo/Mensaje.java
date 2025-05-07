@@ -1,12 +1,13 @@
 package com.gestion.zarpas_backend.modelo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "MENSAJE")
+@Table(name = "mensaje")
 @Getter
 @Setter
 @Builder
@@ -20,10 +21,12 @@ public class Mensaje {
 
     @ManyToOne
     @JoinColumn(name = "id_chat", nullable = false)
+    @JsonBackReference
     private Chat chat;
 
     @ManyToOne
     @JoinColumn(name = "id_emisor", nullable = false)
+    @JsonBackReference
     private Usuario emisor;
 
     @Column(nullable = false, columnDefinition = "TEXT")

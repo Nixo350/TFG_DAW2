@@ -1,5 +1,7 @@
 package com.gestion.zarpas_backend.modelo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,7 +9,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
-@Table(name = "CHAT")
+@Table(name = "chat")
 @Getter
 @Setter
 @Builder
@@ -28,8 +30,10 @@ public class Chat {
     private Timestamp fechaModificacion;
 
     @ManyToMany(mappedBy = "chats")
+    @JsonBackReference
     private List<Usuario> usuarios;
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Mensaje> mensajes;
 }

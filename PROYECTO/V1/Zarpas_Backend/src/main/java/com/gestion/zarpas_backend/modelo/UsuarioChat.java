@@ -1,5 +1,6 @@
 package com.gestion.zarpas_backend.modelo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,7 +8,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "USUARIO_CHAT")
+@Table(name = "usuario_chat")
 @Getter
 @Setter
 @Builder
@@ -28,10 +29,12 @@ public class UsuarioChat {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", insertable = false, updatable = false)
+    @JsonBackReference
     private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "id_chat", insertable = false, updatable = false)
+    @JsonBackReference
     private Chat chat;
 }
 

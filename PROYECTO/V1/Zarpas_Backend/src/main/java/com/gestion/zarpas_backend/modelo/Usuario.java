@@ -1,13 +1,15 @@
 package com.gestion.zarpas_backend.modelo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.*;
 
 @Entity
-@Table(name = "USUARIO")
+@Table(name = "usuario")
 @Getter
 @Setter
 @Builder
@@ -34,9 +36,11 @@ public class Usuario {
     private Timestamp ultimoLogin;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Publicacion> publicaciones;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Comentario> comentarios;
 
     @ManyToMany
@@ -45,9 +49,11 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_chat")
     )
+    @JsonManagedReference
     private List<Chat> chats;
 
     @OneToMany(mappedBy = "emisor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Mensaje> mensajesEnviados;
 
     @ManyToMany
@@ -56,6 +62,7 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_publicacion")
     )
+    @JsonManagedReference
     private List<Publicacion> publicacionesGuardadas;
 
     @ManyToMany
@@ -64,5 +71,10 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_comentario")
     )
+    @JsonManagedReference
     private List<Comentario> comentariosReaccionados;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,mappedBy = "usuario")
+    @JsonBackReference
+    private Set<UsuarioRol> usuarioRoles = new HashSet<>();
 }

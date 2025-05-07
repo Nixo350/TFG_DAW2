@@ -1,5 +1,6 @@
 package com.gestion.zarpas_backend.modelo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,7 +8,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
-@Table(name = "COMENTARIO")
+@Table(name = "comentario")
 @Getter
 @Setter
 @Builder
@@ -21,10 +22,12 @@ public class Comentario {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
+    @JsonBackReference
     private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "id_publicacion", nullable = false)
+    @JsonBackReference
     private Publicacion publicacion;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -37,5 +40,6 @@ public class Comentario {
     private Timestamp fechaModificacion;
 
     @ManyToMany(mappedBy = "comentariosReaccionados")
+    @JsonBackReference
     private List<Usuario> usuariosReaccionaron;
 }
