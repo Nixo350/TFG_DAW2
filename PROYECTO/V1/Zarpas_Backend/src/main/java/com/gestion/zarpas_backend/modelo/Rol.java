@@ -16,8 +16,9 @@ import java.util.Set;
 @AllArgsConstructor
 public class Rol {
     @Id
-    @JoinColumn(name = "id_rol")
-    private Long id_rol;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_rol")
+    private Long id;
     private String nombre;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "rol")

@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/apis/")
 public class ControladorGeneral {
 
     @Autowired
-    private usuarioRepositorio repositorioUsuario;
+    private UsuarioRepository repositorioUsuario;
 
     @GetMapping("/usuarios")
     public List<Usuario> obtenerUsuarios() {
@@ -22,56 +22,56 @@ public class ControladorGeneral {
     }
 
     @Autowired
-    private usuario_ChatRepositorio repositorioUsuarioChat;
+    private UsuarioChatRepository repositorioUsuarioChat;
     @GetMapping("/usuario_Chats")
     public List<UsuarioChat> obtenerUsuarioChats() {
         return repositorioUsuarioChat.findAll();
     }
 
     @Autowired
-    private publicacionRepository repositorioPublicacion;
+    private PublicacionRepository repositorioPublicacion;
     @GetMapping("/publicaciones")
     public List<Publicacion> obtenerPublicaciones() {
         return repositorioPublicacion.findAll();
     }
 
     @Autowired
-    private publicacion_guardadaRepository repositorioPublicacionGuardada;
+    private PublicacionGuardadaRepository repositorioPublicacionGuardada;
     @GetMapping("/pubicaciones_guardadas")
     public List<PublicacionGuardada> obtenerPublicacionesGuardadas() {
         return repositorioPublicacionGuardada.findAll();
     }
 
     @Autowired
-    private mensajeRepository repositorioMensaje;
+    private MensajeRepository repositorioMensaje;
     @GetMapping("/mensajes")
     public List<Mensaje> obtenerMensajes() {
         return repositorioMensaje.findAll();
     }
 
     @Autowired
-    private comentarioRepository repositorioComentario;
+    private ComentarioRepository repositorioComentario;
     @GetMapping("/comentarios")
     public List<Comentario> obtenerComentarios() {
         return repositorioComentario.findAll();
     }
 
     @Autowired
-    private comentario_reaccionRepository repositorioComentarioReaccion;
+    private ComentarioReaccionRepository repositorioComentarioReaccion;
     @GetMapping("/comentario_reacciones")
     public List<ComentarioReaccion> obtenerComentarioReacciones() {
         return repositorioComentarioReaccion.findAll();
     }
 
     @Autowired
-    private chatRepository repositorioChat;
+    private ChatRepository repositorioChat;
     @GetMapping("/chats")
     public List<Chat> ObtenerChats() {
         return repositorioChat.findAll();
     }
 
     @Autowired
-    private rolRepositorio repositorioRol;
+    private RolRepository repositorioRol;
     @GetMapping("/roles")
     public List<Rol> ObtenerRoles() {
         return repositorioRol.findAll();

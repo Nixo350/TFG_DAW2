@@ -38,8 +38,3 @@ public class UsuarioChat {
     private Chat chat;
 }
 
-@Data
-class UsuarioChatId implements Serializable {
-    private Long idUsuario;
-    private Long idChat;
-}

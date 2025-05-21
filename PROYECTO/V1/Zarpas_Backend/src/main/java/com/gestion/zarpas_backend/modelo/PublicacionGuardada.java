@@ -39,8 +39,3 @@ public class PublicacionGuardada {
     private Publicacion publicacion;
 }
 
-@Data
-class PublicacionGuardadaId implements Serializable {
-    private Long idUsuario;
-    private Long idPublicacion;
-}

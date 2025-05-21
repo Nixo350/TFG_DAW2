@@ -42,8 +42,3 @@ public class ComentarioReaccion {
     private Comentario comentario;
 }
 
-@Data
-class ComentarioReaccionId implements Serializable {
-    private Long idUsuario;
-    private Long idComentario;
-}

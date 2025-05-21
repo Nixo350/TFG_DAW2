@@ -35,6 +35,9 @@ public class Usuario {
     @Column(name = "ultimo_login")
     private Timestamp ultimoLogin;
 
+    @Column(name = "foto_perfil")
+    private String fotoPerfil;
+
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Publicacion> publicaciones;
@@ -45,7 +48,7 @@ public class Usuario {
 
     @ManyToMany
     @JoinTable(
-            name = "USUARIO_CHAT",
+            name = "usuario_chat",
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_chat")
     )
@@ -58,7 +61,7 @@ public class Usuario {
 
     @ManyToMany
     @JoinTable(
-            name = "PUBLICACION_GUARDADA",
+            name = "publicacion_guardada",
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_publicacion")
     )
@@ -67,7 +70,7 @@ public class Usuario {
 
     @ManyToMany
     @JoinTable(
-            name = "COMENTARIO_REACCION",
+            name = "comentario_reaccion",
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_comentario")
     )
