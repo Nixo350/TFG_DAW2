@@ -10,8 +10,11 @@ public interface ComentarioService {
     Comentario guardarComentario(Comentario comentario);
     Optional<Comentario> obtenerComentarioPorId(Long id);
     List<Comentario> obtenerTodosLosComentarios();
-    List<Comentario> obtenerComentariosPorPublicacion(Publicacion publicacion);
+    List<Comentario> obtenerComentariosPorPublicacion(Long idPublicacion);
     List<Comentario> obtenerComentariosPorUsuario(Usuario usuario);
-    Comentario actualizarComentario(Comentario comentario);
+    Comentario actualizarComentario(Long idComentario, String nuevoTexto);
     void eliminarComentario(Long id);
+    Comentario crearComentario(Long idUsuario, Long idPublicacion, String texto);
+
+
 }

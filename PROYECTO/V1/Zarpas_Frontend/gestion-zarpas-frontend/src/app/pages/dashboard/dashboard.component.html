@@ -1,38 +1,85 @@
 <div class="dashboard-container">
-    <div class="main-content">
-      <div class="posts-list">
-        <h2>Publicaciones Recientes</h2>
-  
-        <div *ngIf="posts.length === 0" class="no-posts">
-          No hay publicaciones disponibles en este momento.
+  <div class="main-content">
+    <div class="posts-list">
+      <h2>Publicaciones Recientes</h2>
+
+      <div *ngIf="posts.length === 0" class="no-posts">
+        No hay publicaciones disponibles en este momento.
+      </div>
+
+      <div *ngFor="let post of posts" class="post-card">
+        <h3>{{ post.titulo }}</h3>
+        <p>{{ post.contenido }}</p>
+        <img *ngIf="post.imagenUrl" [src]="'http://localhost:9000' + post.imagenUrl" alt="Imagen de la publicación" class="post-image">
+        <p>Publicado por: {{ post.usuario?.username }} el {{ post.fechaCreacion | date:'short' }}</p>
+      
+        <div class="reactions-container">
+          <button (click)="onToggleReaccion(post.idPublicacion!, TipoReaccion.like)"
+                  [ngClass]="{'active-like': hasLiked(post.idPublicacion!)}">
+            👍 {{ reaccionesConteo[post.idPublicacion!]?.like || 0 }} </button>
+         
+          <button (click)="onToggleReaccion(post.idPublicacion!, TipoReaccion.dislike)"
+                  [ngClass]="{'active-dislike': hasDisliked(post.idPublicacion!)}"> 👎 {{ reaccionesConteo[post.idPublicacion!]?.dislike || 0 }} </button>
         </div>
-  
-        <div *ngFor="let post of posts" class="post-item">
-          <div class="post-card">
-            <div class="post-header">
-              <h3>{{ post.titulo }}</h3>
-              <span class="post-author">por {{ post.usuario?.username }}</span>
-            </div>
-            <div class="post-body">
-              <p>{{ post.contenido }}</p>
-              <img *ngIf="post.imagenUrl" [src]="post.imagenUrl" alt="Imagen de la publicación" class="post-image">
-            </div>
-            <div class="post-footer">
-              <span class="post-date">Publicado el {{ post.fechaCreacion | date:'mediumDate' }}</span>
-              <div class="post-votes">
-                <span class="vote-arrow">&#9650;</span>
-                <span>0</span> <span class="vote-arrow">&#9660;</span>
-                <span>0</span>
+        <hr>
+        <div class="comments-section">
+          <h4>Comentarios ({{ post.comentarios?.length || 0 }})</h4>
+
+          <div *ngIf="post.comentarios && post.comentarios.length > 0; else noComments">
+            <div *ngFor="let comentario of post.comentarios" class="comment-card">
+              <p class="comment-author">
+                <strong>{{ comentario.usernameUsuario }}</strong> el {{ comentario.fechaCreacion | date:'short' }}: 
+              </p>
+              <p class="comment-text">{{ comentario.texto }}</p>
+
+              <div class="comment-reactions-container">
+                <button (click)="onToggleComentarioReaccion(comentario.idComentario!, TipoReaccion.like)"
+                  [ngClass]="{'active-like': hasComentarioLiked(comentario.idComentario!)}">
+                  👍 {{ comentarioReaccionesConteo[comentario.idComentario!]?.like || 0 }}
+                </button>
+                <button (click)="onToggleComentarioReaccion(comentario.idComentario!, TipoReaccion.dislike)"
+                  [ngClass]="{'active-dislike': hasComentarioDisliked(comentario.idComentario!)}">
+                  👎 {{ comentarioReaccionesConteo[comentario.idComentario!]?.dislike || 0 }}
+                </button>
               </div>
             </div>
           </div>
+          <ng-template #noComments>
+            <p class="no-comments-message">No hay comentarios todavía. ¡Sé el primero en comentar!</p>
+          </ng-template>
+
+          <div class="new-comment-form">
+            <textarea [(ngModel)]="nuevoComentarioTexto[post.idPublicacion!]" placeholder="Escribe un comentario..."
+              rows="3"></textarea>
+            <button (click)="onCrearComentario(post.idPublicacion!)"
+              [disabled]="!nuevoComentarioTexto[post.idPublicacion!] || nuevoComentarioTexto[post.idPublicacion!].trim() === ''">
+              Comentar
+            </button>
+          </div>
         </div>
-      </div>
-    </div>
-  
-    <div class="sidebar">
-      <div class="sidebar-card"><h3>Acerca de ZarpasApp</h3><p>Bienvenido a la comunidad de amantes de las mascotas. Comparte tus historias, fotos y consejos. ¡Conecta con otros dueños de mascotas!</p><button mat-raised-button color="primary">Crear Publicación</button></div>
-      <div class="sidebar-card"><h3>Comunidades Populares</h3><ul><li><a href="#">#PerrosGraciosos</a></li><li><a href="#">#GatosDivertidos</a></li><li><a href="#">#AvesExoticas</a></li><li><a href="#">#AdopcionGijon</a></li></ul></div>
-      <div class="sidebar-card"><h3>Normas de la Comunidad</h3><p>Sé respetuoso, no spam, y mantén el contenido relacionado con mascotas.</p></div>
+        </div>
     </div>
   </div>
+  
+
+  <div class="sidebar">
+    <div class="sidebar-card about-card">
+      <h3>Acerca de ZarpasApp</h3>
+      <p>Bienvenido a la comunidad de amantes de las mascotas. Comparte tus historias, fotos y consejos. ¡Conecta con otros dueños de mascotas!</p>
+      <button class="create-post-button-sidebar" routerLink="/create-post">Crear Publicación</button>
+    </div>
+    <div class="sidebar-card">
+      <h3>Comunidades Populares</h3>
+      <ul>
+        <li><a href="#">#PerrosGraciosos</a></li>
+        <li><a href="#">#GatosDivertidos</a></li>
+        <li><a href="#">#AvesExoticas</a></li>
+        <li><a href="#">#AdopcionGijon</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-card footer-links">
+      <p>&copy; 2023 ZarpasApp. Todos los derechos reservados.</p>
+      <a href="#">Política de Privacidad</a> | <a href="#">Términos de Servicio</a>
+    </div>
+  </div>
+</div>

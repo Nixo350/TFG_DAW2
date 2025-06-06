@@ -43,10 +43,16 @@ public class Publicacion {
 
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("publicacion-comentarios") // Coincide con Comentario.java
-    private List<Comentario> comentarios;
+    private List<Comentario> comentarios = new ArrayList<>();
 
     // Relación con la entidad de unión PublicacionGuardada
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("publicacion-publicacionGuardadas") // Coincide con PublicacionGuardada.java
     private List<PublicacionGuardada> guardadosPorUsuarios = new ArrayList<>();
+
+    // --- ¡AÑADE ESTO PARA LAS REACCIONES! ---
+    @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("publicacion-reacciones")
+    private List<ReaccionPublicacion> reaccionesPublicacion = new ArrayList<>();
+
 }

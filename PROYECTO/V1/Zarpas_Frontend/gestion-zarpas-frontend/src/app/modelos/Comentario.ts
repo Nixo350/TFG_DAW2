@@ -1,12 +1,20 @@
-import { Publicacion } from "./Publicacion";
+import { TipoReaccion } from "./TipoReaccion";
 import { Usuario } from "./Usuario";
 
 export interface Comentario {
-    idComentario: number;
+    idComentario?: number;
     usuario: Usuario;
-    publicacion: Publicacion;
+    usernameUsuario?: string;
+    idPublicacion?: number;
     texto: string;
-    fechaCreacion: Date;
-    fechaModificacion: Date;
-    usuariosReaccionaron: Usuario[];
+    fechaCreacion?: Date | null;
+  fechaModificacion?: Date | null;
+  reaccionesConteo?: { like: number; dislike: number };
+  currentUserReaction?: TipoReaccion | null;
+  }
+
+export interface ComentarioRequest {
+    idUsuario: number;
+    idPublicacion: number;
+    texto: string;
   }

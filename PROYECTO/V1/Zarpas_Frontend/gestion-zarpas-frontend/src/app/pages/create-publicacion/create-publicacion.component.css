@@ -1,0 +1,103 @@
+/* src/app/pages/create-publicacion/create-publicacion.component.css */
+.create-post-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+}
+
+h2 {
+    text-align: center;
+    color: #3f51b5; /* Angular Material primary color */
+    margin-bottom: 30px;
+    font-size: 2em;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+input[type="text"],
+input[type="url"],
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box; /* Incluye padding y borde en el ancho */
+    font-size: 1em;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="url"]:focus,
+textarea:focus {
+    border-color: #3f51b5;
+    box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
+    outline: none;
+}
+
+textarea {
+    resize: vertical; /* Permite redimensionar verticalmente */
+}
+
+.validation-error {
+    color: #e53935; /* Un rojo de error */
+    font-size: 0.85em;
+    margin-top: 5px;
+}
+
+button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+button[type="submit"]:hover:not(:disabled) {
+    background-color: #303f9f; /* Un tono más oscuro */
+}
+
+button[type="submit"]:disabled {
+    background-color: #a7b7e7;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.form-message {
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.success-message {
+    background-color: #e8f5e9; /* Verde claro */
+    color: #2e7d32; /* Verde oscuro */
+    border: 1px solid #a5d6a7;
+}
+
+.error-message {
+    background-color: #ffebee; /* Rojo claro */
+    color: #c62828; /* Rojo oscuro */
+    border: 1px solid #ef9a9a;
+}

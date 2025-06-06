@@ -16,12 +16,19 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/comentarios")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ComentarioController {
 
     private final ComentarioService comentarioService;
     private final UsuarioService usuarioService; // Para asociar usuario
     private final PublicacionService publicacionService; // Para asociar publicación
 
+
+    public static class ComentarioRequest {
+        public Long idUsuario;
+        public Long idPublicacion;
+        public String texto;
+    }
     @Autowired
     public ComentarioController(ComentarioService comentarioService, UsuarioService usuarioService, PublicacionService publicacionService) {
         this.comentarioService = comentarioService;
@@ -30,23 +37,20 @@ public class ComentarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Comentario> crearComentario(@RequestBody Comentario comentario) {
-        if (comentario.getUsuario() == null || comentario.getUsuario().getIdUsuario() == null ||
-                comentario.getPublicacion() == null || comentario.getPublicacion().getIdPublicacion() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Se requieren IDs de usuario y publicación
+    public ResponseEntity<?> crearComentario(@RequestBody ComentarioRequest request) {
+        try {
+            Comentario comentario = comentarioService.crearComentario(request.idUsuario, request.idPublicacion, request.texto);
+            return new ResponseEntity<>(comentario, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error interno del servidor al crear comentario: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        Optional<Usuario> usuarioOpt = usuarioService.obtenerUsuarioPorId(comentario.getUsuario().getIdUsuario());
-        Optional<Publicacion> publicacionOpt = publicacionService.obtenerPublicacionPorId(comentario.getPublicacion().getIdPublicacion());
-
-        if (usuarioOpt.isPresent() && publicacionOpt.isPresent()) {
-            comentario.setUsuario(usuarioOpt.get());
-            comentario.setPublicacion(publicacionOpt.get());
-            Comentario nuevoComentario = comentarioService.guardarComentario(comentario);
-            return new ResponseEntity<>(nuevoComentario, HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Usuario o Publicación no encontrados
-        }
+    }
+    @GetMapping("/publicacion/{idPublicacion}")
+    public ResponseEntity<List<Comentario>> obtenerComentariosPorPublicacion(@PathVariable Long idPublicacion) {
+        List<Comentario> comentarios = comentarioService.obtenerComentariosPorPublicacion(idPublicacion);
+        return new ResponseEntity<>(comentarios, HttpStatus.OK);
     }
 
     @GetMapping
@@ -62,15 +66,6 @@ public class ComentarioController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/publicacion/{publicacionId}")
-    public ResponseEntity<List<Comentario>> obtenerComentariosPorPublicacion(@PathVariable Long publicacionId) {
-        return publicacionService.obtenerPublicacionPorId(publicacionId)
-                .map(publicacion -> {
-                    List<Comentario> comentarios = comentarioService.obtenerComentariosPorPublicacion(publicacion);
-                    return new ResponseEntity<>(comentarios, HttpStatus.OK);
-                })
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
 
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<Comentario>> obtenerComentariosPorUsuario(@PathVariable Long usuarioId) {
@@ -82,26 +77,27 @@ public class ComentarioController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Comentario> actualizarComentario(@PathVariable("id") Long id, @RequestBody Comentario comentario) {
-        if (!id.equals(comentario.getIdComentario())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    @PutMapping("/{idComentario}")
+    public ResponseEntity<?> actualizarComentario(@PathVariable Long idComentario, @RequestBody ComentarioRequest request) {
         try {
-            Comentario comentarioActualizado = comentarioService.actualizarComentario(comentario);
-            return new ResponseEntity<>(comentarioActualizado, HttpStatus.OK);
+            Comentario comentario = comentarioService.actualizarComentario(idComentario, request.texto);
+            return new ResponseEntity<>(comentario, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error interno del servidor al actualizar comentario: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarComentario(@PathVariable("id") Long id) {
+    @DeleteMapping("/{idComentario}")
+    public ResponseEntity<?> eliminarComentario(@PathVariable Long idComentario) {
         try {
-            comentarioService.eliminarComentario(id);
+            comentarioService.eliminarComentario(idComentario);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error interno del servidor al eliminar comentario: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

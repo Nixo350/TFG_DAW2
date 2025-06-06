@@ -13,16 +13,10 @@ import java.sql.Timestamp;
 @Setter
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
-@IdClass(ComentarioReaccionId.class)
 public class ComentarioReaccion implements Serializable {
-    @Id
-    @Column(name = "id_usuario")
-    private Long idUsuario;
 
-    @Id
-    @Column(name = "id_comentario")
-    private Long idComentario;
+    @EmbeddedId // ¡Añade esta anotación! Define la clave primaria compuesta
+    private ComentarioReaccionId id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_reaccion")
@@ -31,13 +25,40 @@ public class ComentarioReaccion implements Serializable {
     @Column(name = "fecha_reaccion")
     private Timestamp fechaReaccion;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", insertable = false, updatable = false)
     @JsonBackReference("usuario-comentarioReacciones")
+    @MapsId("idUsuario")
     private Usuario usuario;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_comentario", insertable = false, updatable = false)
-    @JsonBackReference("comentario-comentarioReacciones")
+    @MapsId("idComentario")
+    @JsonBackReference("comentario-comentarioReacciones") // Coincide con Comentario.java
     private Comentario comentario;
+
+    public ComentarioReaccion(Usuario usuario, Comentario comentario, TipoReaccion tipoReaccion) {
+        this.id = new ComentarioReaccionId(usuario.getIdUsuario(), comentario.getIdComentario());
+        this.usuario = usuario;
+        this.comentario = comentario;
+        this.tipoReaccion = tipoReaccion;
+        this.fechaReaccion = new Timestamp(System.currentTimeMillis());
+    }
+    public ComentarioReaccion(ComentarioReaccionId id, TipoReaccion tipoReaccion, Timestamp fechaReaccion, Usuario usuario, Comentario comentario) {
+        this.id = id;
+        this.tipoReaccion = tipoReaccion;
+        this.fechaReaccion = fechaReaccion;
+        this.usuario = usuario;
+        this.comentario = comentario;
+    }
+
+    // También asegúrate de que Lombok @Data genere getters para el 'id'
+    // Puedes añadir manualmente getters para idUsuario y idComentario si los necesitas directamente
+    public Long getIdUsuario() {
+        return this.id != null ? this.id.getIdUsuario() : null;
+    }
+
+    public Long getIdComentario() {
+        return this.id != null ? this.id.getIdComentario() : null;
+    }
 }

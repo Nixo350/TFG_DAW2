@@ -1,6 +1,6 @@
 package com.gestion.zarpas_backend.modelo;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -43,12 +43,14 @@ public class Usuario {
     private String fotoPerfil;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("usuario-publicaciones") // Nombre único
+    @JsonManagedReference("usuario-publicaciones")
+    @JsonIgnore// Nombre único
     private List<Publicacion> publicaciones; //
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("usuario-comentarios") // Nombre único
-    private List<Comentario> comentarios; //
+    @JsonManagedReference("usuario-comentarios")
+    @JsonIgnore// Nombre único
+    private List<Comentario> comentarios = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -72,20 +74,23 @@ public class Usuario {
     @JsonManagedReference("usuario-publicacionesGuardadas") // Nombre único
     private List<Publicacion> publicacionesGuardadas; //
 
-    @ManyToMany
-    @JoinTable(
-            name = "comentario_reaccion",
-            joinColumns = @JoinColumn(name = "id_usuario"),
-            inverseJoinColumns = @JoinColumn(name = "id_comentario")
-    )
-    @JsonManagedReference("usuario-comentariosReaccionados") // Nombre único
-    private List<Comentario> comentariosReaccionados; //
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("usuario-comentarioReacciones")
+    private List<ComentarioReaccion> comentarioReacciones = new ArrayList<>();
 
     // Relación de Usuario-Rol (a través de UsuarioRol)
     // Usamos JsonManagedReference para gestionar esta parte de la relación
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,mappedBy = "usuario")
     @JsonManagedReference("usuario-usuarioRoles") // Nombre único
+    @JsonIgnore
     private Set<UsuarioRol> usuarioRoles = new HashSet<>(); //
+
+    // --- ¡AÑADE ESTO PARA LAS REACCIONES A PUBLICACIONES! ---
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("usuario-reaccionesPublicacion")
+    private List<ReaccionPublicacion> reaccionesPublicacion = new ArrayList<>();
+
 
     // Constructor para el registro de usuario (simplificado, puedes ajustarlo si necesitas más campos)
     public Usuario(String username, String email, String contrasena, String nombre) {

@@ -4,6 +4,7 @@ import com.gestion.zarpas_backend.modelo.ComentarioReaccion;
 import com.gestion.zarpas_backend.modelo.ComentarioReaccionId;
 import com.gestion.zarpas_backend.modelo.TipoReaccion;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ComentarioReaccionService {
@@ -15,4 +16,7 @@ public interface ComentarioReaccionService {
     void eliminarReaccionComentario(Long idUsuario, Long idComentario);
     List<ComentarioReaccion> obtenerReaccionesPorComentario(Long idComentario);
     List<ComentarioReaccion> obtenerReaccionesPorUsuario(Long idUsuario);
+    ComentarioReaccion crearOActualizarReaccion(Long idUsuario, Long idComentario, TipoReaccion nuevoTipoReaccion);
+    Optional<TipoReaccion> getReaccionUsuarioAComentario(Long idUsuario, Long idComentario);
+    Map<TipoReaccion, Long> getConteoReaccionesByComentarioId(Long idComentario);
 }

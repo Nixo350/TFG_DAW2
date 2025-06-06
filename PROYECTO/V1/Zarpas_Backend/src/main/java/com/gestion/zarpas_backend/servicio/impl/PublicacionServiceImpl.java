@@ -42,7 +42,16 @@ public class PublicacionServiceImpl implements PublicacionService {
     @Override
     @Transactional(readOnly = true)
     public List<Publicacion> obtenerTodasLasPublicaciones() {
-        return publicacionRepository.findAll();
+        System.out.println("PublicacionServiceImpl: Entrando en obtenerTodasLasPublicaciones()...");
+        try {
+            List<Publicacion> publicaciones = publicacionRepository.findAll();
+            System.out.println("PublicacionServiceImpl: publicacionRepository.findAll() completado. Número de publicaciones: " + publicaciones.size());
+            return publicaciones;
+        } catch (Exception e) {
+            System.err.println("PublicacionServiceImpl: ¡ERROR en obtenerTodasLasPublicaciones! " + e.getMessage());
+            e.printStackTrace(); // Imprime el stack trace completo
+            throw e; // Relanza la excepción para que el controlador la capture
+        }
     }
 
     @Override

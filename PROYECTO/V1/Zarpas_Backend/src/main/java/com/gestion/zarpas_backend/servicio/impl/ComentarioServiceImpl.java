@@ -4,6 +4,8 @@ import com.gestion.zarpas_backend.modelo.Comentario;
 import com.gestion.zarpas_backend.modelo.Publicacion;
 import com.gestion.zarpas_backend.modelo.Usuario;
 import com.gestion.zarpas_backend.repositorio.ComentarioRepository;
+import com.gestion.zarpas_backend.repositorio.PublicacionRepository;
+import com.gestion.zarpas_backend.repositorio.UsuarioRepository;
 import com.gestion.zarpas_backend.servicio.ComentarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,10 @@ import java.util.Optional;
 public class ComentarioServiceImpl implements ComentarioService {
 
     private final ComentarioRepository comentarioRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
+    private PublicacionRepository publicacionRepository;
 
     @Autowired
     public ComentarioServiceImpl(ComentarioRepository comentarioRepository) {
@@ -33,6 +39,22 @@ public class ComentarioServiceImpl implements ComentarioService {
         comentario.setFechaModificacion(Timestamp.from(Instant.now()));
         return comentarioRepository.save(comentario);
     }
+    @Override
+    @Transactional
+    public Comentario crearComentario(Long idUsuario, Long idPublicacion, String texto) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idUsuario));
+        Publicacion publicacion = publicacionRepository.findById(idPublicacion)
+                .orElseThrow(() -> new RuntimeException("Publicación no encontrada con ID: " + idPublicacion));
+
+        Comentario comentario = new Comentario();
+        comentario.setUsuario(usuario);
+        comentario.setPublicacion(publicacion);
+        comentario.setTexto(texto);
+        comentario.setFechaCreacion(new Timestamp(System.currentTimeMillis()));
+        comentario.setFechaModificacion(new Timestamp(System.currentTimeMillis()));
+        return comentarioRepository.save(comentario);
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -46,10 +68,12 @@ public class ComentarioServiceImpl implements ComentarioService {
         return comentarioRepository.findAll();
     }
 
+
+
     @Override
     @Transactional(readOnly = true)
-    public List<Comentario> obtenerComentariosPorPublicacion(Publicacion publicacion) {
-        return comentarioRepository.findByPublicacion(publicacion);
+    public List<Comentario> obtenerComentariosPorPublicacion(Long idPublicacion) {
+        return comentarioRepository.findByPublicacion_IdPublicacionOrderByFechaCreacionAsc(idPublicacion);
     }
 
     @Override
@@ -60,13 +84,12 @@ public class ComentarioServiceImpl implements ComentarioService {
 
     @Override
     @Transactional
-    public Comentario actualizarComentario(Comentario comentario) {
-        return comentarioRepository.findById(comentario.getIdComentario())
-                .map(existingComentario -> {
-                    existingComentario.setTexto(comentario.getTexto());
-                    existingComentario.setFechaModificacion(Timestamp.from(Instant.now()));
-                    return comentarioRepository.save(existingComentario);
-                }).orElseThrow(() -> new RuntimeException("Comentario no encontrado con ID: " + comentario.getIdComentario()));
+    public Comentario actualizarComentario(Long idComentario, String nuevoTexto) {
+        Comentario comentario = comentarioRepository.findById(idComentario)
+                .orElseThrow(() -> new RuntimeException("Comentario no encontrado con ID: " + idComentario));
+        comentario.setTexto(nuevoTexto);
+        comentario.setFechaModificacion(new Timestamp(System.currentTimeMillis()));
+        return comentarioRepository.save(comentario);
     }
 
     @Override

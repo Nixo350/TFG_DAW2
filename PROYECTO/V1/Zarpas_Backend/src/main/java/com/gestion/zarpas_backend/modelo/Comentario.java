@@ -2,6 +2,7 @@ package com.gestion.zarpas_backend.modelo;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,7 +43,14 @@ public class Comentario {
     private Timestamp fechaModificacion;
 
     // Relación con la entidad de unión ComentarioReaccion
-    @OneToMany(mappedBy = "comentario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("comentario-comentarioReacciones")
-    private List<ComentarioReaccion> reacciones = new ArrayList<>();
+    @OneToMany(mappedBy = "comentario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference("comentario-comentarioReacciones") // Nombre único para esta relación
+    private List<ComentarioReaccion> comentarioReacciones = new ArrayList<>();
+
+    @JsonProperty("usernameUsuario") // Esto le dice a Jackson que cree un campo JSON llamado "usernameUsuario"
+    public String getUsernameFromUsuario() {
+        // Asegúrate de que el objeto usuario no sea nulo antes de intentar acceder a su username
+        // Si el usuario no se carga por LAZY loading, esto podría seguir siendo nulo.
+        return (this.usuario != null) ? this.usuario.getUsername() : null;
+    }
 }

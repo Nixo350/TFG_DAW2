@@ -3,13 +3,16 @@ package com.gestion.zarpas_backend.controlador;
 import com.gestion.zarpas_backend.modelo.Publicacion;
 import com.gestion.zarpas_backend.modelo.Usuario;
 import com.gestion.zarpas_backend.servicio.PublicacionService;
-import com.gestion.zarpas_backend.servicio.UsuarioService; // Para buscar el usuario por ID
+import com.gestion.zarpas_backend.servicio.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize; // Mantén si lo usas en otros métodos, si no, puedes quitarlo
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.gestion.zarpas_backend.servicio.StorageService;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
@@ -18,7 +21,9 @@ import java.util.List;
 public class PublicacionController {
 
     private final PublicacionService publicacionService;
-    private final UsuarioService usuarioService; // Necesario para asociar publicaciones a usuarios existentes
+    private final UsuarioService usuarioService;
+    @Autowired
+    private StorageService storageService;
 
     @Autowired
     public PublicacionController(PublicacionService publicacionService, UsuarioService usuarioService) {
@@ -27,29 +32,67 @@ public class PublicacionController {
     }
 
     @PostMapping
-    public ResponseEntity<Publicacion> crearPublicacion(@RequestBody Publicacion publicacion) {
-        // Asegurarse de que el usuario asociado a la publicación exista
-        if (publicacion.getUsuario() == null || publicacion.getUsuario().getIdUsuario() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Se requiere ID de usuario
+    public ResponseEntity<?> crearPublicacion(
+            // @RequestPart es para recibir partes individuales de un FormData
+            @RequestPart("titulo") String titulo,
+            @RequestPart("contenido") String contenido,
+            @RequestPart("idUsuario") String idUsuarioString, // El ID del usuario se envía como String
+            @RequestPart(value = "file", required = false) MultipartFile file // El archivo de imagen es opcional
+    ) {
+        try {
+            // Convertir el idUsuario de String a Long
+            Long idUsuario = Long.parseLong(idUsuarioString);
+
+            // Buscar el usuario por su ID
+            Usuario usuario = usuarioService.obtenerUsuarioPorId(idUsuario)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idUsuario));
+
+            // Crear la nueva publicación
+            Publicacion publicacion = new Publicacion();
+            publicacion.setTitulo(titulo);
+            publicacion.setContenido(contenido);
+            publicacion.setUsuario(usuario);
+            publicacion.setFechaCreacion(new Timestamp(System.currentTimeMillis()));
+
+            String imageUrl = null;
+            // Si se proporcionó un archivo, almacenarlo usando StorageService
+            if (file != null && !file.isEmpty()) {
+                imageUrl = storageService.store(file); // Almacena el archivo en el disco
+                publicacion.setImagenUrl(imageUrl); // Guarda la URL relativa en la entidad Publicacion
+            }
+
+            // Guardar la publicación en la base de datos
+            Publicacion nuevaPublicacion = publicacionService.guardarPublicacion(publicacion);
+            return new ResponseEntity<>(nuevaPublicacion, HttpStatus.CREATED);
+
+        } catch (NumberFormatException e) {
+            // Error si el idUsuario no es un número válido
+            return new ResponseEntity<>("Error de formato en idUsuario: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (RuntimeException e) {
+            // Errores específicos como usuario no encontrado o problemas de almacenamiento
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND); // O HttpStatus.BAD_REQUEST si es un problema de entrada
+        } catch (Exception e) {
+            // Captura cualquier otra excepción inesperada
+            return new ResponseEntity<>("Error interno del servidor al crear la publicación: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return usuarioService.obtenerUsuarioPorId(publicacion.getUsuario().getIdUsuario())
-                .map(usuario -> {
-                    publicacion.setUsuario(usuario); // Asignar el usuario manejado por JPA
-                    Publicacion nuevaPublicacion = publicacionService.guardarPublicacion(publicacion);
-                    return new ResponseEntity<>(nuevaPublicacion, HttpStatus.CREATED);
-                })
-                .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST)); // Usuario no encontrado
     }
 
-    @GetMapping("/todas")
-    @PreAuthorize("permitAll()")
+    @GetMapping({"/todas", "/todas/"})
     public ResponseEntity<List<Publicacion>> obtenerTodasLasPublicaciones() {
-        List<Publicacion> publicaciones = publicacionService.obtenerTodasLasPublicaciones(); // Llama al servicio
-        return new ResponseEntity<>(publicaciones, HttpStatus.OK); // Devuelve la lista con estado 200 OK
+        System.out.println("PublicacionController: Entrando en obtenerTodasLasPublicaciones()..."); // Puedes quitar este System.out.println si quieres
+        try {
+            List<Publicacion> publicaciones = publicacionService.obtenerTodasLasPublicaciones();
+            System.out.println("PublicacionController: publicacionService.obtenerTodasLasPublicaciones() completado. Número de publicaciones: " + publicaciones.size()); // Puedes quitar este System.out.println si quieres
+            return new ResponseEntity<>(publicaciones, HttpStatus.OK);
+        } catch (Exception e) {
+            System.err.println("PublicacionController: ¡ERROR al obtener todas las publicaciones! " + e.getMessage());
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Publicacion> obtenerPublicacionPorId(@PathVariable("id") Long id) {
+    public ResponseEntity<Publicacion> obtenerPublicacionPorId(@PathVariable Long id) {
         return publicacionService.obtenerPublicacionPorId(id)
                 .map(publicacion -> new ResponseEntity<>(publicacion, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));

@@ -12,13 +12,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.AntPathMatcher; // <-- ¡NUEVA IMPORTACIÓN!
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays; // <-- ¡NUEVA IMPORTACIÓN!
-import java.util.List; // <-- ¡NUEVA IMPORTACIÓN!
+import java.util.Arrays;
+import java.util.List;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
@@ -31,55 +31,65 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     // Lista de rutas que deben ser excluidas de la validación de JWT
     private static final List<String> EXCLUDED_PATHS = Arrays.asList(
-            "/api/auth/signup",
-            "/api/auth/signin",
-            // Puedes añadir más rutas públicas aquí si las tienes
-            "/api/test/**",
-            "/api/usuarios/**", // Si esta ruta tiene endpoints públicos aparte de auth/signup
-            "/api/publicaciones/**",
-            "/api/comentarios/**"
+            "/api/auth/**",
+            "/api/publicaciones/**" // ¡AÑADIDA ESTA LÍNEA!
     );
 
-    // Para la comparación de rutas con patrones Ant-style
-    private AntPathMatcher pathMatcher = new AntPathMatcher(); // <-- Inicializa AntPathMatcher
+    private final AntPathMatcher pathMatcher = new AntPathMatcher(); // Necesario para comparar rutas con patrones
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
         String requestUri = request.getRequestURI();
+        String httpMethod = request.getMethod();
 
-        // 1. Verificar si la ruta actual está en la lista de rutas excluidas (públicas)
-        boolean isPublicPath = EXCLUDED_PATHS.stream()
-                .anyMatch(p -> pathMatcher.match(p, requestUri));
+        logger.info("AuthTokenFilter: Interceptando solicitud para la URL: {}", requestUri);
+        logger.info("AuthTokenFilter: Método HTTP: {}", httpMethod);
+
+        // 1. Comprueba si la ruta es pública y debe ser excluida de la validación JWT
+        boolean isPublicPath = EXCLUDED_PATHS.stream().anyMatch(p -> pathMatcher.match(p, requestUri));
 
         if (isPublicPath) {
-            // Si es una ruta pública, simplemente pasa la petición al siguiente filtro
-            filterChain.doFilter(request, response);
-            return; // ¡IMPORTANTE! Salir del método para no continuar con la validación JWT
+            logger.info("AuthTokenFilter: Ruta '{}' es pública. Saltando validación JWT.", requestUri);
+            filterChain.doFilter(request, response); // Continúa la cadena de filtros sin validar JWT
+            return; // Importante para detener la ejecución aquí
         }
+
+        logger.info("AuthTokenFilter: Ruta '{}' NO es pública. Intentando validar JWT.", requestUri);
 
         // 2. Si no es una ruta pública, intenta procesar el JWT como lo hacías antes
         try {
             String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String username = jwtUtils.getUserNameFromJwtToken(jwt);
+            if (jwt != null) {
+                logger.info("AuthTokenFilter: Encabezado Authorization: {}", request.getHeader("Authorization"));
+                if (jwt.startsWith("Bearer ")) {
+                    logger.info("AuthTokenFilter: Prefijo 'Bearer ' encontrado. JWT extraído.");
+                    logger.info("AuthTokenFilter: Token JWT extraído: {}...", jwt.substring(0, Math.min(jwt.length(), 20))); // Log limitado
+                }
+                if (jwtUtils.validateJwtToken(jwt)) {
+                    String username = jwtUtils.getUserNameFromJwtToken(jwt);
+                    logger.info("AuthTokenFilter: Username extraído del token: {}", username);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails,
-                                null,
-                                userDetails.getAuthorities());
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(userDetails,
+                                    null,
+                                    userDetails.getAuthorities());
 
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    logger.info("AuthTokenFilter: Autenticación establecida en SecurityContextHolder para: {}", username);
+                }
+            } else {
+                logger.info("AuthTokenFilter: No se encontró token JWT en la solicitud.");
             }
         } catch (Exception e) {
-            // Loguear el error solo si ocurre al intentar validar un JWT,
-            // no para rutas públicas sin token
-            logger.error("No se pudo establecer la autenticación del usuario: {}", e.getMessage());
+            logger.error("No se pudo establecer la autenticación del usuario: {}", e.getMessage(), e);
+            // Considera enviar un error 401 si no se puede establecer la autenticación para una ruta NO pública
+            // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            // return; // Detener la cadena de filtros aquí si envías un error
         }
 
         filterChain.doFilter(request, response);

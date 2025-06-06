@@ -90,4 +90,11 @@ export class AuthService {
       return of(error); // Devuelve el error para que el componente que llama lo maneje
     };
   }
+   /**
+   * Obtiene el token JWT del localStorage.
+   * @returns El token JWT como string o null si no existe.
+   */
+   getToken(): string | null {
+    return localStorage.getItem('auth-token');
+  }
 }

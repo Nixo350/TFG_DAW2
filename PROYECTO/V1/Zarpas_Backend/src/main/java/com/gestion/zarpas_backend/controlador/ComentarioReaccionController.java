@@ -10,12 +10,42 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/comentario-reacciones")
+@RequestMapping("/api/reacciones-comentario") // Nueva ruta base
+@CrossOrigin(origins = "http://localhost:4200")
 public class ComentarioReaccionController {
 
-    private final ComentarioReaccionService comentarioReaccionService;
+    @Autowired
+    private ComentarioReaccionService comentarioReaccionService;
+
+    public static class ComentarioReaccionRequest {
+        public Long idUsuario;
+        public Long idComentario;
+        public TipoReaccion tipoReaccion;
+    }
+
+    @PutMapping("/toggle")
+    public ResponseEntity<?> toggleReaccion(@RequestBody ComentarioReaccionRequest request) {
+        try {
+            ComentarioReaccion reaccionGuardada = comentarioReaccionService.crearOActualizarReaccion(
+                    request.idUsuario, request.idComentario, request.tipoReaccion);
+
+            if (reaccionGuardada == null) {
+                // Reacción eliminada (toggle off)
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
+            } else {
+                // Reacción creada o actualizada
+                return new ResponseEntity<>(reaccionGuardada, HttpStatus.OK); // 200 OK con el objeto de reacción
+            }
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error interno del servidor: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @Autowired
     public ComentarioReaccionController(ComentarioReaccionService comentarioReaccionService) {
@@ -39,6 +69,24 @@ public class ComentarioReaccionController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/conteo/{idComentario}")
+    public ResponseEntity<Map<TipoReaccion, Long>> getConteoReacciones(@PathVariable Long idComentario) {
+        Map<TipoReaccion, Long> conteo = comentarioReaccionService.getConteoReaccionesByComentarioId(idComentario);
+        // Asegurarse de que siempre devuelva 0 si no hay likes/dislikes, en lugar de no incluir la clave
+        conteo.putIfAbsent(TipoReaccion.like, 0L);
+        conteo.putIfAbsent(TipoReaccion.dislike, 0L);
+        return new ResponseEntity<>(conteo, HttpStatus.OK);
+    }
+
+    @GetMapping("/usuario/{idUsuario}/comentario/{idComentario}")
+    public ResponseEntity<TipoReaccion> getReaccionUsuario(
+            @PathVariable Long idUsuario,
+            @PathVariable Long idComentario) {
+        Optional<TipoReaccion> tipoReaccion = comentarioReaccionService.getReaccionUsuarioAComentario(idUsuario, idComentario);
+        return tipoReaccion.map(reaccion -> new ResponseEntity<>(reaccion, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND)); // 404 si no hay reacción
     }
 
     @GetMapping

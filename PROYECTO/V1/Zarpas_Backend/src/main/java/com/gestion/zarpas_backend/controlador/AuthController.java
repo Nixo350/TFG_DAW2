@@ -93,7 +93,7 @@ public class AuthController {
         Set<UsuarioRol> usuarioRoles = new HashSet<>();
         Rol userRole = rolRepository.findByNombre("USER")
                 .orElseThrow(() -> new RuntimeException("Error: El rol 'USER' no se encuentra."));
-        usuarioRoles.add(new UsuarioRol(null, usuario, userRole));
+        usuarioRoles.add(new UsuarioRol(usuario, userRole));
 
         usuario.setUsuarioRoles(usuarioRoles);
 

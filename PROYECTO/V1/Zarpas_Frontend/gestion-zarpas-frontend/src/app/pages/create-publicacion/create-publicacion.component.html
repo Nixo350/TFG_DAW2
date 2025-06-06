@@ -1,0 +1,54 @@
+<div class="create-post-container">
+    <h2>Crear Nueva Publicación</h2>
+
+    <form (ngSubmit)="onSubmit()" #postForm="ngForm">
+      <div class="form-group">
+        <label for="titulo">Título:</label>
+        <input
+          type="text"
+          id="titulo"
+          name="titulo"
+          [(ngModel)]="publicacion.titulo"
+          required
+          minlength="5"
+          #titulo="ngModel"
+        />
+        <div *ngIf="titulo.invalid && (titulo.dirty || titulo.touched)" class="validation-error">
+          <div *ngIf="titulo.errors?.['required']">El título es obligatorio.</div>
+          <div *ngIf="titulo.errors?.['minlength']">El título debe tener al menos 5 caracteres.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="contenido">Contenido:</label>
+        <textarea
+          id="contenido"
+          name="contenido"
+          [(ngModel)]="publicacion.contenido"
+          rows="5"
+          required
+          minlength="10"
+          #contenido="ngModel"
+        ></textarea>
+        <div *ngIf="contenido.invalid && (contenido.dirty || contenido.touched)" class="validation-error">
+          <div *ngIf="contenido.errors?.['required']">El contenido es obligatorio.</div>
+          <div *ngIf="contenido.errors?.['minlength']">El contenido debe tener al menos 10 caracteres.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="imagenUpload">Subir Imagen (opcional):</label>
+        <input
+          type="file"
+          id="imagenUpload"
+          name="imagenUpload"
+          (change)="onFileSelected($event)" accept="image/*" />
+        </div>
+
+      <button type="submit" [disabled]="!postForm.form.valid">Publicar</button>
+    </form>
+
+    <div *ngIf="message" [ngClass]="{'success-message': isSuccess, 'error-message': !isSuccess}" class="form-message">
+      {{ message }}
+    </div>
+</div>

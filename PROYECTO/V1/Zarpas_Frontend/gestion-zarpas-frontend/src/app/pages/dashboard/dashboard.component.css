@@ -1,12 +1,370 @@
-/* src/app/pages/dashboard/dashboard.component.css */
-/* ... (Mantén todos los estilos anteriores para .dashboard-container, .main-content, .sidebar, etc.) ... */
+/* Variables CSS para consistencia de colores y espaciado */
+:host {
+  --primary-color: #3f51b5; /* Un azul como el de Angular Material */
+  --accent-color: #ff4081; /* Un rosa/magenta */
+  --text-color: #333;
+  --light-text-color: #666;
+  --background-color: #f0f2f5; /* Gris claro para el fondo */
+  --card-background-color: #ffffff;
+  --border-color: #e0e0e0;
+  --spacing-unit: 16px;
+  --border-radius: 8px;
+  --box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --font-family: 'Roboto', sans-serif; /* O la fuente que uses en tu proyecto */
+}
+
+body {
+  font-family: var(--font-family);
+  margin: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* Contenedor principal del Dashboard */
+.dashboard-container {
+  display: flex;
+  justify-content: center; /* Centra el contenido */
+  padding: var(--spacing-unit);
+  gap: var(--spacing-unit); /* Espacio entre las columnas */
+  max-width: 1200px; /* Ancho máximo para el contenido */
+  margin: 0 auto; /* Centra el contenedor en la página */
+}
+
+/* Contenido principal (Publicaciones) */
+.main-content {
+  flex: 3; /* Ocupa 3 partes del espacio disponible */
+  min-width: 600px; /* Ancho mínimo para el contenido principal */
+  background-color: var(--background-color);
+}
+
+.posts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(var(--spacing-unit) / 2) var(--spacing-unit);
+  margin-bottom: var(--spacing-unit);
+  background-color: var(--card-background-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-light);
+}
+
+.posts-header h2 {
+  margin: 0;
+  font-size: 1.5em;
+  color: var(--text-color);
+}
+
+.create-post-button, .create-post-button-sidebar {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.create-post-button:hover, .create-post-button-sidebar:hover {
+  background-color: darken(var(--primary-color), 10%); /* Ajustar color más oscuro al pasar el ratón */
+}
+
+
+.no-posts-message {
+  background-color: var(--card-background-color);
+  padding: var(--spacing-unit);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-light);
+  text-align: center;
+  color: var(--light-text-color);
+  margin-bottom: var(--spacing-unit);
+}
+
+/* Estilo de las tarjetas de publicación */
+.post-card {
+  background-color: var(--card-background-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-light);
+  margin-bottom: var(--spacing-unit);
+  padding: var(--spacing-unit);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-unit);
+}
+
+.post-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: calc(var(--spacing-unit) / 2);
+  object-fit: cover;
+}
+
+.post-info {
+  flex-grow: 1;
+}
+
+.post-title {
+  margin: 0;
+  font-size: 1.2em;
+  color: var(--text-color);
+}
+
+.post-author {
+  font-size: 0.9em;
+  color: var(--light-text-color);
+}
+
+.post-body {
+  margin-bottom: var(--spacing-unit);
+}
+
+.post-content {
+  margin-top: 0;
+  line-height: 1.5;
+  color: var(--text-color);
+}
 
 .post-image {
-    max-width: 100%; /* Asegura que la imagen no desborde la tarjeta */
-    height: auto;    /* Mantiene la proporción de la imagen */
-    border-radius: 4px;
-    margin-top: 10px;
-    display: block;  /* Para que ocupe su propia línea */
+  max-width: 100%;
+  border-radius: var(--border-radius);
+  margin-top: calc(var(--spacing-unit) / 2);
+  display: block; /* Para eliminar espacio extra bajo la imagen */
+  height: auto; /* Asegura que la imagen se escale correctamente */
+}
+
+.post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: calc(var(--spacing-unit) / 2);
+  font-size: 0.9em;
+  color: var(--light-text-color);
+}
+
+.post-actions {
+  display: flex;
+  gap: calc(var(--spacing-unit) / 2);
+}
+
+.post-votes {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.vote-button {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  color: var(--light-text-color);
+  padding: 0 5px;
+  transition: color 0.2s ease;
+}
+
+.like-button:hover {
+  color: #4CAF50; /* Verde para like */
+}
+
+.dislike-button:hover {
+  color: #f44336; /* Rojo para dislike */
+}
+
+.vote-count {
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.action-button {
+  background: none;
+  border: none;
+  color: var(--light-text-color);
+  cursor: pointer;
+  font-size: 0.9em;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.action-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--text-color);
+}
+
+
+/* Barra Lateral */
+.sidebar {
+  flex: 1; /* Ocupa 1 parte del espacio disponible */
+  min-width: 280px; /* Ancho mínimo para la barra lateral */
+  max-width: 350px; /* Ancho máximo para la barra lateral */
+}
+
+.sidebar-card {
+  background-color: var(--card-background-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-light);
+  margin-bottom: var(--spacing-unit);
+  padding: var(--spacing-unit);
+}
+
+.sidebar-card h3 {
+  margin-top: 0;
+  font-size: 1.2em;
+  color: var(--text-color);
+  margin-bottom: calc(var(--spacing-unit) / 2);
+}
+
+.sidebar-card p {
+  font-size: 0.9em;
+  line-height: 1.4;
+  color: var(--light-text-color);
+}
+
+.sidebar-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-card ul li {
+  margin-bottom: 5px;
+}
+
+.sidebar-card ul li a {
+  text-decoration: none;
+  color: var(--primary-color);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.sidebar-card ul li a:hover {
+  color: darken(var(--primary-color), 10%);
+  text-decoration: underline;
+}
+
+.sidebar-card.footer-links p {
+  text-align: center;
+  font-size: 0.8em;
+}
+
+.sidebar-card.footer-links a {
+  color: var(--light-text-color);
+  text-decoration: none;
+}
+
+.sidebar-card.footer-links a:hover {
+  text-decoration: underline;
+}
+
+.read-more {
+  display: inline-block;
+  margin-top: calc(var(--spacing-unit) / 2);
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+.read-more:hover {
+  text-decoration: underline;
+}
+.post-votes {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre los botones y contadores */
+}
+
+.vote-button {
+  background: none;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.vote-button:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.like-button {
+  border-color: #4CAF50; /* Verde */
+  color: #4CAF50;
+}
+
+.like-button:hover {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.dislike-button {
+  border-color: #f44336; /* Rojo */
+  color: #f44336;
+}
+
+.dislike-button:hover {
+  background-color: #f44336;
+  color: white;
+}
+
+.like-count, .dislike-count {
+  font-weight: bold;
+  color: var(--light-text-color);
+  font-size: 0.9em;
+}
+
+/* Media Queries para responsividad (opcional, pero recomendado) */
+@media (max-width: 900px) {
+  .dashboard-container {
+    flex-direction: column; /* Apila las columnas en pantallas más pequeñas */
+    align-items: center;
   }
-  
-  /* ... (El resto de tus estilos CSS existentes) ... */
+
+  .main-content, .sidebar {
+    width: 100%;
+    max-width: 600px; /* Limita el ancho en móviles para mejor legibilidad */
+    min-width: unset; /* Quita el min-width para móviles */
+  }
+
+  .posts-header {
+      flex-direction: column;
+      text-align: center;
+  }
+  .posts-header h2 {
+      margin-bottom: 10px;
+  }
+}
+/* Puedes ajustar estos estilos a tu gusto */
+.reactions-container button {
+  padding: 8px 15px;
+  margin: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.reactions-container button.active-like {
+  background-color: #28a745; /* Verde */
+  color: white;
+  border-color: #28a745;
+}
+
+.reactions-container button.active-dislike {
+  background-color: #dc3545; /* Rojo */
+  color: white;
+  border-color: #dc3545;
+}
