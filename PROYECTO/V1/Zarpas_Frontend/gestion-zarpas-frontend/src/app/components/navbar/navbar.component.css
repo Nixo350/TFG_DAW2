@@ -1,0 +1,28 @@
+.spacer {
+    flex: 1 1 auto;
+  }
+  
+  mat-toolbar {
+    padding: 0 16px;
+    min-height: 56px;
+  }
+  
+  mat-toolbar a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  mat-toolbar button {
+    margin-left: 8px;
+  }
+  
+
+  .navbar-logo {
+    height: 40px; 
+    width: auto; 
+    margin-left: 16px; 
+    border-radius: 50%;
+  }
+  .navbar-logo.left-logo {
+    margin-right: 16px; 
+  }

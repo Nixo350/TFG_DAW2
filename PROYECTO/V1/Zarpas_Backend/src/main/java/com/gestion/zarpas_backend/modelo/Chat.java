@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,11 +30,12 @@ public class Chat {
     @Column(name = "fecha_modificacion")
     private Timestamp fechaModificacion;
 
-    @ManyToMany(mappedBy = "chats")
-    @JsonBackReference
-    private List<Usuario> usuarios;
+    // Relación con la entidad de unión UsuarioChat
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference("chat-usuarioChats") // El Chat es el "dueño" del UsuarioChat desde su perspectiva
+    private List<UsuarioChat> usuarioChats = new ArrayList<>();
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("chat-mensajes")
     private List<Mensaje> mensajes;
 }

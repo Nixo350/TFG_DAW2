@@ -6,8 +6,9 @@ export interface Publicacion {
     usuario: Usuario;
     titulo: string;
     contenido: string;
+    imagenUrl?: string;
     fechaCreacion: Date;
-    fechaModificacion: Date;
+    fechaModificacion?: Date;
     comentarios: Comentario[];
     usuariosGuardaron: Usuario[];
   }

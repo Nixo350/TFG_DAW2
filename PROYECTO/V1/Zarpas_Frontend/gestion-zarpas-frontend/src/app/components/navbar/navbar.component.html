@@ -1,0 +1,29 @@
+<mat-toolbar color="primary">
+    <img src="favicon.png" alt="Logo de la Aplicación" class="navbar-logo left-logo">
+    <span><a routerLink="/" style="color: white; text-decoration: none;">ZarpasApp</a></span>
+  
+    <span class="spacer"></span>
+  
+    <ng-container *ngIf="!isLoggedIn">
+      <button mat-button routerLink="/login">
+        <mat-icon>login</mat-icon> Iniciar Sesión
+      </button>
+      <button mat-button routerLink="/signup">
+        <mat-icon>person_add</mat-icon> Registrarse
+      </button>
+    </ng-container>
+  
+    <ng-container *ngIf="isLoggedIn">
+      <button mat-button routerLink="/dashboard">
+        <mat-icon>dashboard</mat-icon> Dashboard
+      </button>
+  
+      <button mat-button>
+        <mat-icon>person</mat-icon> {{ username }}
+      </button>
+  
+      <button mat-button (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon> Cerrar Sesión
+      </button>
+    </ng-container>
+  </mat-toolbar>

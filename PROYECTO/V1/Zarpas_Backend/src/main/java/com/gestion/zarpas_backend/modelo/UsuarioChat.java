@@ -14,8 +14,8 @@ import java.sql.Timestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(UsuarioChatId.class)
-public class UsuarioChat {
+@IdClass(UsuarioChatId.class) // Usar IdClass para la clave compuesta
+public class UsuarioChat implements Serializable {
     @Id
     @Column(name = "id_usuario")
     private Long idUsuario;
@@ -29,12 +29,11 @@ public class UsuarioChat {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", insertable = false, updatable = false)
-    @JsonBackReference
+    @JsonBackReference("usuario-usuarioChats") // Debe coincidir con Usuario.java
     private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "id_chat", insertable = false, updatable = false)
-    @JsonBackReference
+    @JsonBackReference("chat-usuarioChats") // Debe coincidir con Chat.java
     private Chat chat;
 }
-

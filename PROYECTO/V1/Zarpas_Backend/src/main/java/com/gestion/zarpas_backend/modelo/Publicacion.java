@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,7 +24,7 @@ public class Publicacion {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("usuario-publicaciones") // Coincide con Usuario.java
     private Usuario usuario;
 
     private String titulo;
@@ -41,10 +42,11 @@ public class Publicacion {
     private Timestamp fechaModificacion;
 
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("publicacion-comentarios") // Coincide con Comentario.java
     private List<Comentario> comentarios;
 
-    @ManyToMany(mappedBy = "publicacionesGuardadas")
-    @JsonBackReference
-    private List<Usuario> usuariosGuardaron;
+    // Relación con la entidad de unión PublicacionGuardada
+    @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference("publicacion-publicacionGuardadas") // Coincide con PublicacionGuardada.java
+    private List<PublicacionGuardada> guardadosPorUsuarios = new ArrayList<>();
 }

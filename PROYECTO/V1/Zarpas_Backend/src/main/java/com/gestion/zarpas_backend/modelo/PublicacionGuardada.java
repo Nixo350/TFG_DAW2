@@ -1,7 +1,6 @@
 package com.gestion.zarpas_backend.modelo;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +15,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(PublicacionGuardadaId.class)
-public class PublicacionGuardada {
+public class PublicacionGuardada implements Serializable {
     @Id
     @Column(name = "id_usuario")
     private Long idUsuario;
@@ -30,12 +29,11 @@ public class PublicacionGuardada {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", insertable = false, updatable = false)
-    @JsonBackReference
+    @JsonBackReference("usuario-publicacionGuardadas")
     private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "id_publicacion", insertable = false, updatable = false)
-    @JsonBackReference
+    @JsonBackReference("publicacion-publicacionGuardadas")
     private Publicacion publicacion;
 }
-

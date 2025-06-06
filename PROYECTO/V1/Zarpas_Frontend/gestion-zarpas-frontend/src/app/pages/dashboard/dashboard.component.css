@@ -1,0 +1,12 @@
+/* src/app/pages/dashboard/dashboard.component.css */
+/* ... (Mantén todos los estilos anteriores para .dashboard-container, .main-content, .sidebar, etc.) ... */
+
+.post-image {
+    max-width: 100%; /* Asegura que la imagen no desborde la tarjeta */
+    height: auto;    /* Mantiene la proporción de la imagen */
+    border-radius: 4px;
+    margin-top: 10px;
+    display: block;  /* Para que ocupe su propia línea */
+  }
+  
+  /* ... (El resto de tus estilos CSS existentes) ... */

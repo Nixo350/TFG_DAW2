@@ -13,13 +13,17 @@ import java.util.*;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor // Necesario para JPA y JSON
+@AllArgsConstructor // Necesario para Builder y algunos usos de conversión
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
     private Long idUsuario;
+
+    // AÑADE ESTE CAMPO PARA EL NOMBRE DE USUARIO
+    @Column(unique = true, nullable = false) // Asegúrate de que sea único
+    private String username;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -27,7 +31,7 @@ public class Usuario {
     private String nombre;
 
     @Column(nullable = false)
-    private String contrasena;
+    private String contrasena; // Cambiado a 'contrasena' para que coincida con el frontend
 
     @Column(name = "fecha_registro")
     private Timestamp fechaRegistro;
@@ -39,12 +43,12 @@ public class Usuario {
     private String fotoPerfil;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Publicacion> publicaciones;
+    @JsonManagedReference("usuario-publicaciones") // Nombre único
+    private List<Publicacion> publicaciones; //
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Comentario> comentarios;
+    @JsonManagedReference("usuario-comentarios") // Nombre único
+    private List<Comentario> comentarios; //
 
     @ManyToMany
     @JoinTable(
@@ -52,12 +56,12 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_chat")
     )
-    @JsonManagedReference
-    private List<Chat> chats;
+    @JsonManagedReference("usuario-chats") // Nombre único
+    private List<Chat> chats; //
 
     @OneToMany(mappedBy = "emisor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Mensaje> mensajesEnviados;
+    @JsonManagedReference("usuario-mensajesEnviados") // Nombre único
+    private List<Mensaje> mensajesEnviados; //
 
     @ManyToMany
     @JoinTable(
@@ -65,8 +69,8 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_publicacion")
     )
-    @JsonManagedReference
-    private List<Publicacion> publicacionesGuardadas;
+    @JsonManagedReference("usuario-publicacionesGuardadas") // Nombre único
+    private List<Publicacion> publicacionesGuardadas; //
 
     @ManyToMany
     @JoinTable(
@@ -74,10 +78,36 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_comentario")
     )
-    @JsonManagedReference
-    private List<Comentario> comentariosReaccionados;
+    @JsonManagedReference("usuario-comentariosReaccionados") // Nombre único
+    private List<Comentario> comentariosReaccionados; //
 
+    // Relación de Usuario-Rol (a través de UsuarioRol)
+    // Usamos JsonManagedReference para gestionar esta parte de la relación
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,mappedBy = "usuario")
-    @JsonBackReference
-    private Set<UsuarioRol> usuarioRoles = new HashSet<>();
+    @JsonManagedReference("usuario-usuarioRoles") // Nombre único
+    private Set<UsuarioRol> usuarioRoles = new HashSet<>(); //
+
+    // Constructor para el registro de usuario (simplificado, puedes ajustarlo si necesitas más campos)
+    public Usuario(String username, String email, String contrasena, String nombre) {
+        this.username = username;
+        this.email = email;
+        this.contrasena = contrasena;
+        this.nombre = nombre;
+        this.fechaRegistro = new Timestamp(System.currentTimeMillis());
+        this.usuarioRoles = new HashSet<>(); // Inicializar roles vacíos, se asignarán después
+    }
+
+    // Métodos equals y hashCode para UserDetailsImpl
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Usuario usuario = (Usuario) o;
+        return Objects.equals(idUsuario, usuario.idUsuario);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idUsuario);
+    }
 }

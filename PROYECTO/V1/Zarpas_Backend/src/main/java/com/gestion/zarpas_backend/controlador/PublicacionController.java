@@ -7,12 +7,14 @@ import com.gestion.zarpas_backend.servicio.UsuarioService; // Para buscar el usu
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/publicaciones")
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 public class PublicacionController {
 
     private final PublicacionService publicacionService;
@@ -39,10 +41,11 @@ public class PublicacionController {
                 .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST)); // Usuario no encontrado
     }
 
-    @GetMapping
+    @GetMapping("/todas")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<List<Publicacion>> obtenerTodasLasPublicaciones() {
-        List<Publicacion> publicaciones = publicacionService.obtenerTodasLasPublicaciones();
-        return new ResponseEntity<>(publicaciones, HttpStatus.OK);
+        List<Publicacion> publicaciones = publicacionService.obtenerTodasLasPublicaciones(); // Llama al servicio
+        return new ResponseEntity<>(publicaciones, HttpStatus.OK); // Devuelve la lista con estado 200 OK
     }
 
     @GetMapping("/{id}")

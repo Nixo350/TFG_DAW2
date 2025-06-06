@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(ComentarioReaccionId.class)
-public class ComentarioReaccion {
+public class ComentarioReaccion implements Serializable {
     @Id
     @Column(name = "id_usuario")
     private Long idUsuario;
@@ -33,12 +33,11 @@ public class ComentarioReaccion {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", insertable = false, updatable = false)
-    @JsonBackReference
+    @JsonBackReference("usuario-comentarioReacciones")
     private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "id_comentario", insertable = false, updatable = false)
-    @JsonBackReference
+    @JsonBackReference("comentario-comentarioReacciones")
     private Comentario comentario;
 }
-

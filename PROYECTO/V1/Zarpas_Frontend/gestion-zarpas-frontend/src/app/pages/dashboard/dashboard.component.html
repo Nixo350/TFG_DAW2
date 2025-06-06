@@ -1,0 +1,38 @@
+<div class="dashboard-container">
+    <div class="main-content">
+      <div class="posts-list">
+        <h2>Publicaciones Recientes</h2>
+  
+        <div *ngIf="posts.length === 0" class="no-posts">
+          No hay publicaciones disponibles en este momento.
+        </div>
+  
+        <div *ngFor="let post of posts" class="post-item">
+          <div class="post-card">
+            <div class="post-header">
+              <h3>{{ post.titulo }}</h3>
+              <span class="post-author">por {{ post.usuario?.username }}</span>
+            </div>
+            <div class="post-body">
+              <p>{{ post.contenido }}</p>
+              <img *ngIf="post.imagenUrl" [src]="post.imagenUrl" alt="Imagen de la publicación" class="post-image">
+            </div>
+            <div class="post-footer">
+              <span class="post-date">Publicado el {{ post.fechaCreacion | date:'mediumDate' }}</span>
+              <div class="post-votes">
+                <span class="vote-arrow">&#9650;</span>
+                <span>0</span> <span class="vote-arrow">&#9660;</span>
+                <span>0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="sidebar">
+      <div class="sidebar-card"><h3>Acerca de ZarpasApp</h3><p>Bienvenido a la comunidad de amantes de las mascotas. Comparte tus historias, fotos y consejos. ¡Conecta con otros dueños de mascotas!</p><button mat-raised-button color="primary">Crear Publicación</button></div>
+      <div class="sidebar-card"><h3>Comunidades Populares</h3><ul><li><a href="#">#PerrosGraciosos</a></li><li><a href="#">#GatosDivertidos</a></li><li><a href="#">#AvesExoticas</a></li><li><a href="#">#AdopcionGijon</a></li></ul></div>
+      <div class="sidebar-card"><h3>Normas de la Comunidad</h3><p>Sé respetuoso, no spam, y mantén el contenido relacionado con mascotas.</p></div>
+    </div>
+  </div>
