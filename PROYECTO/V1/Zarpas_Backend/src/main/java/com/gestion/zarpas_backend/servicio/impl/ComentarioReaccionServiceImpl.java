@@ -187,4 +187,8 @@ public class ComentarioReaccionServiceImpl implements ComentarioReaccionService 
     public List<ComentarioReaccion> obtenerReaccionesPorUsuario(Long idUsuario) {
         return comentarioReaccionRepository.findById_IdUsuario(idUsuario);
     }
+    @Transactional(readOnly = true)
+    public Optional<ComentarioReaccion> findByComentarioIdAndUsuarioId(Long idComentario, Long idUsuario) {
+        return comentarioReaccionRepository.findByComentario_IdComentarioAndUsuario_IdUsuario(idComentario, idUsuario);
+    }
 }

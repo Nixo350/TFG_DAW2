@@ -129,4 +129,15 @@ public class ComentarioReaccionController {
                 .map(cr -> new ResponseEntity<>(cr, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+    @GetMapping("/comentario/{idComentario}/usuario/{idUsuario}")
+    public ResponseEntity<TipoReaccion> getReaccionByComentarioAndUsuario(
+            @PathVariable Long idComentario,
+            @PathVariable Long idUsuario) {
+        Optional<ComentarioReaccion> reaccion = comentarioReaccionService.findByComentarioIdAndUsuarioId(idComentario, idUsuario);
+        if (reaccion.isPresent()) {
+            return ResponseEntity.ok(reaccion.get().getTipoReaccion());
+        } else {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 No Content si no hay reacción
+        }
+    }
 }

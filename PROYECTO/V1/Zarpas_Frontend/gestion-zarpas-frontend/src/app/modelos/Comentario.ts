@@ -1,6 +1,7 @@
 import { TipoReaccion } from "./TipoReaccion";
 import { Usuario } from "./Usuario";
 
+
 export interface Comentario {
     idComentario?: number;
     usuario: Usuario;
@@ -11,6 +12,9 @@ export interface Comentario {
   fechaModificacion?: Date | null;
   reaccionesConteo?: { like: number; dislike: number };
   currentUserReaction?: TipoReaccion | null;
+
+  conteoLikes?: number;    // Contador de "me gusta" para el comentario
+  conteoDislikes?: number;
   }
 
 export interface ComentarioRequest {

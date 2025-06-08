@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { NgForm, FormsModule } from '@angular/forms'; // <<-- ¡AHORA SÍ, IMPORTA FormsModule AQUÍ!
-import { CommonModule } from '@angular/common'; // También podrías necesitar CommonModule
-import { AuthService } from '../../services/auth.service'; // Asegúrate de que esta ruta sea correcta
+import { NgForm, FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 // Define la interfaz para tu objeto de publicación (ajusta si tienes más campos)
 interface Publicacion {
@@ -23,28 +23,26 @@ interface Categoria {
   selector: 'app-create-publicacion',
   templateUrl: './create-publicacion.component.html',
   styleUrls: ['./create-publicacion.component.css'],
-  // **AQUÍ ES DONDE IMPORTAS LOS MÓDULOS EN UN COMPONENTE STANDALONE**
-  standalone: true, // Asegúrate de que tu componente es standalone
+  standalone: true,
   imports: [
-    FormsModule, // <--- ¡Importa FormsModule aquí!
-    CommonModule // <--- Importa CommonModule para directivas como *ngIf, *ngFor, etc.
+    FormsModule,
+    CommonModule
   ]
 })
 export class CreatePublicacionComponent implements OnInit {
-  publicacion: Publicacion = { titulo: '', contenido: '' }; // Modelo para la publicación
+  publicacion: Publicacion = { titulo: '', contenido: '' };
 
-  selectedImage: File | null = null; // Para almacenar el archivo de imagen seleccionado
+  selectedImage: File | null = null;
 
-  // Variables para la creación de categoría
   createNewCategory: boolean = false;
   selectedCategoryId: number | undefined = undefined;
   newCategoryName: string = '';
   newCategoryDescription: string = '';
 
-  categories: Categoria[] = []; // Para almacenar las categorías existentes
+  categories: Categoria[] = [];
 
-  isSuccess: boolean | null = null; // Para mensajes de éxito/error en la UI
-  message: string = ''; // El mensaje a mostrar
+  isSuccess: boolean | null = null;
+  message: string = '';
 
   constructor(
     private http: HttpClient,
@@ -53,7 +51,7 @@ export class CreatePublicacionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadCategories(); // Carga las categorías existentes al iniciar el componente
+    this.loadCategories();
   }
 
   loadCategories(): void {
@@ -93,8 +91,15 @@ export class CreatePublicacionComponent implements OnInit {
     this.isSuccess = null;
     this.message = '';
 
-    if (form.invalid || (!this.selectedCategoryId && !this.createNewCategory) || (this.createNewCategory && !this.newCategoryName)) {
-      this.message = 'Por favor, completa todos los campos requeridos y selecciona/crea una categoría.';
+    // Primero, validar que se haya seleccionado o creado una categoría
+    if ((!this.selectedCategoryId && !this.createNewCategory) || (this.createNewCategory && (!this.newCategoryName || this.newCategoryName.trim() === ''))) {
+      this.message = 'Por favor, selecciona o introduce un nombre para la categoría.';
+      this.isSuccess = false;
+      return;
+    }
+
+    if (form.invalid) {
+      this.message = 'Por favor, completa todos los campos requeridos.';
       this.isSuccess = false;
       return;
     }
@@ -113,15 +118,34 @@ export class CreatePublicacionComponent implements OnInit {
       formData.append('imagen', this.selectedImage, this.selectedImage.name);
     }
 
+    // --- Lógica para determinar el 'categoriaNombre' a enviar al backend ---
+    let categoriaNameToSend: string | undefined;
+
     if (this.createNewCategory) {
-      formData.append('createNewCategory', 'true');
-      formData.append('newCategoryName', this.newCategoryName);
-      if (this.newCategoryDescription) {
-        formData.append('newCategoryDescription', this.newCategoryDescription);
-      }
+      // Si el usuario elige crear una nueva categoría, usamos el nombre de la nueva categoría
+      categoriaNameToSend = this.newCategoryName;
     } else if (this.selectedCategoryId) {
-      formData.append('selectedCategoryId', this.selectedCategoryId.toString());
+      // Si el usuario elige una categoría existente, buscamos su nombre en la lista cargada
+      const selectedCategory = this.categories.find(cat => cat.idCategoria === this.selectedCategoryId);
+      if (selectedCategory) {
+        categoriaNameToSend = selectedCategory.nombre;
+      } else {
+        this.message = 'Categoría seleccionada no encontrada. Intenta recargar la página.';
+        this.isSuccess = false;
+        return;
+      }
     }
+
+    // Asegurarse de que categoriaNameToSend no sea undefined o vacío antes de enviarlo
+    if (categoriaNameToSend && categoriaNameToSend.trim() !== '') {
+      formData.append('categoriaNombre', categoriaNameToSend);
+    } else {
+      // Esto debería ser capturado por la validación inicial, pero es un buen fallback
+      this.message = 'El nombre de la categoría es obligatorio.';
+      this.isSuccess = false;
+      return;
+    }
+    // --- Fin de la lógica de categoría ---
 
     const token = this.authService.getToken();
     console.log(token);
@@ -133,7 +157,7 @@ export class CreatePublicacionComponent implements OnInit {
     }
 
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}` // <<-- ¡Asegúrate de que esto sea CORRECTO!
+      'Authorization': `Bearer ${token}`
     });
 
     this.http.post('http://localhost:9000/api/publicaciones/crear-con-imagen', formData, { headers: headers })
@@ -149,7 +173,7 @@ export class CreatePublicacionComponent implements OnInit {
           this.selectedCategoryId = undefined;
           this.newCategoryName = '';
           this.newCategoryDescription = '';
-          this.loadCategories();
+          this.loadCategories(); // Recargar categorías por si se creó una nueva
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {

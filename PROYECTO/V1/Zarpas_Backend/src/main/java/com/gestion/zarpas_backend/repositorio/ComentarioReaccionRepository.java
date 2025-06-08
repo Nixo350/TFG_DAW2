@@ -22,4 +22,5 @@ public interface ComentarioReaccionRepository extends JpaRepository<ComentarioRe
 
     long countByComentario_IdComentarioAndTipoReaccion(Long idComentario, TipoReaccion tipoReaccion);
 
+    Optional<ComentarioReaccion> findByComentario_IdComentarioAndUsuario_IdUsuario(Long idComentario, Long idUsuario);
 }

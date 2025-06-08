@@ -2,11 +2,8 @@ import { Comentario } from "./Comentario";
 import { Usuario } from "./Usuario";
 import { TipoReaccion } from "./TipoReaccion";
 import { ReaccionPublicacion } from "./ReaccionPublicacion";
-
-export interface Categoria {
-  idCategoria: number;
-  nombre: string;
-}
+import { Categoria } from "./Categoria";
+import { PublicacionGuardada } from './PublicacionGuardada';
 
 export interface Publicacion {
     idPublicacion: number;
@@ -22,5 +19,9 @@ export interface Publicacion {
     conteoLikes?: number;
     conteoDislikes?: number;
     miReaccion?: TipoReaccion | null;
-    categorias?: string[]; 
+    categoria?: Categoria | null;
+
+    mostrarComentarios?: boolean; 
+    guardadosPorUsuarios?: PublicacionGuardada[]; 
+    isSaved?: boolean; 
   }

@@ -14,16 +14,15 @@ import java.util.*;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor // Necesario para JPA y JSON
-@AllArgsConstructor // Necesario para Builder y algunos usos de conversión
+@NoArgsConstructor
+@AllArgsConstructor
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
     private Long idUsuario;
 
-    // AÑADE ESTE CAMPO PARA EL NOMBRE DE USUARIO
-    @Column(unique = true, nullable = false) // Asegúrate de que sea único
+    @Column(unique = true, nullable = false)
     private String username;
 
     @Column(unique = true, nullable = false)
@@ -32,7 +31,7 @@ public class Usuario {
     private String nombre;
 
     @Column(nullable = false)
-    private String contrasena; // Cambiado a 'contrasena' para que coincida con el frontend
+    private String contrasena;
 
     @Column(name = "fecha_registro")
     private Timestamp fechaRegistro;
@@ -43,70 +42,80 @@ public class Usuario {
     @Column(name = "foto_perfil")
     private String fotoPerfil;
 
+    // Relación con Publicacion (publicaciones creadas por el usuario)
+    // El usuario es el lado "managed" (posee la lista de publicaciones)
+    // La Publicacion tendrá @JsonBackReference("usuario-publicaciones")
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonBackReference("usuario-publicaciones")
-    @JsonIgnore// Nombre único
-    private List<Publicacion> publicaciones; //
+    @JsonManagedReference("usuario-publicaciones") // AÑADE ESTO
+    // @JsonIgnore // <-- Elimina este JsonIgnore si quieres serializar las publicaciones del usuario en algunos contextos
+    private List<Publicacion> publicaciones;
 
+    // Relación con Comentario
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference("usuario-comentarios")
-    @JsonIgnore// Nombre único
+    @JsonManagedReference("usuario-comentarios") // El usuario "gestiona" sus comentarios
+    // @JsonIgnore // <-- Elimina este JsonIgnore si quieres serializar los comentarios del usuario
     private List<Comentario> comentarios = new ArrayList<>();
 
+    // Relación con Chat (el usuario participa en muchos chats)
+    // Usa @JsonIgnore aquí si no necesitas serializar los chats del usuario al obtener un Usuario
+    // O bien, usa @JsonManagedReference si el Chat tiene un @JsonBackReference al usuario.
     @ManyToMany
     @JoinTable(
             name = "usuario_chat",
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_chat")
     )
-    @JsonManagedReference("usuario-chats") // Nombre único
-    private List<Chat> chats; //
+    @JsonIgnore // Considera usar @JsonIgnore aquí si serializar los chats del usuario causa problemas recursivos grandes
+    private List<Chat> chats;
 
+    // Relación con Mensaje (mensajes enviados por el usuario)
     @OneToMany(mappedBy = "emisor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("usuario-mensajesEnviados") // Nombre único
-    private List<Mensaje> mensajesEnviados; //
+    @JsonManagedReference("usuario-mensajesEnviados") // El usuario "gestiona" sus mensajes enviados
+    private List<Mensaje> mensajesEnviados;
 
-    @ManyToMany
-    @JoinTable(
-            name = "publicacion_guardada",
-            joinColumns = @JoinColumn(name = "id_usuario"),
-            inverseJoinColumns = @JoinColumn(name = "id_publicacion")
-    )
-    @JsonManagedReference("usuario-publicacionesGuardadas") // Nombre único
-    private List<Publicacion> publicacionesGuardadas; //
+    // --- CORRECCIÓN IMPORTANTE PARA PUBLICACIONES GUARDADAS ---
+    // Si PublicacionGuardada es una entidad de unión, la relación aquí debe ser OneToMany
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference("usuario-publicacionGuardadas") // El usuario "gestiona" sus publicaciones guardadas
+    // @JsonIgnore // <-- Puedes eliminar esto si necesitas serializar las PublicacionGuardada completas
+    private List<PublicacionGuardada> publicacionesGuardadas;
 
 
+    // Relación con ComentarioReaccion
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    @JsonManagedReference("usuario-comentarioReacciones")
+    @JsonManagedReference("usuario-comentarioReacciones") // El usuario "gestiona" sus reacciones a comentarios
     private List<ComentarioReaccion> comentarioReacciones = new ArrayList<>();
 
-    // Relación de Usuario-Rol (a través de UsuarioRol)
-    // Usamos JsonManagedReference para gestionar esta parte de la relación
+    // Relación de Usuario-Rol
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,mappedBy = "usuario")
-    @JsonManagedReference("usuario-usuarioRoles") // Nombre único
-    @JsonIgnore
-    private Set<UsuarioRol> usuarioRoles = new HashSet<>(); //
+    @JsonManagedReference("usuario-usuarioRoles") // El usuario "gestiona" sus roles
+    // @JsonIgnore // <-- Puedes eliminar esto si necesitas serializar los roles del usuario
+    private Set<UsuarioRol> usuarioRoles = new HashSet<>();
 
-    // --- ¡AÑADE ESTO PARA LAS REACCIONES A PUBLICACIONES! ---
+    // Relación con ReaccionPublicacion (reacciones del usuario a publicaciones)
+    // Asumo que 'ReaccionPublicacion' tiene un campo 'usuario' que mapea aquí
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonBackReference("usuario-reaccionesPublicacion")
+    @JsonManagedReference("usuario-reaccionesPublicacion") // El usuario "gestiona" sus reacciones a publicaciones
     private List<ReaccionPublicacion> reaccionesPublicacion = new ArrayList<>();
 
 
-    // Constructor para el registro de usuario (simplificado, puedes ajustarlo si necesitas más campos)
+    // Constructor para el registro de usuario
     public Usuario(String username, String email, String contrasena, String nombre) {
         this.username = username;
         this.email = email;
         this.contrasena = contrasena;
         this.nombre = nombre;
-        this.fechaRegistro = new Timestamp(System.currentTimeMillis());
-        this.usuarioRoles = new HashSet<>(); // Inicializar roles vacíos, se asignarán después
+        this.fechaRegistro = new Timestamp(System.currentTimeMillis()); // Corregido el typo
+        this.usuarioRoles = new HashSet<>();
         this.comentarios = new ArrayList<>();
         this.reaccionesPublicacion = new ArrayList<>();
         this.comentarioReacciones = new ArrayList<>();
+        this.publicaciones = new ArrayList<>(); // Inicializa también
+        this.chats = new ArrayList<>(); // Inicializa también
+        this.mensajesEnviados = new ArrayList<>(); // Inicializa también
+        this.publicacionesGuardadas = new ArrayList<>(); // Inicializa también
     }
 
-    // Métodos equals y hashCode para UserDetailsImpl
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -119,6 +128,4 @@ public class Usuario {
     public int hashCode() {
         return Objects.hash(idUsuario);
     }
-
-
 }

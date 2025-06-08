@@ -2,6 +2,13 @@ import { TipoReaccion } from './TipoReaccion'; // Asume que ya tienes este enum
 import { Usuario } from './Usuario';
 import { Publicacion } from './Publicacion';
 
+
+export interface ReaccionPublicacionRequest {
+  idPublicacion: number;
+  idUsuario: number;
+  tipoReaccion: TipoReaccion;
+}
+
 export interface ReaccionPublicacion {
 
   usuario: {

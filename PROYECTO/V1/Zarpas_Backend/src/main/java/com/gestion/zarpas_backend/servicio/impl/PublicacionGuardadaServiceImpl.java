@@ -66,6 +66,11 @@ public class PublicacionGuardadaServiceImpl implements PublicacionGuardadaServic
         return publicacionGuardadaRepository.findByIdUsuario(idUsuario);
     }
 
+    public List<PublicacionGuardada> getPublicacionesGuardadasByUsuario(Long idUsuario) {
+        // Asegúrate de que este método exista en tu repositorio
+        return publicacionGuardadaRepository.findByUsuario_IdUsuario(idUsuario);
+    }
+
     @Override
     @Transactional
     public PublicacionGuardada guardarPublicacionParaUsuario(Long idUsuario, Long idPublicacion) throws Exception {
@@ -99,4 +104,6 @@ public class PublicacionGuardadaServiceImpl implements PublicacionGuardadaServic
         id.setIdPublicacion(idPublicacion);
         publicacionGuardadaRepository.deleteById(id);
     }
+
+
 }

@@ -41,6 +41,11 @@ export class ComentarioReaccionService {
     return this.http.get<{ like: number, dislike: number }>(`${this.baseUrl}/conteo/${idComentario}`);
   }
 
+  getReaccionByComentarioAndUsuario(idComentario: number, idUsuario: number): Observable<TipoReaccion | null> {
+    return this.http.get<TipoReaccion | null>(`${this.baseUrl}/comentario/${idComentario}/usuario/${idUsuario}`, { headers: this.getAuthHeaders() });
+  }
+
+
   getReaccionUsuario(idUsuario: number, idComentario: number): Observable<TipoReaccion | null> {
     const headers = this.getAuthHeaders(); // Usar getAuthHeaders para incluir el token
 
@@ -58,5 +63,10 @@ export class ComentarioReaccionService {
           throw error;
         })
       );
+  }
+
+  reaccionar(request: ComentarioReaccionRequest): Observable<any> {
+    console.log(request)
+    return this.http.put(`${this.baseUrl}/toggle`, request);
   }
 }

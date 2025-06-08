@@ -1,7 +1,7 @@
 package com.gestion.zarpas_backend.seguridad.config;
 
 import com.gestion.zarpas_backend.seguridad.jwt.AuthEntryPointJwt;
-import com.gestion.zarpas_backend.seguridad.jwt.AuthTokenFilter;
+import com.gestion.zarpas_backend.seguridad.jwt.AuthTokenFilter; // <-- Importa AuthTokenFilter
 import com.gestion.zarpas_backend.servicio.impl.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,14 +19,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration; // Importa CorsConfiguration
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource; // Importa UrlBasedCorsConfigurationSource
-import org.springframework.web.filter.CorsFilter; // Importa CorsFilter
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Arrays; // Importa Arrays
+import java.util.Arrays;
 
 @Configuration
 @EnableMethodSecurity
@@ -39,12 +40,12 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
+    @Autowired
+    private AuthTokenFilter authTokenFilter; // <-- ¡AÑADE ESTO para inyectar la instancia de AuthTokenFilter!
+
     private static final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
 
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
-    }
+
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -66,19 +67,9 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Configura el manejador de recursos para servir las imágenes subidas.
-        // "/uploads/**" es el patrón de URL que el frontend usará para solicitar las imágenes.
-        // "file:./uploads/" es la ubicación física en el sistema de archivos del servidor
-        // donde Spring Boot buscará esas imágenes.
-        // Asegúrate de que esta ruta (file:./uploads/) coincida con la ruta que has configurado
-        // en tu StorageService (this.rootLocation = Paths.get("uploads")).
-        // Si en StorageService usaras, por ejemplo, Paths.get("/ruta/absoluta/a/imagenes"),
-        // entonces aquí deberías poner .addResourceLocations("file:/ruta/absoluta/a/imagenes/").
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:./uploads/");
     }
-
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -98,64 +89,68 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .authorizeHttpRequests(auth -> auth
                         // 1. Rutas de autenticación y recursos públicos (siempre al principio)
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/uploads/**").permitAll() // Para servir imágenes subidas
-                        .requestMatchers("/api/test/**").permitAll() // Rutas de prueba
-                        .requestMatchers("/api/usuarios/crear").permitAll() // Si el registro de usuarios es público
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/api/test/**").permitAll()
+                        .requestMatchers("/api/usuarios/crear").permitAll()
+                        .requestMatchers("/error").permitAll()
 
                         // 2. Rutas de Publicaciones PÚBLICAS (¡TODAS DEBEN IR AQUÍ, ANTES DEL authenticated() GENERAL DE PUBLICACIONES!)
-                        .requestMatchers("/api/publicaciones/todas").permitAll() // Ver todas las publicaciones
-                        .requestMatchers("/api/publicaciones/buscar").permitAll() // Buscar publicaciones
-                        .requestMatchers("/api/publicaciones/{idPublicacion}").permitAll() // Ver una sola publicación
-                        .requestMatchers("/api/publicaciones/categoria/{nombreCategoria}").permitAll() // Ver por categoría
-                        .requestMatchers("/api/publicaciones/usuario/{idUsuario}").permitAll() // Ver publicaciones de un usuario
-                        .requestMatchers(HttpMethod.GET, "/api/publicaciones").permitAll() // Si hay un GET general de publicaciones que quieras que sea público
-
+                        .requestMatchers("/api/publicaciones/todas").permitAll()
+                        .requestMatchers("/api/publicaciones/buscar").permitAll()
+                        .requestMatchers("/api/publicaciones/{idPublicacion}").permitAll()
+                        .requestMatchers("/api/publicaciones/categoria/{nombreCategoria}").permitAll()
+                        .requestMatchers("/api/publicaciones/usuario/{idUsuario}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/publicaciones").permitAll()
 
                         // Rutas de Categorías ESPECÍFICAS (GET de todas las categorías)
-                        .requestMatchers(HttpMethod.GET, "/api/publicaciones/categorias/all").permitAll() // ¡ESTA LÍNEA DEBE IR AQUÍ!
-                        // Si tienes más GETs públicos específicos dentro de /api/publicaciones, ponlos aquí.
+                        .requestMatchers(HttpMethod.GET, "/api/publicaciones/categorias/all").permitAll()
 
                         // 3. Rutas de comentarios (públicas)
-                        .requestMatchers("/api/comentarios/publicacion/**").permitAll() // Ver comentarios de una publicación (público)
-                        // ... (resto de reglas de comentarios)
+                        .requestMatchers("/api/comentarios/publicacion/**").permitAll()
+                        // Si hay otros GETs de comentarios que deben ser públicos, ponlos aquí.
 
 
-                        // 4. Rutas de Reacciones de Publicaciones (públicas)
-                        .requestMatchers("/api/reacciones-publicacion/conteo/**").permitAll() // Conteo de reacciones
-                        .requestMatchers("/api/reacciones-publicacion/usuario/**").permitAll() // Si un usuario ha reaccionado (para el frontend)
-                        // ... (resto de reglas de reacciones)
+                        // 4. Rutas de Reacciones de Publicaciones (PÚBLICAS - LAS QUE FALLAN CON 401)
+                        // **¡ESTAS SON CRÍTICAS Y DEBEN IR AQUÍ, ANTES DE CUALQUIER /api/publicaciones/**.authenticated()**
+                        .requestMatchers("/api/reacciones-publicacion/conteo/**").permitAll()
+                        .requestMatchers("/api/publicaciones/reacciones/conteo/**").permitAll()
 
+                        .requestMatchers("/api/reacciones-publicacion/usuario/**").permitAll()
+                        .requestMatchers("/api/reacciones-publicacion/publicacion/**").permitAll()
+                        // Nota: La línea "/api/publicaciones/reacciones/conteo/**" en tu código original
+                        // parece un error tipográfico, ya tienes "/api/reacciones-publicacion/conteo/**".
+                        // Asegúrate de que no haya duplicados o rutas incorrectas.
 
                         // 5. Rutas de Reacciones de Comentarios (públicas)
                         .requestMatchers("/api/reacciones-comentario/conteo/**").permitAll()
                         .requestMatchers("/api/reacciones-comentario/usuario/**").permitAll()
-                        // ... (resto de reglas de reacciones de comentarios)
 
 
-                        // TODAS las rutas de /api/publicaciones que *no* fueron explicitamente permitidas antes, ahora requieren autenticación
-                        .requestMatchers("/api/publicaciones/**").authenticated() // <-- ¡AHORA ESTA REGLA VA AQUÍ, DESPUÉS DE LOS PERMITALLS ESPECÍFICOS!
-
+                        // A PARTIR DE AQUÍ, TODO LO QUE NO SE HAYA PERMITIDO ANTES EXPLÍCITAMENTE
+                        // Y ESTÉ BAJO /api/publicaciones, REQUERIRÁ AUTENTICACIÓN.
+                        // Ahora esta regla se aplicará SOLO a las rutas que no se hayan marcado como permitAll() previamente.
+                        .requestMatchers("/api/publicaciones/**").authenticated()
 
                         // Rutas de Categorías que requieren autenticación (POST, PUT, DELETE)
-                        .requestMatchers(HttpMethod.POST, "/api/publicaciones/categorias").authenticated() // Solo usuarios autenticados pueden crear categorías
-                        .requestMatchers(HttpMethod.PUT, "/api/publicaciones/categorias/**").authenticated() // Solo usuarios autenticados pueden actualizar categorías
-                        .requestMatchers(HttpMethod.DELETE, "/api/publicaciones/categorias/**").authenticated() // Solo usuarios autenticados pueden eliminar categorías
-
-                        .requestMatchers(HttpMethod.POST, "/api/publicaciones/categoria").authenticated() // Solo usuarios autenticados pueden crear categorías
-                        .requestMatchers(HttpMethod.PUT, "/api/publicaciones/categoria/**").authenticated() // Solo usuarios autenticados pueden actualizar categorías
-                        .requestMatchers(HttpMethod.DELETE, "/api/publicaciones/categoria/**").authenticated() // Solo usuarios autenticados pueden eliminar categorías
+                        .requestMatchers(HttpMethod.POST, "/api/publicaciones/categorias").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/publicaciones/categorias/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/publicaciones/categorias/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/publicaciones/categoria").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/publicaciones/categoria/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/publicaciones/categoria/**").authenticated()
 
 
                         // 6. Rutas de Usuarios (requieren autenticación)
-                        .requestMatchers("/api/usuarios/{id}").authenticated() // Ver usuario individual
-                        .requestMatchers("/api/usuarios/**").authenticated() // El resto de /api/usuarios (ej: actualizar perfil, borrar)
+                        .requestMatchers("/api/usuarios/{id}").authenticated()
+                        .requestMatchers("/api/usuarios/**").authenticated()
 
                         // 7. Cualquier otra petición no especificada requiere autenticación por defecto
                         .anyRequest().authenticated()
                 );
 
         http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        // ¡USA LA INSTANCIA INYECTADA, NO LA QUE CREA EL @Bean que eliminaste!
+        http.addFilterBefore(authTokenFilter, AuthorizationFilter.class);
 
         return http.build();
     }

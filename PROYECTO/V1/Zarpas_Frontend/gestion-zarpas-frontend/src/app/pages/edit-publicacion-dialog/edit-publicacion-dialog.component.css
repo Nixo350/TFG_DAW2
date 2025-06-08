@@ -1,0 +1,34 @@
+/* src/app/dialogs/edit-publicacion-dialog/edit-publicacion-dialog.component.css */
+.dialog-content {
+    padding: 20px;
+    min-width: 400px; /* Ancho mínimo para el diálogo */
+  }
+  
+  .publicacion-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .publicacion-form mat-form-field {
+    margin-bottom: 15px;
+  }
+  
+  .image-upload-section {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .image-preview {
+    margin-top: 15px;
+    text-align: center;
+  }
+  
+  .image-preview img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }

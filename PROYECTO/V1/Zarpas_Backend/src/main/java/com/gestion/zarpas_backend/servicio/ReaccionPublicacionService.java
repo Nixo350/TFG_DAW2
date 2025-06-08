@@ -84,4 +84,9 @@ public class ReaccionPublicacionService {
         return reaccionPublicacionRepository.findById_IdUsuarioAndId_IdPublicacion(idUsuario, idPublicacion)
                 .map(ReaccionPublicacion::getTipoReaccion);
     }
+
+    @Transactional(readOnly = true)
+    public Optional<ReaccionPublicacion> findByPublicacionIdAndUsuarioId(Long idPublicacion, Long idUsuario) {
+        return reaccionPublicacionRepository.findByPublicacion_IdPublicacionAndUsuario_IdUsuario(idPublicacion, idUsuario);
+    }
 }

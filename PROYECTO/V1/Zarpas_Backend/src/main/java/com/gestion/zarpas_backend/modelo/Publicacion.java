@@ -7,9 +7,9 @@ import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashSet; // Aunque no se usa directamente en Publicacion, se mantiene por si acaso
 import java.util.List;
-import java.util.Set;
+import java.util.Set; // Aunque no se usa directamente en Publicacion, se mantiene por si acaso
 
 @Entity
 @Table(name = "publicacion")
@@ -26,8 +26,8 @@ public class Publicacion {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario", nullable = false)
-    @JsonManagedReference("usuario-publicaciones") // Coincide con Usuario.java
-    private Usuario usuario;
+    @JsonBackReference("usuario-publicaciones") // <--- ¡CORREGIDO! Ahora es JsonBackReference
+    private Usuario usuario; // El usuario que creó la publicación
 
     private String titulo;
 
@@ -44,21 +44,20 @@ public class Publicacion {
     private Timestamp fechaModificacion;
 
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("publicacion-comentarios") // Coincide con Comentario.java
+    @JsonManagedReference("publicacion-comentarios") // Correcto: la publicación gestiona sus comentarios
     private List<Comentario> comentarios = new ArrayList<>();
 
     // Relación con la entidad de unión PublicacionGuardada
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference("publicacion-publicacionGuardadas") // Coincide con PublicacionGuardada.java
+    @JsonManagedReference("publicacion-publicacionGuardadas") // <--- ¡CORREGIDO! Ahora es JsonManagedReference
     private List<PublicacionGuardada> guardadosPorUsuarios = new ArrayList<>();
 
-    // --- ¡AÑADE ESTO PARA LAS REACCIONES! ---
+    // Relación con ReaccionPublicacion
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("publicacion-reacciones")
+    @JsonManagedReference("publicacion-reacciones") // Correcto: la publicación gestiona sus reacciones
     private List<ReaccionPublicacion> reaccionesPublicacion = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.EAGER) // Carga EAGER para la categoría para simplificar el frontend
-    @JoinColumn(name = "id_categoria", nullable = false) // Columna FK en la tabla de publicacion
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_categoria", nullable = false)
     private Categoria categoria;
-
 }

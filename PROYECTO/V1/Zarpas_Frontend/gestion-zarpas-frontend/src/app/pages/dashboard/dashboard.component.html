@@ -3,6 +3,19 @@
     <div class="posts-list">
       <h2>Publicaciones Recientes</h2>
 
+      <div class="dashboard-controls">
+        <mat-form-field appearance="outline" class="category-select">
+          <mat-label>Filtrar por Categoría</mat-label>
+          <mat-select [(ngModel)]="selectedCategoryId" (selectionChange)="filterByCategory()">
+            <mat-option [value]="null">Todas las categorías</mat-option>
+            <mat-option *ngFor="let category of categories" [value]="category.idCategoria">{{ category.nombre }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="warn" *ngIf="selectedCategoryId" (click)="clearCategoryFilter()">
+          <mat-icon>clear</mat-icon> Limpiar Filtro
+        </button>
+      </div>
+
       <div *ngIf="posts.length === 0" class="no-posts">
         No hay publicaciones disponibles en este momento.
       </div>
@@ -25,7 +38,30 @@
                 >{{ post.fechaCreacion | date : 'short' }}</span
               >
             </div>
+            <span class="post-category" *ngIf="post.categoria?.nombre">
+              <mat-icon>label</mat-icon> {{ post.categoria?.nombre }}
+            </span>
           </div>
+
+          <button
+            mat-icon-button
+            [matMenuTriggerFor]="postMenu"
+            aria-label="Opciones de publicación"
+            class="post-options-button"
+            *ngIf="canManagePost(post)"
+          >
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #postMenu="matMenu">
+            <button mat-menu-item (click)="onEditPost(post)">
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+            <button mat-menu-item (click)="onDeletePost(post.idPublicacion!)">
+              <mat-icon>delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+          </mat-menu>
         </div>
 
         <h3 class="post-title">{{ post.titulo }}</h3>
@@ -39,87 +75,103 @@
 
         <div class="post-actions">
           <button
-            class="reaction-button"
-            [ngClass]="{ 'liked': hasPublicacionLiked(post.idPublicacion) }"
-            (click)="togglePublicacionReaction(post.idPublicacion, TipoReaccion.like)"
+            mat-icon-button
+            (click)="reactToPost(post, TipoReaccion.like)"
+            [color]="post.miReaccion === TipoReaccion.like ? 'primary' : ''"
           >
-            <i class="fas fa-thumbs-up"></i>
-            👍 {{ getConteoPublicacionLikes(post.idPublicacion) }}
+            <mat-icon>thumb_up</mat-icon>
           </button>
+          <span>{{ post.conteoLikes || 0 }}</span>
+
           <button
-            class="reaction-button"
-            [ngClass]="{ 'disliked': hasPublicacionDisliked(post.idPublicacion) }"
-            (click)="togglePublicacionReaction(post.idPublicacion, TipoReaccion.dislike)"
+            mat-icon-button
+            (click)="reactToPost(post, TipoReaccion.dislike)"
+            [color]="post.miReaccion === TipoReaccion.dislike ? 'warn' : ''"
           >
-            <i class="fas fa-thumbs-down"></i>
-            👎 {{ getConteoPublicacionDislikes(post.idPublicacion) }}
+            <mat-icon>thumb_down</mat-icon>
           </button>
-          <button class="comment-button" (click)="toggleComments(post.idPublicacion)">
-            <i class="fas fa-comment"></i>
-            Comentarios
-            ({{ post.comentarios ? post.comentarios.length : 0 }})
+          <span>{{ post.conteoDislikes || 0 }}</span>
+
+          <button mat-icon-button (click)="onSaveToggle(post)">
+            <mat-icon *ngIf="hasCurrentUserSavedPost(post)" color="accent">bookmark</mat-icon>
+            <mat-icon *ngIf="!hasCurrentUserSavedPost(post)">bookmark_border</mat-icon>
           </button>
         </div>
 
-
-
-        <div *ngIf="showComments[post.idPublicacion]" class="comments-section">
+        <div class="comments-section">
           <h4>Comentarios</h4>
-          <div *ngIf="post.comentarios && post.comentarios.length > 0; else noComments">
-            <div *ngFor="let comentario of post.comentarios" class="comment-card">
+          <div class="comment-input">
+            <mat-form-field appearance="outline" class="full-width-input">
+              <mat-label>Añadir un comentario...</mat-label>
+              <textarea
+                matInput
+                [(ngModel)]="nuevoComentarioTexto[post.idPublicacion!]"
+                rows="1"
+              ></textarea>
+              <button
+                mat-icon-button
+                matSuffix
+                color="primary"
+                (click)="sendComment(post.idPublicacion!)"
+                [disabled]="!nuevoComentarioTexto[post.idPublicacion!]?.trim()"
+              >
+                <mat-icon>send</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+          <div
+            *ngIf="post.comentarios && post.comentarios.length > 0"
+            class="comments-list"
+          >
+            <div *ngFor="let comment of post.comentarios" class="comment-item">
               <div class="comment-header">
                 <img
                   [src]="
-                    comentario.usuario?.fotoPerfil
-                      ? ('http://localhost:9000' + comentario.usuario.fotoPerfil)
+                    comment.usuario?.fotoPerfil
+                      ? ('http://localhost:9000' + comment.usuario.fotoPerfil)
                       : 'assets/default-avatar.png'
                   "
                   alt="Avatar"
                   class="comment-avatar"
                 />
                 <div class="comment-info">
-                  <span class="comment-author">{{ comentario.usernameUsuario }}</span>
+                  <span class="comment-author"
+                    >{{ comment.usuario?.username }}
+                  </span>
                   <span class="comment-date"
-                    >{{ comentario.fechaCreacion | date : 'short' }}</span
+                    >{{ comment.fechaCreacion | date : 'short' }}</span
                   >
                 </div>
               </div>
-              <p class="comment-content">{{ comentario.texto }}</p>
+              <p class="comment-text">{{ comment.texto }}</p>
               <div class="comment-actions">
                 <button
-                  class="reaction-button"
-                  [ngClass]="{ 'liked': hasComentarioLiked(comentario.idComentario!) }"
-                  (click)="toggleComentarioReaction(comentario.idComentario!, TipoReaccion.like)"
+                  mat-icon-button
+                  (click)="reaccionarComentario(comment.idComentario!, TipoReaccion.like)"
+                  [color]="comment.currentUserReaction === TipoReaccion.like ? 'primary' : ''"
                 >
-                  <i class="fas fa-thumbs-up"></i>
-                  👍 {{ getConteoComentarioLikes(comentario.idComentario!) }}
+                  <mat-icon>thumb_up</mat-icon>
                 </button>
+                <span>{{ comment.conteoLikes || 0 }}</span>
                 <button
-                  class="reaction-button"
-                  [ngClass]="{ 'disliked': hasComentarioDisliked(comentario.idComentario!) }"
-                  (click)="toggleComentarioReaction(comentario.idComentario!, TipoReaccion.dislike)"
+                  mat-icon-button
+                  (click)="
+                    reaccionarComentario(comment.idComentario!, TipoReaccion.dislike)
+                  "
+                  [color]="comment.currentUserReaction === TipoReaccion.dislike ? 'warn' : ''"
                 >
-                  <i class="fas fa-thumbs-down"></i>
-                  👎 {{ getConteoComentarioDislikes(comentario.idComentario!) }}
+                  <mat-icon>thumb_down</mat-icon>
                 </button>
+                <span>{{ comment.conteoDislikes || 0 }}</span>
               </div>
             </div>
           </div>
-          <ng-template #noComments>
-            <p class="no-comments-message">Sé el primero en comentar.</p>
-          </ng-template>
-
-          <div class="add-comment">
-            <textarea
-                [(ngModel)]="nuevoComentarioTexto[post.idPublicacion]"
-                placeholder="Añadir un comentario..."
-              ></textarea>
-            <button
-              (click)="addComment(post.idPublicacion)"
-              [disabled]="!nuevoComentarioTexto[post.idPublicacion] || nuevoComentarioTexto[post.idPublicacion].trim() === ''"
-            >
-              Publicar
-            </button>
+          <div
+            *ngIf="!post.comentarios || post.comentarios.length === 0"
+            class="no-comments"
+          >
+            Sé el primero en comentar.
           </div>
         </div>
       </div>
@@ -138,32 +190,12 @@
       </button>
     </div>
     <div class="sidebar-card">
-      <h3>Filtrar por Categoría</h3>
-      <div class="category-filter">
-        <select
-          [(ngModel)]="selectedCategoryId" (change)="filterByCategory()"
-          class="form-control"
-        >
-          <option [ngValue]="null" disabled>Selecciona una categoría</option>
-          <option *ngFor="let cat of categories" [ngValue]="cat.idCategoria"> {{ cat.nombre }}
-          </option>
-        </select>
-        <button
-          *ngIf="selectedCategoryId" (click)="clearCategoryFilter()"
-          class="clear-filter-button"
-        >
-          Ver Todas
-        </button>
-      </div>
-    </div>
-    <div class="sidebar-card">
       <h3>Comunidades Populares</h3>
       <ul>
         <li><a href="#">#PerrosGraciosos</a></li>
         <li><a href="#">#GatosDivertidos</a></li>
         <li><a href="#">#AvesExoticas</a></li>
         <li><a href="#">#ReptilesApasionantes</a></li>
-        <li><a href="#">#PecesDeAcuario</a></li>
       </ul>
     </div>
   </div>

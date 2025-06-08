@@ -16,6 +16,8 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @IdClass(PublicacionGuardadaId.class)
 public class PublicacionGuardada implements Serializable {
+
+
     @Id
     @Column(name = "id_usuario")
     private Long idUsuario;
@@ -27,13 +29,17 @@ public class PublicacionGuardada implements Serializable {
     @Column(name = "fecha_guardado")
     private Timestamp fechaGuardado;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("idUsuario")
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     @JsonBackReference("usuario-publicacionGuardadas")
     private Usuario usuario;
 
-    @ManyToOne
-    @JoinColumn(name = "id_publicacion", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("idPublicacion")
+    @JoinColumn(name = "id_publicacion", referencedColumnName = "id_publicacion")
     @JsonBackReference("publicacion-publicacionGuardadas")
     private Publicacion publicacion;
+
+
 }

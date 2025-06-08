@@ -469,3 +469,20 @@
 .clear-filter-button:active {
   transform: translateY(1px);
 }
+/* Si los avatares en los comentarios usan la misma clase 'post-avatar' */
+.post-avatar {
+  width: 40px;  /* O el tamaño que desees, por ejemplo, 30px, 50px */
+  height: 40px; /* Mantén el mismo valor que width para que sea un cuadrado */
+  border-radius: 50%; /* Opcional: para hacerlos redondos */
+  object-fit: cover; /* Opcional: Para asegurar que la imagen cubra el espacio sin distorsionarse, recortando si es necesario */
+  display: block; /* Opcional: Si quieres que ocupe su propia línea */
+}
+
+/* Si tienes una clase específica para avatares de comentarios, por ejemplo: */
+.comment-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}

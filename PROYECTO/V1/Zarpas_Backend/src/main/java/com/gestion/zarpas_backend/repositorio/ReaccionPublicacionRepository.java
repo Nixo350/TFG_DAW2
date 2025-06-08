@@ -24,4 +24,6 @@ public interface ReaccionPublicacionRepository extends JpaRepository<ReaccionPub
 
     // Encontrar todas las reacciones de una publicación (útil para el conteo)
     List<ReaccionPublicacion> findByPublicacion_IdPublicacion(Long idPublicacion);
+
+    Optional<ReaccionPublicacion> findByPublicacion_IdPublicacionAndUsuario_IdUsuario(Long idPublicacion, Long idUsuario);
 }

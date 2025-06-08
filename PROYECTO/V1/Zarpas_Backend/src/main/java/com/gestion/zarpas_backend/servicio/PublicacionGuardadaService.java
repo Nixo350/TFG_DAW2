@@ -15,4 +15,6 @@ public interface PublicacionGuardadaService {
     List<PublicacionGuardada> obtenerPublicacionesGuardadasPorUsuario(Long idUsuario);
     PublicacionGuardada guardarPublicacionParaUsuario(Long idUsuario, Long idPublicacion) throws Exception;
     void eliminarPublicacionGuardadaParaUsuario(Long idUsuario, Long idPublicacion);
+     List<PublicacionGuardada> getPublicacionesGuardadasByUsuario(Long idUsuario) ;
+
 }

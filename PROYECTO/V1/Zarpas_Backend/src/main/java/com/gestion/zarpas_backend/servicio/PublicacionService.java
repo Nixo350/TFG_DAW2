@@ -19,4 +19,7 @@ public interface PublicacionService {
     List<Publicacion> getPublicacionesByCategoria(String nombreCategoria);
     Categoria crearCategoria(Categoria categoria);
     Optional<Categoria> getCategoriaById(Long id);
+    void guardarPublicacionPorUsuario(Long idPublicacion, Long idUsuario);
+    void eliminarPublicacionGuardadaPorUsuario(Long idPublicacion, Long idUsuario);
+
 }
