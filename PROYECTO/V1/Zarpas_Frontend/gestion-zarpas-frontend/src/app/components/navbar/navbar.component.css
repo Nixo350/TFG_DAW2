@@ -1,28 +1,82 @@
-.spacer {
-    flex: 1 1 auto;
-  }
-  
-  mat-toolbar {
-    padding: 0 16px;
-    min-height: 56px;
-  }
-  
-  mat-toolbar a {
-    color: white;
-    text-decoration: none;
-  }
-  
-  mat-toolbar button {
-    margin-left: 8px;
-  }
-  
+/* src/app/pages/navbar/navbar.component.css */
 
-  .navbar-logo {
-    height: 40px; 
-    width: auto; 
-    margin-left: 16px; 
-    border-radius: 50%;
+/* ELIMINA LAS VARIABLES :host {} DE AQUÍ SI YA LAS TIENES EN styles.css */
+/* :host {
+  --primary-color: #3f51b5;
+  --text-on-dark: white;
+} */
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+mat-toolbar {
+padding: 0 16px;
+min-height: 56px;
+/* El background-color ya se hereda de styles.css */
+}
+
+mat-toolbar a {
+color: var(--text-on-dark); /* Color de texto para enlaces en barra oscura */
+text-decoration: none;
+font-weight: 500;
+margin-right: 10px; /* Pequeño margen para separar del logo */
+}
+
+mat-toolbar button {
+margin-left: 8px;
+/* Los colores de los botones se heredarán de styles.css */
+}
+
+
+.navbar-logo {
+height: 40px;
+width: auto;
+margin-left: 16px;
+border-radius: 50%;
+object-fit: contain; /* Asegura que la imagen no se recorte o distorsione */
+}
+.navbar-logo.left-logo {
+margin-right: 16px;
+}
+/* ... (tus estilos existentes) ... */
+
+/* Estilos para el buscador */
+.search-container {
+  position: relative;
+  margin-right: 20px; /* Espacio antes de los botones de login/perfil */
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  color: #666; /* Color del icono de búsqueda */
+  font-size: 20px; /* Tamaño del icono */
+  z-index: 1; /* Asegura que esté por encima del input */
+}
+
+.search-input {
+  padding: 8px 12px 8px 35px; /* Espacio para el icono */
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  width: 250px; /* Ancho deseado del input */
+  font-size: 1em;
+  background-color: white;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
+  outline: none;
+}
+
+/* Opcional: Ajustar el ancho en pantallas pequeñas */
+@media (max-width: 768px) {
+  .search-input {
+    width: 150px; /* Reducir el ancho en móviles */
   }
-  .navbar-logo.left-logo {
-    margin-right: 16px; 
-  }
+}

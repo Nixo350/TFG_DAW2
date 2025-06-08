@@ -1,139 +1,162 @@
-// src/app/pages/create-publicacion/create-publicacion.component.ts
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Router, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth.service'; // <--- ¡Ahora sí, descomentamos y usamos!
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { NgForm, FormsModule } from '@angular/forms'; // <<-- ¡AHORA SÍ, IMPORTA FormsModule AQUÍ!
+import { CommonModule } from '@angular/common'; // También podrías necesitar CommonModule
+import { AuthService } from '../../services/auth.service'; // Asegúrate de que esta ruta sea correcta
 
-// Define una interfaz para la estructura de la publicación que enviaremos
+// Define la interfaz para tu objeto de publicación (ajusta si tienes más campos)
 interface Publicacion {
   titulo: string;
   contenido: string;
-  //imagenUrl?: string; // Opcional
-  usuario: {
-    idUsuario: number; // El ID del usuario que crea la publicación
-  };
-  fechaCreacion?: string; // No es necesario enviarlo, el backend lo genera
-  fechaModificacion?: string; // No es necesario enviarlo, el backend lo genera
+  // Otros campos si los tienes en tu modelo
+}
+
+// Define la interfaz para tu objeto de categoría (ajusta según tu backend)
+interface Categoria {
+  idCategoria: number;
+  nombre: string;
+  descripcion?: string; // Opcional
 }
 
 @Component({
   selector: 'app-create-publicacion',
   templateUrl: './create-publicacion.component.html',
   styleUrls: ['./create-publicacion.component.css'],
-  standalone: true,
+  // **AQUÍ ES DONDE IMPORTAS LOS MÓDULOS EN UN COMPONENTE STANDALONE**
+  standalone: true, // Asegúrate de que tu componente es standalone
   imports: [
-    FormsModule,
-    HttpClientModule,
-    CommonModule,
-    RouterModule
+    FormsModule, // <--- ¡Importa FormsModule aquí!
+    CommonModule // <--- Importa CommonModule para directivas como *ngIf, *ngFor, etc.
   ]
 })
 export class CreatePublicacionComponent implements OnInit {
+  publicacion: Publicacion = { titulo: '', contenido: '' }; // Modelo para la publicación
 
-  publicacion: Publicacion = {
-    titulo: '',
-    contenido: '',
-    //imagenUrl: '',
-    usuario: {
-      idUsuario: 0 // Se inicializará con el ID del usuario logueado
-    }
-  };
-  selectedFile: File | null = null;
+  selectedImage: File | null = null; // Para almacenar el archivo de imagen seleccionado
 
-  message: string = '';
-  isSuccess: boolean = false;
-  private baseUrl = 'http://localhost:9000/api/publicaciones'; // Tu URL del endpoint de publicaciones
+  // Variables para la creación de categoría
+  createNewCategory: boolean = false;
+  selectedCategoryId: number | undefined = undefined;
+  newCategoryName: string = '';
+  newCategoryDescription: string = '';
+
+  categories: Categoria[] = []; // Para almacenar las categorías existentes
+
+  isSuccess: boolean | null = null; // Para mensajes de éxito/error en la UI
+  message: string = ''; // El mensaje a mostrar
 
   constructor(
     private http: HttpClient,
-    private router: Router,
-    private authService: AuthService // <--- Inyectamos el AuthService
+    private authService: AuthService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
-    // Obtener el ID del usuario logueado usando AuthService
-    const currentUser = this.authService.getUser();
-    if (currentUser && currentUser.id) { // Asegúrate de que el usuario y su ID existan
-      this.publicacion.usuario.idUsuario = currentUser.id;
+    this.loadCategories(); // Carga las categorías existentes al iniciar el componente
+  }
+
+  loadCategories(): void {
+    const token = this.authService.getToken();
+    console.log(token);
+    if (!token) {
+      console.warn('No hay token de autenticación para cargar categorías. Es posible que no se carguen todas o que falle la petición.');
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.get<Categoria[]>('http://localhost:9000/api/publicaciones/categorias/all', { headers })
+      .subscribe({
+        next: (data) => {
+          this.categories = data;
+          console.log('Categorías cargadas:', data);
+        },
+        error: (error) => {
+          console.error('Error al cargar las categorías:', error);
+          this.message = 'Error al cargar las categorías.';
+          this.isSuccess = false;
+        }
+      });
+  }
+
+  onFileSelected(event: any): void {
+    if (event.target.files && event.target.files.length > 0) {
+      this.selectedImage = event.target.files[0];
     } else {
-      // Si no hay usuario logueado o su ID no está disponible, redirigir al login
-      console.warn('Usuario no logueado o ID de usuario no disponible. Redirigiendo al login.');
-      this.router.navigate(['/login']);
+      this.selectedImage = null;
     }
   }
 
-    // <--- Nuevo método: Manejar la selección de archivo
-    onFileSelected(event: any): void {
-      const file = event.target.files[0];
-      if (file) {
-        this.selectedFile = file;
-        console.log('Archivo seleccionado:', file.name);
-      } else {
-        this.selectedFile = null;
-        console.log('Ningún archivo seleccionado.');
-      }
+  onSubmit(form: NgForm): void {
+    this.isSuccess = null;
+    this.message = '';
+
+    if (form.invalid || (!this.selectedCategoryId && !this.createNewCategory) || (this.createNewCategory && !this.newCategoryName)) {
+      this.message = 'Por favor, completa todos los campos requeridos y selecciona/crea una categoría.';
+      this.isSuccess = false;
+      return;
     }
 
-  onSubmit(): void {
-    this.message = 'Enviando publicación...';
-    this.isSuccess = false;
+    if (!this.selectedImage) {
+      this.message = 'Por favor, selecciona una imagen para la publicación.';
+      this.isSuccess = false;
+      return;
+    }
 
-    ///
     const formData = new FormData();
     formData.append('titulo', this.publicacion.titulo);
     formData.append('contenido', this.publicacion.contenido);
-    formData.append('idUsuario', this.publicacion.usuario.idUsuario.toString()); // Enviar el ID del usuario
 
-    if (this.selectedFile) {
-      formData.append('file', this.selectedFile, this.selectedFile.name); // 'file' es el nombre que espera el backend
+    if (this.selectedImage) {
+      formData.append('imagen', this.selectedImage, this.selectedImage.name);
     }
-    ///
-    console.log('Datos a enviar:', formData); // Para depuración
 
-    this.http.post<Publicacion>(this.baseUrl, formData).subscribe({
-      next: (response) => {
-        this.message = 'Publicación creada con éxito!';
-        this.isSuccess = true;
-        this.resetForm();
-        setTimeout(() => {
-          this.router.navigate(['/dashboard']);
-        }, 2000);
-      },
-      error: (error) => {
-        console.error('Error al crear la publicación:', error);
-        this.message = 'Error al crear la publicación. Inténtalo de nuevo.';
-        this.isSuccess = false;
-
-        if (error.error && error.error.message) {
-            this.message = `Error: ${error.error.message}`;
-        } else if (error.status === 400) {
-            this.message = 'Error de validación: Comprueba los campos.';
-        } else if (error.status === 404) {
-             this.message = 'Error: El usuario asociado no fue encontrado. Asegúrate de que el ID de usuario es válido.';
-        } else {
-            this.message = 'Ha ocurrido un error inesperado. Por favor, inténtalo más tarde.';
-        }
+    if (this.createNewCategory) {
+      formData.append('createNewCategory', 'true');
+      formData.append('newCategoryName', this.newCategoryName);
+      if (this.newCategoryDescription) {
+        formData.append('newCategoryDescription', this.newCategoryDescription);
       }
+    } else if (this.selectedCategoryId) {
+      formData.append('selectedCategoryId', this.selectedCategoryId.toString());
+    }
+
+    const token = this.authService.getToken();
+    console.log(token);
+    if (!token) {
+      this.message = 'No estás autenticado. Por favor, inicia sesión.';
+      this.isSuccess = false;
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}` // <<-- ¡Asegúrate de que esto sea CORRECTO!
     });
-  }
 
-  resetForm(): void {
-    this.publicacion = {
-      titulo: '',
-      contenido: '',
-      //imagenUrl: '',
-      usuario: {
-        idUsuario: this.publicacion.usuario.idUsuario // Mantener el ID de usuario
-      }
-    };
-    this.selectedFile = null; // Reiniciar el archivo seleccionado
-    // Si usas un input type="file", puede que necesites resetearlo manualmente
-    // (ej: usando un ViewChild o reiniciando el formulario completo si es posible)
-    const fileInput = document.getElementById('imagenUpload') as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = '';
-    }
+    this.http.post('http://localhost:9000/api/publicaciones/crear-con-imagen', formData, { headers: headers })
+      .subscribe({
+        next: (response) => {
+          console.log('Publicación creada exitosamente', response);
+          this.message = 'Publicación creada con éxito!';
+          this.isSuccess = true;
+          form.resetForm();
+          this.publicacion = { titulo: '', contenido: '' };
+          this.selectedImage = null;
+          this.createNewCategory = false;
+          this.selectedCategoryId = undefined;
+          this.newCategoryName = '';
+          this.newCategoryDescription = '';
+          this.loadCategories();
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error) => {
+          console.error('Error al crear la publicación:', error);
+          this.message = 'Error al crear la publicación: ' + (error.error?.message || error.message || 'Error desconocido.');
+          this.isSuccess = false;
+        }
+      });
   }
 }

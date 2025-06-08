@@ -7,7 +7,9 @@ import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "publicacion")
@@ -22,9 +24,9 @@ public class Publicacion {
     @Column(name = "id_publicacion")
     private Long idPublicacion;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario", nullable = false)
-    @JsonBackReference("usuario-publicaciones") // Coincide con Usuario.java
+    @JsonManagedReference("usuario-publicaciones") // Coincide con Usuario.java
     private Usuario usuario;
 
     private String titulo;
@@ -54,5 +56,9 @@ public class Publicacion {
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("publicacion-reacciones")
     private List<ReaccionPublicacion> reaccionesPublicacion = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.EAGER) // Carga EAGER para la categoría para simplificar el frontend
+    @JoinColumn(name = "id_categoria", nullable = false) // Columna FK en la tabla de publicacion
+    private Categoria categoria;
 
 }

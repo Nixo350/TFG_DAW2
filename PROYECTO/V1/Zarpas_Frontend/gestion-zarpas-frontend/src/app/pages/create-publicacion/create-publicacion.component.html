@@ -1,54 +1,112 @@
-<div class="create-post-container">
-    <h2>Crear Nueva Publicación</h2>
+<div class="main-content-card">
+  <h2>Crear Nueva Publicación</h2>
 
-    <form (ngSubmit)="onSubmit()" #postForm="ngForm">
-      <div class="form-group">
-        <label for="titulo">Título:</label>
+  <form (ngSubmit)="onSubmit(postForm)" #postForm="ngForm">
+    <div class="form-group">
+      <label for="titulo">Título:</label>
+      <input
+        type="text"
+        id="titulo"
+        name="titulo"
+        [(ngModel)]="publicacion.titulo"
+        required
+        minlength="5"
+        #titulo="ngModel"
+      />
+      <div *ngIf="titulo.invalid && (titulo.dirty || titulo.touched)" class="error-message">
+        <div *ngIf="titulo.errors?.['required']">El título es obligatorio.</div>
+        <div *ngIf="titulo.errors?.['minlength']">El título debe tener al menos 5 caracteres.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="contenido">Contenido:</label>
+      <textarea
+        id="contenido"
+        name="contenido"
+        [(ngModel)]="publicacion.contenido"
+        rows="5"
+        required
+        minlength="10"
+        #contenido="ngModel"
+      ></textarea>
+      <div *ngIf="contenido.invalid && (contenido.dirty || contenido.touched)" class="error-message">
+        <div *ngIf="contenido.errors?.['required']">El contenido es obligatorio.</div>
+        <div *ngIf="contenido.errors?.['minlength']">El contenido debe tener al menos 10 caracteres.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
         <input
-          type="text"
-          id="titulo"
-          name="titulo"
-          [(ngModel)]="publicacion.titulo"
-          required
-          minlength="5"
-          #titulo="ngModel"
+            type="checkbox"
+            id="createNewCategoryCheckbox"
+            name="createNewCategoryCheckbox"
+            [(ngModel)]="createNewCategory"
+            (change)="selectedCategoryId = undefined; newCategoryName = ''; newCategoryDescription = '';"
         />
-        <div *ngIf="titulo.invalid && (titulo.dirty || titulo.touched)" class="validation-error">
-          <div *ngIf="titulo.errors?.['required']">El título es obligatorio.</div>
-          <div *ngIf="titulo.errors?.['minlength']">El título debe tener al menos 5 caracteres.</div>
+        <label for="createNewCategoryCheckbox" style="display: inline-block; margin-left: 5px;">Crear nueva categoría</label>
+    </div>
+
+    <div class="form-group" *ngIf="!createNewCategory">
+        <label for="categoria">Categoría Existente:</label>
+        <select
+            id="categoria"
+            name="categoria"
+            [(ngModel)]="selectedCategoryId"
+            [required]="!createNewCategory"
+            #categoria="ngModel"
+            class="form-control"
+        >
+            <option [ngValue]="undefined" disabled>Selecciona una categoría</option>
+            <option *ngFor="let cat of categories" [ngValue]="cat.idCategoria">{{ cat.nombre }}</option>
+        </select>
+        <div *ngIf="!createNewCategory && categoria.invalid && (categoria.dirty || categoria.touched)" class="error-message">
+            <div *ngIf="categoria.errors?.['required']">La categoría es obligatoria.</div>
         </div>
-      </div>
+    </div>
 
-      <div class="form-group">
-        <label for="contenido">Contenido:</label>
-        <textarea
-          id="contenido"
-          name="contenido"
-          [(ngModel)]="publicacion.contenido"
-          rows="5"
-          required
-          minlength="10"
-          #contenido="ngModel"
-        ></textarea>
-        <div *ngIf="contenido.invalid && (contenido.dirty || contenido.touched)" class="validation-error">
-          <div *ngIf="contenido.errors?.['required']">El contenido es obligatorio.</div>
-          <div *ngIf="contenido.errors?.['minlength']">El contenido debe tener al menos 10 caracteres.</div>
+    <div *ngIf="createNewCategory" class="new-category-fields">
+        <div class="form-group">
+            <label for="newCategoryName">Nombre de la Nueva Categoría:</label>
+            <input
+                type="text"
+                id="newCategoryName"
+                name="newCategoryName"
+                [(ngModel)]="newCategoryName"
+                [required]="createNewCategory"
+                minlength="3"
+                #newCatName="ngModel"
+            />
+            <div *ngIf="newCatName.invalid && (newCatName.dirty || newCatName.touched)" class="error-message">
+                <div *ngIf="newCatName.errors?.['required']">El nombre de la nueva categoría es obligatorio.</div>
+                <div *ngIf="newCatName.errors?.['minlength']">El nombre debe tener al menos 3 caracteres.</div>
+            </div>
         </div>
-      </div>
-
-      <div class="form-group">
-        <label for="imagenUpload">Subir Imagen (opcional):</label>
-        <input
-          type="file"
-          id="imagenUpload"
-          name="imagenUpload"
-          (change)="onFileSelected($event)" accept="image/*" />
+        <div class="form-group">
+            <label for="newCategoryDescription">Descripción (Opcional):</label>
+            <textarea
+                id="newCategoryDescription"
+                name="newCategoryDescription"
+                [(ngModel)]="newCategoryDescription"
+                rows="2"
+            ></textarea>
         </div>
+    </div>
+    <div class="form-group">
+      <label for="imagenUpload">Subir Imagen (opcional):</label>
+      <input
+        type="file"
+        id="imagenUpload"
+        name="imagenUpload"
+        (change)="onFileSelected($event)" accept="image/*" />
+    </div>
 
-      <button type="submit" [disabled]="!postForm.form.valid">Publicar</button>
-    </form>
+    <button type="submit" [disabled]="!postForm.form.valid">
+      Crear Publicación
+    </button>
 
-    <div *ngIf="message" [ngClass]="{'success-message': isSuccess, 'error-message': !isSuccess}" class="form-message">
+    <div *ngIf="isSuccess !== null" [class.success-message]="isSuccess" [class.error-message]="!isSuccess">
       {{ message }}
     </div>
+  </form>
 </div>

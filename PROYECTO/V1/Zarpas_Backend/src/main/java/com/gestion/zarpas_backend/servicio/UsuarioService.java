@@ -17,5 +17,6 @@ public interface UsuarioService {
     Optional<Usuario> obtenerUsuarioPorEmail(String email);
     Usuario agregarRolAUsuario(Long usuarioId, Long rolId);
     Set<Rol> obtenerRolesDeUsuario(Long usuarioId);
+    Optional<Usuario> findByUsername(String username);
 }
 

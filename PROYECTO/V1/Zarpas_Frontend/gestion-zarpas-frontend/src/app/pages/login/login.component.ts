@@ -1,17 +1,18 @@
+// src/app/pages/login/login.component.ts
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Para directivas como *ngIf
-import { FormsModule } from '@angular/forms'; // Necesario para [(ngModel)]
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card'; // Para el diseño de la tarjeta
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // Para notificaciones
-import { AuthService } from '../../services/auth.service'; // Asegúrate de que esta ruta sea correcta
-import { Router } from '@angular/router'; // Para la navegación programática
+import { MatCardModule } from '@angular/material/card';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  standalone: true, // Si tu proyecto es standalone
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -19,94 +20,86 @@ import { Router } from '@angular/router'; // Para la navegación programática
     MatInputModule,
     MatButtonModule,
     MatCardModule,
-    MatSnackBarModule // Asegúrate de que este módulo esté aquí
+    MatSnackBarModule
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css' // Usar styleUrl si es un archivo CSS
+  styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit {
 
-  // Objeto para almacenar las credenciales del usuario
   user = {
     username: '',
-    password: '' // Importante: Coincide con 'password' en LoginRequest de Spring Boot
+    password: ''
   };
 
-  isLoggedIn = false;
+  isLoggedIn = false; // Este no es el estado reactivo, se usa internamente si lo necesitas
   isLoginFailed = false;
   errorMessage = '';
   roles: string[] = [];
 
   constructor(
     private authService: AuthService,
-    private snack: MatSnackBar, // Inyecta MatSnackBar
-    private router: Router // Inyecta Router
+    private snack: MatSnackBar,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
-    // Opcional: Si quieres verificar si el usuario ya está logueado al cargar el componente.
-    // Esto depende de cómo implementes el AuthService y si el token se valida.
-    // if (this.authService.isLoggedIn()) {
-    //   this.isLoggedIn = true;
-    //   this.roles = this.authService.getUserRoles();
-    //   // Podrías redirigir automáticamente si ya está logueado
-    //   // this.router.navigate(['/dashboard']);
-    // }
+    // Puedes suscribirte aquí al observable de login si quieres que este componente reaccione
+    // o simplemente llamar a isLoggedIn() al inicio para saber si ya está logueado
+    if (this.authService.isLoggedIn()) { // Comprueba el estado inicial
+      this.isLoggedIn = true;
+      const user = this.authService.getUserFromLocalStorage(); // Obtiene el usuario del localStorage
+      if (user && user.roles) {
+        this.roles = user.roles;
+      }
+      this.router.navigate(['/dashboard']); // Redirige si ya está logueado
+    }
+  }
+
+  goToSignup(): void {
+    this.router.navigate(['/signup']);
   }
 
   formSubmit() {
     console.log('Intentando iniciar sesión...');
     console.log('Credenciales enviadas:', this.user);
 
-    // 1. Validaciones básicas del formulario en el cliente
     if (this.user.username.trim() === '' || this.user.username === null) {
       this.snack.open('El nombre de usuario es requerido !!', 'Aceptar', {
-        duration: 3000, // Muestra el mensaje por 3 segundos
-        verticalPosition: 'top',
-        horizontalPosition: 'right'
-      });
-      return; // Detiene la ejecución si falla la validación
-    }
-
-    if (this.user.password.trim() === '' || this.user.password === null) {
-      this.snack.open('La contraseña es requerida !!', 'Aceptar', {
-        duration: 3000,
-        verticalPosition: 'top',
-        horizontalPosition: 'right'
+        duration: 3000, verticalPosition: 'top', horizontalPosition: 'right'
       });
       return;
     }
 
-    // 2. Llamar al servicio de autenticación para enviar las credenciales al backend
+    if (this.user.password.trim() === '' || this.user.password === null) {
+      this.snack.open('La contraseña es requerida !!', 'Aceptar', {
+        duration: 3000, verticalPosition: 'top', horizontalPosition: 'right'
+      });
+      return;
+    }
+
     this.authService.login(this.user.username, this.user.password).subscribe({
       next: (data: any) => {
-        // Se ejecuta si la petición al backend es exitosa (código 2xx)
         console.log('Respuesta exitosa del backend (login):', data);
         this.snack.open('¡Inicio de sesión exitoso!', 'Cerrar', {
-          duration: 3000,
-          verticalPosition: 'top',
-          horizontalPosition: 'right'
+          duration: 3000, verticalPosition: 'top', horizontalPosition: 'right'
         });
 
-        // Actualiza el estado del componente
+        // Estos estados internos del componente ya no son estrictamente necesarios para el Navbar
+        // ya que el Navbar se suscribe al AuthService, pero puedes mantenerlos si los usas localmente.
         this.isLoginFailed = false;
         this.isLoggedIn = true;
-        this.roles = data.roles; // Asume que la respuesta del backend incluye los roles
+        this.roles = data.roles;
 
-        // 3. Redirige al usuario a una página principal o dashboard
-        this.router.navigate(['/dashboard']); // ¡IMPORTANTE! Ajusta esta ruta a tu dashboard
+        this.router.navigate(['/dashboard']); // Redirige al usuario al dashboard
       },
       error: (e: any) => {
-        // Se ejecuta si la petición al backend devuelve un error (código 4xx, 5xx)
         console.error('Error durante el inicio de sesión:', e);
-        this.isLoginFailed = true; // Marca el login como fallido
-        // Intenta extraer un mensaje de error más específico del backend
+        this.isLoginFailed = true;
         this.errorMessage = e.error?.message || 'Credenciales inválidas. Por favor, inténtalo de nuevo.';
 
         this.snack.open('Error al iniciar sesión: ' + this.errorMessage, 'Cerrar', {
-          duration: 5000,
-          verticalPosition: 'top',
-          horizontalPosition: 'right'
+          duration: 5000, verticalPosition: 'top', horizontalPosition: 'right'
         });
       }
     });

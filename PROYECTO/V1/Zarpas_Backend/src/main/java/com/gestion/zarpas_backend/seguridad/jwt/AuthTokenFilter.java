@@ -12,15 +12,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
+
     @Autowired
     private JwtUtils jwtUtils;
 
@@ -29,69 +30,107 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
-    // Lista de rutas que deben ser excluidas de la validación de JWT
-    private static final List<String> EXCLUDED_PATHS = Arrays.asList(
-            "/api/auth/**",
-            "/api/publicaciones/**" // ¡AÑADIDA ESTA LÍNEA!
-    );
+    // Define las rutas que son públicamente accesibles (no requieren JWT)
+    private static final Set<String> PUBLIC_GET_PATHS = new HashSet<>(Arrays.asList(
+            "/api/publicaciones/todas",
+            "/api/publicaciones/buscar",
+            "/api/publicaciones/categoria/", // Ej: /api/publicaciones/categoria/perro
+            "/api/publicaciones/usuario/",   // Ej: /api/publicaciones/usuario/123
+            "/api/publicaciones/",           // Si tienes un GET general /api/publicaciones que sea público
+            "/api/publicaciones/categorias/all", // Obtener todas las categorías (GET)
+            "/api/comentarios/publicacion/", // Ver comentarios de una publicación (GET)
+            "/api/reacciones-publicacion/conteo/", // Conteo de reacciones (GET)
+            "/api/reacciones-publicacion/usuario/", // Si un usuario ha reaccionado (GET)
+            "/api/reacciones-comentario/conteo/", // Conteo de reacciones a comentarios (GET)
+            "/api/reacciones-comentario/usuario/"  // Si un usuario ha reaccionado a un comentario (GET)
+    ));
 
-    private final AntPathMatcher pathMatcher = new AntPathMatcher(); // Necesario para comparar rutas con patrones
+    // Para POST, usaremos equals para coincidencia exacta de rutas públicas.
+    private static final Set<String> PUBLIC_POST_PATHS = new HashSet<>(Arrays.asList(
+            "/api/auth/signin", // Iniciar sesión
+            "/api/auth/signup", // Registrarse
+            "/api/usuarios/crear" // Si el registro de usuarios es público
+            // *** ASEGÚRATE de que NUNCA esté aquí "/api/publicaciones/crear-con-imagen" ***
+            // Queremos que esta ruta POST SÍ requiera autenticación.
+    ));
+
+    private boolean isPublicRoute(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        // Manejar rutas GET públicas
+        if (method.equals("GET")) {
+            for (String publicPath : PUBLIC_GET_PATHS) {
+                // Usamos startsWith porque las rutas GET pueden tener IDs o parámetros
+                if (path.startsWith(publicPath)) {
+                    logger.info("AuthTokenFilter: Ruta '{}' (GET) es pública. Saltando validación JWT.", path);
+                    return true;
+                }
+            }
+        }
+        // Manejar rutas POST públicas (coincidencia exacta)
+        else if (method.equals("POST")) {
+            for (String publicPath : PUBLIC_POST_PATHS) {
+                // Para POSTs públicos, normalmente buscamos coincidencias exactas
+                if (path.equals(publicPath)) {
+                    logger.info("AuthTokenFilter: Ruta '{}' (POST) es pública. Saltando validación JWT.", path);
+                    return true;
+                }
+            }
+        }
+        // Manejar rutas de recursos estáticos (ej. imágenes subidas)
+        if (path.startsWith("/uploads/") && method.equals("GET")) {
+            logger.info("AuthTokenFilter: Ruta '{}' (recurso estático) es pública. Saltando validación JWT.", path);
+            return true;
+        }
+
+        return false; // Por defecto, la ruta no es pública y requerirá validación JWT
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String requestUri = request.getRequestURI();
-        String httpMethod = request.getMethod();
+        String requestUrl = request.getRequestURI();
+        String requestMethod = request.getMethod();
 
-        logger.info("AuthTokenFilter: Interceptando solicitud para la URL: {}", requestUri);
-        logger.info("AuthTokenFilter: Método HTTP: {}", httpMethod);
+        logger.info("AuthTokenFilter: Interceptando solicitud para la URL: {} con método: {}", requestUrl, requestMethod);
 
-        // 1. Comprueba si la ruta es pública y debe ser excluida de la validación JWT
-        boolean isPublicPath = EXCLUDED_PATHS.stream().anyMatch(p -> pathMatcher.match(p, requestUri));
-
-        if (isPublicPath) {
-            logger.info("AuthTokenFilter: Ruta '{}' es pública. Saltando validación JWT.", requestUri);
-            filterChain.doFilter(request, response); // Continúa la cadena de filtros sin validar JWT
-            return; // Importante para detener la ejecución aquí
-        }
-
-        logger.info("AuthTokenFilter: Ruta '{}' NO es pública. Intentando validar JWT.", requestUri);
-
-        // 2. Si no es una ruta pública, intenta procesar el JWT como lo hacías antes
         try {
+            // 1. Verificar si la ruta es pública. Si lo es, permite el paso sin validar JWT.
+            if (isPublicRoute(request)) {
+                logger.debug("AuthTokenFilter: La ruta '{}' es pública. Continuando con el filtro.", requestUrl);
+                filterChain.doFilter(request, response);
+                return; // Es crucial salir temprano para rutas públicas
+            }
+
+            // 2. Si la ruta NO es pública, intenta parsear y validar el JWT.
             String jwt = parseJwt(request);
-            if (jwt != null) {
-                logger.info("AuthTokenFilter: Encabezado Authorization: {}", request.getHeader("Authorization"));
-                if (jwt.startsWith("Bearer ")) {
-                    logger.info("AuthTokenFilter: Prefijo 'Bearer ' encontrado. JWT extraído.");
-                    logger.info("AuthTokenFilter: Token JWT extraído: {}...", jwt.substring(0, Math.min(jwt.length(), 20))); // Log limitado
-                }
-                if (jwtUtils.validateJwtToken(jwt)) {
-                    String username = jwtUtils.getUserNameFromJwtToken(jwt);
-                    logger.info("AuthTokenFilter: Username extraído del token: {}", username);
+            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+                String username = jwtUtils.getUserNameFromJwtToken(jwt);
 
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null, // No guardamos las credenciales aquí
+                                userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(userDetails,
-                                    null,
-                                    userDetails.getAuthorities());
-
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    logger.info("AuthTokenFilter: Autenticación establecida en SecurityContextHolder para: {}", username);
-                }
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                logger.info("AuthTokenFilter: Token JWT válido establecido para el usuario: {}", username);
             } else {
-                logger.info("AuthTokenFilter: No se encontró token JWT en la solicitud.");
+                // Si la ruta no es pública pero no hay JWT o es inválido,
+                // Spring Security lo manejará (ej. lanzando una excepción de autenticación
+                // que será capturada por AuthEntryPointJwt).
+                logger.warn("AuthTokenFilter: No se encontró token JWT o es inválido para la ruta no pública: {}", requestUrl);
             }
         } catch (Exception e) {
-            logger.error("No se pudo establecer la autenticación del usuario: {}", e.getMessage(), e);
-            // Considera enviar un error 401 si no se puede establecer la autenticación para una ruta NO pública
-            // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-            // return; // Detener la cadena de filtros aquí si envías un error
+            logger.error("AuthTokenFilter: No se pudo establecer la autenticación del usuario para {}: {}", requestUrl, e.getMessage());
+            // No lanzar la excepción aquí, Spring Security la manejará más adelante si la autenticación falla
         }
 
+        // Continúa con la cadena de filtros, incluso si la autenticación falló,
+        // para que otros filtros de seguridad (como AuthorizationFilter) puedan actuar.
         filterChain.doFilter(request, response);
     }
 
@@ -99,7 +138,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String headerAuth = request.getHeader("Authorization");
 
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7);
+            return headerAuth.substring(7); // Extrae el token después de "Bearer "
         }
 
         return null;

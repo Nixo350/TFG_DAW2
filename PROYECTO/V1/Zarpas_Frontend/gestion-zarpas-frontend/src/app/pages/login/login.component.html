@@ -1,49 +1,45 @@
-<div class="bootstrap-wrapper">
-  <div class="container">
-    <div class="row" style="margin-top: 50px;">
-      <div class="col-md-6 offset-md-3">
-        <mat-card>
-          <div class="container text-center">
-            <img src="adduser/add.png" alt="Icono add user" width="100" height="100">
-          </div>
+<div class="bootstrap-wrapper"> <div class="container"> <div class="row" style="margin-top: 50px;"> <div class="col-md-6 offset-md-3 main-content-card"> <div class="text-center">
+  <img src="/favicon.png" alt="Icono add user" width="100" height="100"> </div>
 
-          <h1 class="text-center">Iniciar Sesión</h1>
+<h1 class="text-center">Iniciar Sesión</h1>
 
-          <form (ngSubmit)="formSubmit()">
-            <mat-form-field class="full-width" appearance="outline">
-              <mat-label>Nombre de usuario</mat-label>
-              <input
-                required
-                [(ngModel)]="user.username"
-                name="username"
-                matInput
-                placeholder="Introduce tu nombre de usuario"
-              >
-            </mat-form-field>
+<form (ngSubmit)="formSubmit()">
+<mat-form-field class="full-width" appearance="outline">
+  <mat-label>Nombre de usuario</mat-label>
+  <input
+    required
+    [(ngModel)]="user.username"
+    name="username"
+    matInput
+    placeholder="Introduce tu nombre de usuario"
+  >
+</mat-form-field>
 
-            <mat-form-field class="full-width" appearance="outline">
-              <mat-label>Contraseña</mat-label>
-              <input
-                required
-                [(ngModel)]="user.password"
-                name="password"
-                type="password"
-                matInput
-                placeholder="Introduce tu contraseña"
-              >
-            </mat-form-field>
+<mat-form-field class="full-width" appearance="outline">
+  <mat-label>Contraseña</mat-label>
+  <input
+    required
+    [(ngModel)]="user.password"
+    name="password"
+    type="password"
+    matInput
+    placeholder="Introduce tu contraseña"
+  >
+</mat-form-field>
 
-            <div class="container text-center">
-              <button mat-raised-button color="primary" type="submit">Entrar</button>
-              <button mat-raised-button color="accent" style="margin-left: 20px;" type="reset">Limpiar</button>
-            </div>
-          </form>
+<div class="container text-center button-group">
+  <button mat-raised-button color="primary" type="submit">Entrar</button>
+  <button mat-raised-button color="accent" type="reset">Limpiar</button>
+</div>
+</form>
 
-          <div *ngIf="isLoginFailed" class="alert alert-danger mt-3">
-            {{ errorMessage }}
-          </div>
-        </mat-card>
-      </div>
-    </div>
-  </div>
+<div *ngIf="isLoginFailed" class="error-message mt-3"> {{ errorMessage }}
+</div>
+
+<div class="text-center mt-3">
+  <p>¿No tienes una cuenta? <button type="button" class="btn-as-link" (click)="goToSignup()">Regístrate aquí</button></p>
+</div>
+</div>
+</div>
+</div>
 </div>

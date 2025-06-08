@@ -1,8 +1,150 @@
-/* You can add global styles to this file, and also import other style files */
+/* src/styles.css - Archivo de estilos global */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
- .text-center{
-    text-align: center;
+/* --- Variables CSS Globales --- */
+:root {
+   --primary-color: #B71C1C; /* Rojo oscuro principal */
+   --accent-color: #D32F2F; /* Rojo un poco más vibrante, para acentos y botones */
+   --hover-color: #A01F1F;  /* Rojo más oscuro para estados hover */
+   --text-on-dark: #FFFFFF; /* Texto blanco para fondos oscuros */
+   --text-color: #333; /* Color de texto general */
+   --light-text-color: #666; /* Texto más claro para etiquetas, descripciones */
+   --background-color: #f0f2f5; /* Gris claro para el fondo general de la app */
+   --card-background-color: #ffffff; /* Fondo para las tarjetas/contenedores de formulario */
+   --border-color: #e0e0e0; /* Color general de bordes */
+   --border-radius: 8px; /* Radio de borde consistente */
+   --spacing-unit: 16px; /* Unidad base para márgenes y paddings */
+   --box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.08); /* Sombra ligera */
+   --box-shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.12); /* Sombra para elementos principales */
+   --error-color: #E53935; /* Rojo para errores */
+   --success-color: #4CAF50; /* Verde para mensajes de éxito */
+   --info-color: #2196F3; /* Azul para información */
+ 
+   --font-family: 'Roboto', sans-serif; /* Fuente principal de la aplicación */
+ }
+ 
+ /* --- Estilos Globales del Body y HTML --- */
+ html, body {
+   height: 100%;
+   margin: 0;
+   font-family: var(--font-family);
+   background-color: var(--background-color);
+   color: var(--text-color);
+   line-height: 1.6;
+ }
+ 
+ /* --- Contenedor Principal para el Contenido Central (Tarjetas, Formularios) --- */
+ /* Esta clase se aplicará a los contenedores principales de tus vistas (login, create-publicacion) */
+ .main-content-card {
+   background-color: var(--card-background-color);
+   padding: 30px;
+   border-radius: var(--border-radius);
+   box-shadow: var(--box-shadow-medium);
+   margin: 40px auto; /* Centra el elemento y le da margen vertical */
+   max-width: 500px; /* Ancho máximo para formularios como login/registro/crear publicación */
+   width: 90%; /* Ocupa el 90% del ancho disponible en pantallas pequeñas */
+   box-sizing: border-box; /* Asegura que padding y border se incluyan en el ancho */
+ }
+ 
+ /* Estilos de Material Design (asegúrate de que los temas de Angular Material estén importados) */
+ /* Si usas Angular Material, asegúrate de tener un tema importado en angular.json o en styles.css.
+    Por ejemplo: @import '@angular/material/prebuilt-themes/deeppurple-amber.css'; */
+ 
+ /* Sobreescribir estilos de Material Design para que usen tus variables */
+ .mat-toolbar.mat-primary {
+   background-color: var(--primary-color) !important;
+ }
+ 
+ .mat-raised-button.mat-primary {
+   background-color: var(--primary-color) !important;
+   color: var(--text-on-dark) !important;
+ }
+ 
+ .mat-raised-button.mat-accent {
+   background-color: var(--accent-color) !important;
+   color: var(--text-on-dark) !important;
+ }
+ 
+ .mat-raised-button.mat-primary:hover,
+ .mat-raised-button.mat-accent:hover {
+   background-color: var(--hover-color) !important;
+ }
+ 
+ /* Estilos para campos de formulario de Material Design */
+ .mat-form-field-appearance-outline .mat-form-field-outline {
+   color: var(--border-color);
+ }
+ 
+ .mat-form-field.mat-focused .mat-form-field-outline {
+   color: var(--accent-color) !important; /* Rojo de acento al enfocar */
+ }
+ 
+ .mat-form-field.mat-focused .mat-form-field-ripple {
+   background-color: var(--accent-color) !important; /* Rojo de acento para el ripple */
+ }
+ 
+ .mat-form-field-label {
+   color: var(--light-text-color); /* Color por defecto del label */
+ }
+ 
+ .mat-form-field.mat-focused .mat-form-field-label {
+   color: var(--accent-color) !important; /* Rojo de acento para el label enfocado */
+ }
+ 
+ .mat-input-element {
+   color: var(--text-color); /* Color del texto del input */
+ }
+ 
+ /* Utilidades de texto y enlaces */
+ h1, h2, h3, h4, h5, h6 {
+   color: var(--primary-color);
+   font-weight: 700;
+ }
+ 
+ a {
+   color: var(--accent-color);
+   text-decoration: none;
+   transition: color 0.2s ease-in-out;
+ }
+ 
+ a:hover {
+   color: var(--primary-color);
+   text-decoration: underline;
+ }
+ 
+ /* Clases para mensajes de feedback */
+ .success-message {
+     background-color: rgba(76, 175, 80, 0.1); /* Verde suave */
+     color: var(--success-color);
+     border: 1px solid var(--success-color);
+     padding: 12px;
+     border-radius: var(--border-radius);
+     margin-top: 20px;
+     text-align: center;
+     font-weight: bold;
+ }
+ 
+ .error-message {
+     background-color: rgba(229, 57, 53, 0.1); /* Rojo suave */
+     color: var(--error-color);
+     border: 1px solid var(--error-color);
+     padding: 12px;
+     border-radius: var(--border-radius);
+     margin-top: 20px;
+     text-align: center;
+     font-weight: bold;
+ }
+ 
+ /* Responsividad general para el contenido */
+ @media (max-width: 768px) {
+   .main-content-card {
+     margin: 20px auto;
+     padding: 20px;
+   }
+ }
+ 
+ @media (max-width: 480px) {
+   .main-content-card {
+     margin: 15px;
+     padding: 15px;
+   }
  }

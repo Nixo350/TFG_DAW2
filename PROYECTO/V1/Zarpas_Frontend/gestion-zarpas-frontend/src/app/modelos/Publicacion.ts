@@ -3,6 +3,11 @@ import { Usuario } from "./Usuario";
 import { TipoReaccion } from "./TipoReaccion";
 import { ReaccionPublicacion } from "./ReaccionPublicacion";
 
+export interface Categoria {
+  idCategoria: number;
+  nombre: string;
+}
+
 export interface Publicacion {
     idPublicacion: number;
     usuario: Usuario;
@@ -17,4 +22,5 @@ export interface Publicacion {
     conteoLikes?: number;
     conteoDislikes?: number;
     miReaccion?: TipoReaccion | null;
+    categorias?: string[]; 
   }

@@ -11,5 +11,5 @@ export interface ComentarioReaccion {
   export interface ComentarioReaccionRequest {
     idUsuario: number;
     idComentario: number;
-    tipoReaccion: TipoReaccion;
+    tipoReaccion: TipoReaccion | null;
   }

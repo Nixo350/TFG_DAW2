@@ -1,29 +1,43 @@
 <mat-toolbar color="primary">
-    <img src="favicon.png" alt="Logo de la Aplicación" class="navbar-logo left-logo">
-    <span><a routerLink="/" style="color: white; text-decoration: none;">ZarpasApp</a></span>
-  
-    <span class="spacer"></span>
-  
-    <ng-container *ngIf="!isLoggedIn">
-      <button mat-button routerLink="/login">
-        <mat-icon>login</mat-icon> Iniciar Sesión
-      </button>
-      <button mat-button routerLink="/signup">
-        <mat-icon>person_add</mat-icon> Registrarse
-      </button>
-    </ng-container>
-  
-    <ng-container *ngIf="isLoggedIn">
-      <button mat-button routerLink="/dashboard">
-        <mat-icon>dashboard</mat-icon> Dashboard
-      </button>
-  
-      <button mat-button>
-        <mat-icon>person</mat-icon> {{ username }}
-      </button>
-  
-      <button mat-button (click)="logout()">
-        <mat-icon>exit_to_app</mat-icon> Cerrar Sesión
-      </button>
-    </ng-container>
-  </mat-toolbar>
+  <img src="favicon.png" alt="Logo de la Aplicación" class="navbar-logo left-logo">
+  <span><a routerLink="/dashboard" style="color: white; text-decoration: none;">ZarpasApp</a></span>
+
+  <span class="spacer"></span>
+
+  <div class="search-container">
+    <mat-icon class="search-icon">search</mat-icon>
+    <input
+      type="text"
+      placeholder="Buscar publicaciones..."
+      class="search-input"
+      [(ngModel)]="searchTerm"
+      (keyup.enter)="onSearch()"
+    >
+    <button *ngIf="searchTerm" mat-icon-button (click)="clearSearch()" class="clear-search-button">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+
+  <ng-container *ngIf="!isLoggedIn">
+    <button mat-button routerLink="/login">
+      <mat-icon>login</mat-icon> Iniciar Sesión
+    </button>
+    <button mat-button routerLink="/signup">
+      <mat-icon>person_add</mat-icon> Registrarse
+    </button>
+  </ng-container>
+
+  <ng-container *ngIf="isLoggedIn">
+    <button mat-button routerLink="/dashboard">
+      <mat-icon>dashboard</mat-icon> Dashboard
+    </button>
+
+    <button mat-button>
+      <mat-icon>person</mat-icon> {{ username }}
+    </button>
+
+    <button mat-button (click)="logout()">
+      <mat-icon>exit_to_app</mat-icon> Cerrar Sesión
+    </button>
+  </ng-container>
+</mat-toolbar>

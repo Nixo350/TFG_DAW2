@@ -8,65 +8,153 @@
       </div>
 
       <div *ngFor="let post of posts" class="post-card">
-        <h3>{{ post.titulo }}</h3>
-        <p>{{ post.contenido }}</p>
-        <img *ngIf="post.imagenUrl" [src]="'http://localhost:9000' + post.imagenUrl" alt="Imagen de la publicación" class="post-image">
-        <p>Publicado por: {{ post.usuario?.username }} el {{ post.fechaCreacion | date:'short' }}</p>
-      
-        <div class="reactions-container">
-          <button (click)="onToggleReaccion(post.idPublicacion!, TipoReaccion.like)"
-                  [ngClass]="{'active-like': hasLiked(post.idPublicacion!)}">
-            👍 {{ reaccionesConteo[post.idPublicacion!]?.like || 0 }} </button>
-         
-          <button (click)="onToggleReaccion(post.idPublicacion!, TipoReaccion.dislike)"
-                  [ngClass]="{'active-dislike': hasDisliked(post.idPublicacion!)}"> 👎 {{ reaccionesConteo[post.idPublicacion!]?.dislike || 0 }} </button>
+        <div class="post-header">
+          <img
+            [src]="
+              post.usuario?.fotoPerfil
+                ? ('http://localhost:9000' + post.usuario.fotoPerfil)
+                : 'assets/default-avatar.png'
+            "
+            alt="Avatar"
+            class="post-avatar"
+          />
+          <div class="post-info">
+            <div class="user-and-date">
+              <span class="post-author">{{ post.usuario?.username }}</span>
+              <span class="post-date"
+                >{{ post.fechaCreacion | date : 'short' }}</span
+              >
+            </div>
+          </div>
         </div>
-        <hr>
-        <div class="comments-section">
-          <h4>Comentarios ({{ post.comentarios?.length || 0 }})</h4>
 
+        <h3 class="post-title">{{ post.titulo }}</h3>
+        <p class="post-content">{{ post.contenido }}</p>
+        <img
+          *ngIf="post.imagenUrl"
+          [src]="'http://localhost:9000' + post.imagenUrl"
+          alt="Imagen de la publicación"
+          class="post-image"
+        />
+
+        <div class="post-actions">
+          <button
+            class="reaction-button"
+            [ngClass]="{ 'liked': hasPublicacionLiked(post.idPublicacion) }"
+            (click)="togglePublicacionReaction(post.idPublicacion, TipoReaccion.like)"
+          >
+            <i class="fas fa-thumbs-up"></i>
+            👍 {{ getConteoPublicacionLikes(post.idPublicacion) }}
+          </button>
+          <button
+            class="reaction-button"
+            [ngClass]="{ 'disliked': hasPublicacionDisliked(post.idPublicacion) }"
+            (click)="togglePublicacionReaction(post.idPublicacion, TipoReaccion.dislike)"
+          >
+            <i class="fas fa-thumbs-down"></i>
+            👎 {{ getConteoPublicacionDislikes(post.idPublicacion) }}
+          </button>
+          <button class="comment-button" (click)="toggleComments(post.idPublicacion)">
+            <i class="fas fa-comment"></i>
+            Comentarios
+            ({{ post.comentarios ? post.comentarios.length : 0 }})
+          </button>
+        </div>
+
+
+
+        <div *ngIf="showComments[post.idPublicacion]" class="comments-section">
+          <h4>Comentarios</h4>
           <div *ngIf="post.comentarios && post.comentarios.length > 0; else noComments">
             <div *ngFor="let comentario of post.comentarios" class="comment-card">
-              <p class="comment-author">
-                <strong>{{ comentario.usernameUsuario }}</strong> el {{ comentario.fechaCreacion | date:'short' }}: 
-              </p>
-              <p class="comment-text">{{ comentario.texto }}</p>
-
-              <div class="comment-reactions-container">
-                <button (click)="onToggleComentarioReaccion(comentario.idComentario!, TipoReaccion.like)"
-                  [ngClass]="{'active-like': hasComentarioLiked(comentario.idComentario!)}">
-                  👍 {{ comentarioReaccionesConteo[comentario.idComentario!]?.like || 0 }}
+              <div class="comment-header">
+                <img
+                  [src]="
+                    comentario.usuario?.fotoPerfil
+                      ? ('http://localhost:9000' + comentario.usuario.fotoPerfil)
+                      : 'assets/default-avatar.png'
+                  "
+                  alt="Avatar"
+                  class="comment-avatar"
+                />
+                <div class="comment-info">
+                  <span class="comment-author">{{ comentario.usernameUsuario }}</span>
+                  <span class="comment-date"
+                    >{{ comentario.fechaCreacion | date : 'short' }}</span
+                  >
+                </div>
+              </div>
+              <p class="comment-content">{{ comentario.texto }}</p>
+              <div class="comment-actions">
+                <button
+                  class="reaction-button"
+                  [ngClass]="{ 'liked': hasComentarioLiked(comentario.idComentario!) }"
+                  (click)="toggleComentarioReaction(comentario.idComentario!, TipoReaccion.like)"
+                >
+                  <i class="fas fa-thumbs-up"></i>
+                  👍 {{ getConteoComentarioLikes(comentario.idComentario!) }}
                 </button>
-                <button (click)="onToggleComentarioReaccion(comentario.idComentario!, TipoReaccion.dislike)"
-                  [ngClass]="{'active-dislike': hasComentarioDisliked(comentario.idComentario!)}">
-                  👎 {{ comentarioReaccionesConteo[comentario.idComentario!]?.dislike || 0 }}
+                <button
+                  class="reaction-button"
+                  [ngClass]="{ 'disliked': hasComentarioDisliked(comentario.idComentario!) }"
+                  (click)="toggleComentarioReaction(comentario.idComentario!, TipoReaccion.dislike)"
+                >
+                  <i class="fas fa-thumbs-down"></i>
+                  👎 {{ getConteoComentarioDislikes(comentario.idComentario!) }}
                 </button>
               </div>
             </div>
           </div>
           <ng-template #noComments>
-            <p class="no-comments-message">No hay comentarios todavía. ¡Sé el primero en comentar!</p>
+            <p class="no-comments-message">Sé el primero en comentar.</p>
           </ng-template>
 
-          <div class="new-comment-form">
-            <textarea [(ngModel)]="nuevoComentarioTexto[post.idPublicacion!]" placeholder="Escribe un comentario..."
-              rows="3"></textarea>
-            <button (click)="onCrearComentario(post.idPublicacion!)"
-              [disabled]="!nuevoComentarioTexto[post.idPublicacion!] || nuevoComentarioTexto[post.idPublicacion!].trim() === ''">
-              Comentar
+          <div class="add-comment">
+            <textarea
+                [(ngModel)]="nuevoComentarioTexto[post.idPublicacion]"
+                placeholder="Añadir un comentario..."
+              ></textarea>
+            <button
+              (click)="addComment(post.idPublicacion)"
+              [disabled]="!nuevoComentarioTexto[post.idPublicacion] || nuevoComentarioTexto[post.idPublicacion].trim() === ''"
+            >
+              Publicar
             </button>
           </div>
         </div>
-        </div>
+      </div>
     </div>
   </div>
-  
 
   <div class="sidebar">
     <div class="sidebar-card about-card">
       <h3>Acerca de ZarpasApp</h3>
-      <p>Bienvenido a la comunidad de amantes de las mascotas. Comparte tus historias, fotos y consejos. ¡Conecta con otros dueños de mascotas!</p>
-      <button class="create-post-button-sidebar" routerLink="/create-post">Crear Publicación</button>
+      <p>
+        Bienvenido a la comunidad de amantes de las mascotas. Comparte tus
+        historias, fotos y consejos. ¡Conecta con otros dueños de mascotas!
+      </p>
+      <button class="create-post-button-sidebar" routerLink="/create-post">
+        Crear Publicación
+      </button>
+    </div>
+    <div class="sidebar-card">
+      <h3>Filtrar por Categoría</h3>
+      <div class="category-filter">
+        <select
+          [(ngModel)]="selectedCategoryId" (change)="filterByCategory()"
+          class="form-control"
+        >
+          <option [ngValue]="null" disabled>Selecciona una categoría</option>
+          <option *ngFor="let cat of categories" [ngValue]="cat.idCategoria"> {{ cat.nombre }}
+          </option>
+        </select>
+        <button
+          *ngIf="selectedCategoryId" (click)="clearCategoryFilter()"
+          class="clear-filter-button"
+        >
+          Ver Todas
+        </button>
+      </div>
     </div>
     <div class="sidebar-card">
       <h3>Comunidades Populares</h3>
@@ -74,12 +162,9 @@
         <li><a href="#">#PerrosGraciosos</a></li>
         <li><a href="#">#GatosDivertidos</a></li>
         <li><a href="#">#AvesExoticas</a></li>
-        <li><a href="#">#AdopcionGijon</a></li>
+        <li><a href="#">#ReptilesApasionantes</a></li>
+        <li><a href="#">#PecesDeAcuario</a></li>
       </ul>
-    </div>
-    <div class="sidebar-card footer-links">
-      <p>&copy; 2023 ZarpasApp. Todos los derechos reservados.</p>
-      <a href="#">Política de Privacidad</a> | <a href="#">Términos de Servicio</a>
     </div>
   </div>
 </div>

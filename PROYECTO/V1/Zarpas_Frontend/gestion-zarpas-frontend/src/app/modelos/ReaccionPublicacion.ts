@@ -10,6 +10,6 @@ export interface ReaccionPublicacion {
   publicacion: {
     idPublicacion: number;
   };
-  tipoReaccion: TipoReaccion;
+  tipoReaccion: TipoReaccion | null;
   fechaReaccion?: string; // El backend probablemente lo genera
 }

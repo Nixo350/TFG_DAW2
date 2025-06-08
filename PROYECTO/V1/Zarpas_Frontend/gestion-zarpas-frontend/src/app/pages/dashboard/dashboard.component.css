@@ -1,24 +1,26 @@
-/* Variables CSS para consistencia de colores y espaciado */
-:host {
-  --primary-color: #3f51b5; /* Un azul como el de Angular Material */
-  --accent-color: #ff4081; /* Un rosa/magenta */
+/* src/app/pages/dashboard/dashboard.component.css */
+
+/* --- ELIMINA LAS VARIABLES :host {} DE AQUÍ SI YA LAS TIENES EN styles.css --- */
+/* :host {
+  --primary-color: #3f51b5;
+  --accent-color: #ff4081;
   --text-color: #333;
   --light-text-color: #666;
-  --background-color: #f0f2f5; /* Gris claro para el fondo */
+  --background-color: #f0f2f5;
   --card-background-color: #ffffff;
   --border-color: #e0e0e0;
   --spacing-unit: 16px;
   --border-radius: 8px;
   --box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --font-family: 'Roboto', sans-serif; /* O la fuente que uses en tu proyecto */
-}
+  --font-family: 'Roboto', sans-serif;
+} */
 
-body {
-  font-family: var(--font-family);
-  margin: 0;
-  background-color: var(--background-color);
-  color: var(--text-color);
-}
+/* body { /* No debería haber estilos de body aquí, solo en styles.css */
+/* font-family: var(--font-family); */
+/* margin: 0; */
+/* background-color: var(--background-color); */
+/* color: var(--text-color); */
+/* } */
 
 /* Contenedor principal del Dashboard */
 .dashboard-container {
@@ -26,209 +28,219 @@ body {
   justify-content: center; /* Centra el contenido */
   padding: var(--spacing-unit);
   gap: var(--spacing-unit); /* Espacio entre las columnas */
-  max-width: 1200px; /* Ancho máximo para el contenido */
-  margin: 0 auto; /* Centra el contenedor en la página */
+  max-width: 1200px; /* Ancho máximo para el contenido del dashboard */
+  margin: 20px auto; /* Centra el dashboard horizontalmente y añade margen vertical */
+  box-sizing: border-box; /* Asegura que el padding se incluya en el ancho */
 }
 
-/* Contenido principal (Publicaciones) */
+/* Estilos de las columnas (main-content y sidebar) */
 .main-content {
-  flex: 3; /* Ocupa 3 partes del espacio disponible */
-  min-width: 600px; /* Ancho mínimo para el contenido principal */
-  background-color: var(--background-color);
+  flex: 3; /* Ocupa más espacio */
+  min-width: 600px; /* Ancho mínimo para la columna principal */
+  /* Los posts-list ya son tarjetas por defecto */
 }
 
-.posts-header {
+.sidebar {
+  flex: 1; /* Ocupa menos espacio */
+  min-width: 280px; /* Ancho mínimo para la sidebar */
+  max-width: 350px; /* Ancho máximo para la sidebar */
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: calc(var(--spacing-unit) / 2) var(--spacing-unit);
-  margin-bottom: var(--spacing-unit);
-  background-color: var(--card-background-color);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow-light);
+  flex-direction: column;
+  gap: var(--spacing-unit);
 }
 
-.posts-header h2 {
-  margin: 0;
-  font-size: 1.5em;
-  color: var(--text-color);
-}
-
-.create-post-button, .create-post-button-sidebar {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.3s ease;
-}
-
-.create-post-button:hover, .create-post-button-sidebar:hover {
-  background-color: darken(var(--primary-color), 10%); /* Ajustar color más oscuro al pasar el ratón */
-}
-
-
-.no-posts-message {
+/* Estilos de las tarjetas dentro del dashboard */
+.post-card, .sidebar-card {
   background-color: var(--card-background-color);
   padding: var(--spacing-unit);
   border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow-light);
-  text-align: center;
-  color: var(--light-text-color);
-  margin-bottom: var(--spacing-unit);
+  box-shadow: var(--box-shadow-light); /* Sombra más ligera para los elementos individuales */
+  margin-bottom: var(--spacing-unit); /* Espacio entre tarjetas */
 }
 
-/* Estilo de las tarjetas de publicación */
-.post-card {
-  background-color: var(--card-background-color);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow-light);
-  margin-bottom: var(--spacing-unit);
-  padding: var(--spacing-unit);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* Títulos dentro del dashboard */
+.posts-list h2, .sidebar-card h3 {
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  font-weight: 700;
 }
 
-.post-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.post-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--spacing-unit);
-}
-
-.post-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: calc(var(--spacing-unit) / 2);
-  object-fit: cover;
-}
-
-.post-info {
-  flex-grow: 1;
-}
-
-.post-title {
-  margin: 0;
-  font-size: 1.2em;
-  color: var(--text-color);
-}
-
-.post-author {
-  font-size: 0.9em;
-  color: var(--light-text-color);
-}
-
-.post-body {
-  margin-bottom: var(--spacing-unit);
-}
-
-.post-content {
-  margin-top: 0;
-  line-height: 1.5;
-  color: var(--text-color);
-}
-
+/* Imagen de la publicación */
 .post-image {
   max-width: 100%;
+  height: auto;
   border-radius: var(--border-radius);
-  margin-top: calc(var(--spacing-unit) / 2);
-  display: block; /* Para eliminar espacio extra bajo la imagen */
-  height: auto; /* Asegura que la imagen se escale correctamente */
+  margin-top: 15px;
+  margin-bottom: 10px;
 }
 
-.post-footer {
+/* Reacciones (likes/dislikes) */
+.reactions-container {
   display: flex;
-  justify-content: space-between;
+  gap: 10px;
+  margin-top: 15px;
+  margin-bottom: 10px;
   align-items: center;
-  border-top: 1px solid var(--border-color);
-  padding-top: calc(var(--spacing-unit) / 2);
-  font-size: 0.9em;
-  color: var(--light-text-color);
 }
 
-.post-actions {
-  display: flex;
-  gap: calc(var(--spacing-unit) / 2);
-}
-
-.post-votes {
+.reactions-container button {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 20px; /* Botones más redondeados */
+  padding: 8px 15px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 5px;
-}
-
-.vote-button {
-  background: none;
-  border: none;
-  font-size: 1.2em;
-  cursor: pointer;
-  color: var(--light-text-color);
-  padding: 0 5px;
-  transition: color 0.2s ease;
-}
-
-.like-button:hover {
-  color: #4CAF50; /* Verde para like */
-}
-
-.dislike-button:hover {
-  color: #f44336; /* Rojo para dislike */
-}
-
-.vote-count {
-  font-weight: bold;
-  color: var(--text-color);
-}
-
-.action-button {
-  background: none;
-  border: none;
-  color: var(--light-text-color);
-  cursor: pointer;
   font-size: 0.9em;
-  padding: 5px 10px;
-  border-radius: 5px;
-  transition: background-color 0.2s ease;
+  color: var(--light-text-color);
+  transition: all 0.2s ease-in-out;
 }
 
-.action-button:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: var(--text-color);
+.reactions-container button:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background-color: rgba(var(--accent-color-rgb), 0.05); /* Rojo transparente */
+}
+
+.reactions-container button.active-like {
+  background-color: var(--success-color); /* Verde para like activo */
+  border-color: var(--success-color);
+  color: white;
+}
+
+.reactions-container button.active-dislike {
+  background-color: var(--error-color); /* Rojo para dislike activo */
+  border-color: var(--error-color);
+  color: white;
 }
 
 
-/* Barra Lateral */
-.sidebar {
-  flex: 1; /* Ocupa 1 parte del espacio disponible */
-  min-width: 280px; /* Ancho mínimo para la barra lateral */
-  max-width: 350px; /* Ancho máximo para la barra lateral */
+/* Comentarios */
+.comments-section {
+  margin-top: 20px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 20px;
 }
 
-.sidebar-card {
-  background-color: var(--card-background-color);
+.comments-list {
+  margin-top: 15px;
+}
+
+.comment-item {
+  background-color: #f9f9f9; /* Fondo ligero para cada comentario */
+  border-left: 3px solid var(--accent-color); /* Barra lateral de acento */
+  padding: 10px 15px;
   border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow-light);
-  margin-bottom: var(--spacing-unit);
-  padding: var(--spacing-unit);
+  margin-bottom: 10px;
 }
 
-.sidebar-card h3 {
-  margin-top: 0;
-  font-size: 1.2em;
-  color: var(--text-color);
-  margin-bottom: calc(var(--spacing-unit) / 2);
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
 }
 
-.sidebar-card p {
-  font-size: 0.9em;
-  line-height: 1.4;
+.comment-author {
+  font-weight: bold;
+  color: var(--primary-color);
+  font-size: 0.95em;
+}
+
+.comment-date {
+  font-size: 0.8em;
   color: var(--light-text-color);
+}
+
+.comment-text {
+  font-size: 0.9em;
+  color: var(--text-color);
+}
+
+.no-comments, .no-posts {
+  padding: 20px;
+  background-color: var(--card-background-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  text-align: center;
+  color: var(--light-text-color);
+  margin-bottom: 20px;
+}
+
+.new-comment-form {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.new-comment-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-sizing: border-box;
+  font-family: var(--font-family);
+  font-size: 0.9em;
+  color: var(--text-color);
+  resize: vertical;
+}
+
+.new-comment-form textarea:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.2);
+  outline: none;
+}
+
+.new-comment-form button {
+  background-color: var(--primary-color);
+  color: var(--text-on-dark);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.new-comment-form button:hover:not(:disabled) {
+  background-color: var(--hover-color);
+  transform: translateY(-1px);
+}
+
+.new-comment-form button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Botón "Mostrar Comentarios" */
+.toggle-comments-button {
+  background-color: #f0f0f0; /* Un gris claro */
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 15px;
+  font-size: 0.85em;
+  transition: all 0.2s ease-in-out;
+}
+
+.toggle-comments-button:hover {
+  background-color: var(--border-color);
+  color: var(--primary-color);
+}
+
+
+/* SIDEBAR */
+.sidebar-card h3 {
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  color: var(--primary-color);
 }
 
 .sidebar-card ul {
@@ -238,133 +250,222 @@ body {
 }
 
 .sidebar-card ul li {
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 .sidebar-card ul li a {
+  color: var(--light-text-color);
   text-decoration: none;
-  color: var(--primary-color);
-  font-weight: 500;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease-in-out;
 }
 
 .sidebar-card ul li a:hover {
-  color: darken(var(--primary-color), 10%);
+  color: var(--accent-color);
   text-decoration: underline;
 }
 
-.sidebar-card.footer-links p {
-  text-align: center;
-  font-size: 0.8em;
+.about-card p {
+  font-size: 0.95em;
+  color: var(--text-color);
 }
 
-.sidebar-card.footer-links a {
-  color: var(--light-text-color);
-  text-decoration: none;
-}
-
-.sidebar-card.footer-links a:hover {
-  text-decoration: underline;
-}
-
-.read-more {
-  display: inline-block;
-  margin-top: calc(var(--spacing-unit) / 2);
-  color: var(--primary-color);
-  text-decoration: none;
-  font-weight: 500;
-}
-.read-more:hover {
-  text-decoration: underline;
-}
-.post-votes {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* Espacio entre los botones y contadores */
-}
-
-.vote-button {
-  background: none;
-  border: 1px solid var(--primary-color);
-  color: var(--primary-color);
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9em;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.vote-button:hover {
+.create-post-button-sidebar {
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
   background-color: var(--primary-color);
-  color: white;
+  color: var(--text-on-dark);
+  border: none;
+  border-radius: var(--border-radius);
+  text-align: center;
+  font-size: 1em;
+  font-weight: 600;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
-.like-button {
-  border-color: #4CAF50; /* Verde */
-  color: #4CAF50;
+.create-post-button-sidebar:hover {
+  background-color: var(--hover-color);
+  transform: translateY(-2px);
 }
 
-.like-button:hover {
-  background-color: #4CAF50;
-  color: white;
-}
-
-.dislike-button {
-  border-color: #f44336; /* Rojo */
-  color: #f44336;
-}
-
-.dislike-button:hover {
-  background-color: #f44336;
-  color: white;
-}
-
-.like-count, .dislike-count {
-  font-weight: bold;
+/* FOOTER DENTRO DEL DASHBOARD */
+.sidebar-card.footer {
+  font-size: 0.8em;
   color: var(--light-text-color);
-  font-size: 0.9em;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: 15px;
+  margin-top: auto; /* Empuja el footer al final de la sidebar */
 }
 
-/* Media Queries para responsividad (opcional, pero recomendado) */
-@media (max-width: 900px) {
+
+/* Media Queries para responsividad (ajusta según tus necesidades) */
+@media (max-width: 992px) { /* Para tabletas y pantallas más pequeñas */
   .dashboard-container {
-    flex-direction: column; /* Apila las columnas en pantallas más pequeñas */
-    align-items: center;
+    flex-direction: column; /* Apila las columnas */
+    align-items: center; /* Centra el contenido apilado */
+    padding: var(--spacing-unit); /* Asegura padding en los bordes */
   }
 
   .main-content, .sidebar {
-    width: 100%;
-    max-width: 600px; /* Limita el ancho en móviles para mejor legibilidad */
-    min-width: unset; /* Quita el min-width para móviles */
+    width: 100%; /* Ocupa todo el ancho */
+    max-width: 700px; /* Limita el ancho total en pantallas medianas */
+    min-width: unset; /* Quita el min-width */
   }
 
-  .posts-header {
-      flex-direction: column;
-      text-align: center;
+  .sidebar {
+    order: -1; /* Mueve la sidebar arriba en móvil si lo prefieres */
+    margin-bottom: var(--spacing-unit); /* Espacio entre sidebar y posts */
   }
-  .posts-header h2 {
-      margin-bottom: 10px;
+
+  .posts-list h2, .sidebar-card h3 {
+    text-align: center;
   }
 }
-/* Puedes ajustar estos estilos a tu gusto */
-.reactions-container button {
-  padding: 8px 15px;
-  margin: 5px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+
+@media (max-width: 600px) { /* Para teléfonos */
+  .dashboard-container {
+    padding: calc(var(--spacing-unit) / 2); /* Menos padding en pantallas muy pequeñas */
+    margin: 10px auto;
+  }
+
+  .post-card, .sidebar-card {
+    padding: calc(var(--spacing-unit) / 1.2); /* Menos padding dentro de las tarjetas */
+  }
+
+  .posts-list h2, .sidebar-card h3 {
+    font-size: 1.8em;
+  }
+}
+
+
+.post-info {
+  display: flex; /* Para que el nombre de usuario y la fecha estén en la misma línea */
+  flex-direction: column; /* Apilar autor y fecha si hay espacio limitado */
+  margin-left: 10px; /* Espacio entre el avatar y la info del post */
+}
+
+/* Estilos para el autor y la fecha en la publicación (similar a los comentarios) */
+.post-author {
+  font-weight: bold;
+  color: var(--primary-color); /* O el color que desees para el nombre de usuario */
+  font-size: 1em;
+}
+
+.post-date {
+  font-size: 0.85em; /* Ligeramente más pequeño que el autor */
+  color: var(--light-text-color); /* Gris claro para la fecha */
+  margin-top: 2px; /* Pequeño espacio entre el autor y la fecha */
+}
+
+/* ... (tus estilos existentes para .comment-header, .comment-date, etc.) ... */
+
+/* Asegúrate de que .comment-date tenga estilos similares si quieres consistencia */
+.comment-date {
+  font-size: 0.8em; /* Un poco más pequeño que el post-date si quieres */
+  color: var(--light-text-color);
+}
+.post-header {
+  display: flex; /* Para alinear el avatar y la información del usuario/fecha */
+  align-items: center; /* Centrar verticalmente el avatar y el texto */
+  margin-bottom: 10px;
+}
+
+.post-avatar {
+  width: 40px; /* Tamaño del avatar */
+  height: 40px;
+  border-radius: 50%; /* Hacerlo circular */
+  object-fit: cover;
+  margin-right: 10px; /* Espacio entre el avatar y el texto */
+}
+
+.post-info {
+  display: flex;
+  flex-direction: column; /* Apila el contenedor de usuario/fecha bajo el avatar */
+  /* margin-left: 10px; Quitado, ya que el espacio se maneja con margin-right en post-avatar */
+}
+
+.user-and-date {
+  display: flex; /* Para que el nombre de usuario y la fecha estén en la misma línea */
+  align-items: baseline; /* Alinea los textos por su línea base */
+  gap: 8px; /* Espacio entre el nombre de usuario y la fecha */
+  /* Puedes usar margin-bottom para separar esto del título del post si es necesario */
+}
+
+.post-author {
+  font-weight: bold;
+  color: var(--primary-color);
+  font-size: 1.05em; /* Un poco más grande para el nombre de usuario */
+}
+
+.post-date {
+  font-size: 0.8em; /* Más pequeño para la fecha */
+  color: var(--light-text-color);
+  /* margin-left: 8px; Movido a gap en .user-and-date */
+}
+
+/* Estilos para los comentarios (mantener consistencia si es necesario) */
+.comment-header {
+  display: flex; /* Para alinear autor y fecha en comentarios */
+  align-items: baseline;
+  gap: 8px; /* Espacio entre el autor del comentario y su fecha */
+  font-size: 0.9em;
+  margin-bottom: 5px;
+}
+
+.comment-author {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.comment-date {
+  font-size: 0.85em;
+  color: var(--light-text-color);
+}
+.category-filter {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espacio entre el select y el botón */
+}
+
+.category-filter select {
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background-color: var(--card-background-color);
+  color: var(--text-color);
+  font-size: 1em;
+  width: 100%; /* Asegura que ocupe todo el ancho disponible */
+  box-sizing: border-box; /* Incluye padding y border en el ancho total */
+}
+
+.category-filter select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+}
+
+.clear-filter-button {
+  background-color: var(--accent-color); /* Color de acento para este botón */
+  color: var(--text-on-dark);
+  padding: 10px 15px;
+  border: none;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  background-color: #f9f9f9;
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  font-size: 0.9em;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  align-self: flex-start; /* Alinea el botón a la izquierda si no ocupa todo el ancho */
+  width: fit-content; /* Ajusta el ancho al contenido */
 }
 
-.reactions-container button.active-like {
-  background-color: #28a745; /* Verde */
-  color: white;
-  border-color: #28a745;
+.clear-filter-button:hover {
+  background-color: var(--accent-color-dark);
 }
 
-.reactions-container button.active-dislike {
-  background-color: #dc3545; /* Rojo */
-  color: white;
-  border-color: #dc3545;
+.clear-filter-button:active {
+  transform: translateY(1px);
 }

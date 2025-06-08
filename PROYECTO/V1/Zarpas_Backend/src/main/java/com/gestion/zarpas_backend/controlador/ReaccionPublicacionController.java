@@ -21,43 +21,36 @@ public class ReaccionPublicacionController {
     @Autowired
     private ReaccionPublicacionService reaccionPublicacionService;
 
-    // Endpoint para crear o actualizar una reacción (like/dislike)
-    // Cambiado a PUT y recibe un RequestBody con el DTO
-    @PutMapping("/toggle") // <--- ¡CAMBIADO A PUT!
-    public ResponseEntity<?> toggleReaccion(
-            // @RequestParam Long idUsuario, // <--- ELIMINAR
-            // @RequestParam Long idPublicacion, // <--- ELIMINAR
-            // @RequestParam TipoReaccion tipoReaccion) { // <--- ELIMINAR
-            @RequestBody ReaccionRequest request) { // <--- ¡AÑADIDO @RequestBody!
+    @PutMapping("/toggle")
+    public ResponseEntity<?> toggleReaccion(@RequestBody ReaccionRequest request) {
         try {
-            ReaccionPublicacion reaccion = reaccionPublicacionService.crearOActualizarReaccion(
-                    request.getIdUsuario(),
-                    request.getIdPublicacion(),
-                    request.getTipoReaccion()
-            );
-            if (reaccion == null) {
-                return new ResponseEntity<>("Reacción eliminada.", HttpStatus.OK);
+            ReaccionPublicacion reaccionGuardada = reaccionPublicacionService.crearOActualizarReaccion(
+                    request.getIdUsuario(), request.getIdPublicacion(), request.getTipoReaccion());
+
+            if (reaccionGuardada != null) {
+                // Si se creó o actualizó una reacción, devuelve la reacción guardada con 200 OK
+                return new ResponseEntity<>(reaccionGuardada, HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(reaccion, HttpStatus.OK);
+                // Si la reacción fue eliminada (reaccionGuardada es null), devuelve 204 No Content
+                // IMPORTANTE: NO incluyas un cuerpo en esta respuesta.
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-        } catch (RuntimeException e) {
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>("Error interno del servidor: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    // Endpoint para obtener el conteo de likes y dislikes de una publicación
+    // ... (Mantén el resto de tus métodos aquí)
     @GetMapping("/conteo/{idPublicacion}")
     public ResponseEntity<Map<TipoReaccion, Long>> getConteoReacciones(@PathVariable Long idPublicacion) {
         Map<TipoReaccion, Long> conteo = reaccionPublicacionService.getConteoReaccionesByPublicacionId(idPublicacion);
-        // Asegurarse de que siempre devuelva 0 si no hay likes/dislikes, en lugar de no incluir la clave
         conteo.putIfAbsent(TipoReaccion.like, 0L);
         conteo.putIfAbsent(TipoReaccion.dislike, 0L);
         return new ResponseEntity<>(conteo, HttpStatus.OK);
     }
 
-    // Endpoint para obtener la reacción de un usuario a una publicación específica
     @GetMapping("/usuario/{idUsuario}/publicacion/{idPublicacion}")
     public ResponseEntity<TipoReaccion> getReaccionUsuario(
             @PathVariable Long idUsuario,

@@ -32,29 +32,43 @@ public class ReaccionPublicacionService {
     @Transactional
     public ReaccionPublicacion crearOActualizarReaccion(Long idUsuario, Long idPublicacion, TipoReaccion nuevoTipoReaccion) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idUsuario));
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + idUsuario));
         Publicacion publicacion = publicacionRepository.findById(idPublicacion)
-                .orElseThrow(() -> new RuntimeException("Publicación no encontrada con ID: " + idPublicacion));
+                .orElseThrow(() -> new IllegalArgumentException("Publicación no encontrada con ID: " + idPublicacion));
 
-        Optional<ReaccionPublicacion> reaccionExistente = reaccionPublicacionRepository.findById_IdUsuarioAndId_IdPublicacion(idUsuario, idPublicacion);
+        Optional<ReaccionPublicacion> existingReactionOptional = reaccionPublicacionRepository
+                .findById_IdUsuarioAndId_IdPublicacion(idUsuario, idPublicacion);
 
-        if (reaccionExistente.isPresent()) {
-            ReaccionPublicacion reaccion = reaccionExistente.get();
-            if (reaccion.getTipoReaccion().equals(nuevoTipoReaccion)) {
-                // Si la reacción es del mismo tipo, se elimina (deshacer like/dislike)
-                reaccionPublicacionRepository.delete(reaccion);
+        // --- INICIO DE LA LÓGICA CORREGIDA ---
+        if (nuevoTipoReaccion == null) {
+            // Si nuevoTipoReaccion es null, el usuario quiere deseleccionar/eliminar su reacción.
+            if (existingReactionOptional.isPresent()) {
+                reaccionPublicacionRepository.delete(existingReactionOptional.get());
                 return null; // Indica que la reacción fue eliminada
             } else {
-                // Si la reacción es de tipo diferente, se actualiza
-                reaccion.setTipoReaccion(nuevoTipoReaccion);
-                reaccion.setFechaReaccion(new Timestamp(System.currentTimeMillis()));
-                return reaccionPublicacionRepository.save(reaccion);
+                return null; // No hay reacción existente que eliminar
             }
         } else {
-            // No hay reacción existente, se crea una nueva
-            ReaccionPublicacion nuevaReaccion = new ReaccionPublicacion(usuario, publicacion, nuevoTipoReaccion);
-            return reaccionPublicacionRepository.save(nuevaReaccion);
+            // Si nuevoTipoReaccion no es null, el usuario quiere reaccionar o cambiar su reacción.
+            if (existingReactionOptional.isPresent()) {
+                ReaccionPublicacion reaccion = existingReactionOptional.get();
+                if (reaccion.getTipoReaccion().equals(nuevoTipoReaccion)) {
+                    // Si el tipo de reacción existente es el mismo que el nuevo, se elimina (desactivar).
+                    reaccionPublicacionRepository.delete(reaccion);
+                    return null; // Indica que la reacción fue eliminada
+                } else {
+                    // Si el tipo de reacción existente es diferente, se actualiza.
+                    reaccion.setTipoReaccion(nuevoTipoReaccion);
+                    reaccion.setFechaReaccion(new Timestamp(System.currentTimeMillis()));
+                    return reaccionPublicacionRepository.save(reaccion);
+                }
+            } else {
+                // No hay reacción existente, se crea una nueva.
+                ReaccionPublicacion nuevaReaccion = new ReaccionPublicacion(usuario, publicacion, nuevoTipoReaccion);
+                return reaccionPublicacionRepository.save(nuevaReaccion);
+            }
         }
+        // --- FIN DE LA LÓGICA CORREGIDA ---
     }
 
     // Obtener el conteo de likes y dislikes para una publicación

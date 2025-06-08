@@ -1,7 +1,8 @@
 // src/app/services/comentario-reaccion.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs'; // Importa 'of' para errores controlados
+import { map, catchError } from 'rxjs/operators'; // Importa 'map' y 'catchError'
 import { AuthService } from './auth.service';
 import { TipoReaccion } from '../modelos/TipoReaccion';
 import { ComentarioReaccionRequest } from '../modelos/ComentarioReaccion';
@@ -14,8 +15,8 @@ export class ComentarioReaccionService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  private getAuthHeaders(): HttpHeaders {
-    const token = this.authService.getToken();
+  getAuthHeaders(): HttpHeaders {
+    const token = this.authService.getToken(); // Usa el método getToken() de AuthService
     if (token) {
       return new HttpHeaders({
         'Content-Type': 'application/json',
@@ -23,7 +24,7 @@ export class ComentarioReaccionService {
       });
     }
     console.warn('No authentication token available for getAuthHeaders.');
-    return new HttpHeaders({ 'Content-Type': 'application/json' });
+    return new HttpHeaders({ 'Content-Type': 'application/json' }); // Devuelve sin token si no hay
   }
 
   toggleReaccion(request: ComentarioReaccionRequest): Observable<HttpResponse<any>> {
@@ -33,13 +34,29 @@ export class ComentarioReaccionService {
     });
   }
 
+  // --- ¡REVISA ESTA LÍNEA CUIDADOSAMENTE! ---
   getConteoReacciones(idComentario: number): Observable<{ like: number, dislike: number }> {
+    // Asegúrate de que no haya caracteres ocultos o etiquetas HTML aquí.
+    // La URL esperada es: http://localhost:9000/api/reacciones-comentario/conteo/{idComentario}
     return this.http.get<{ like: number, dislike: number }>(`${this.baseUrl}/conteo/${idComentario}`);
   }
 
   getReaccionUsuario(idUsuario: number, idComentario: number): Observable<TipoReaccion | null> {
-    // Si la reacción no existe, el backend devuelve 404, que rxjs/HttpClient mapea a un error.
-    // Usaremos catchError en el componente para manejarlo y devolver null.
-    return this.http.get<TipoReaccion>(`${this.baseUrl}/usuario/${idUsuario}/comentario/${idComentario}`, { headers: this.getAuthHeaders() });
+    const headers = this.getAuthHeaders(); // Usar getAuthHeaders para incluir el token
+
+    // Si la reacción no existe, el backend devuelve 404. HttpClient mapea 404 a un error.
+    // Usamos catchError para interceptar el 404 y devolver 'null'.
+    return this.http.get<TipoReaccion>(`${this.baseUrl}/usuario/${idUsuario}/comentario/${idComentario}`, { headers: headers })
+      .pipe(
+        map(response => response), // Si hay respuesta, la mapea directamente
+        catchError(error => {
+          if (error.status === 404) {
+            return of(null); // Si es 404, devuelve null (no hay reacción)
+          }
+          // Para otros errores, relanza el error
+          console.error('Error al obtener reacción del usuario:', error);
+          throw error;
+        })
+      );
   }
 }

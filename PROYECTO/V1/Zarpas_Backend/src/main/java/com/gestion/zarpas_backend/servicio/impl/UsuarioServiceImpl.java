@@ -32,6 +32,11 @@ public class UsuarioServiceImpl implements UsuarioService { // Implementa la int
     }
 
     @Override
+    public Optional<Usuario> findByUsername(String username) {
+        return usuarioRepository.findByUsername(username); // <--- AÑADE ESTE MÉTODO
+    }
+
+    @Override
     @Transactional
     public Usuario guardarUsuario(Usuario usuario) {
         // La contraseña ya debería venir codificada desde el AuthController,

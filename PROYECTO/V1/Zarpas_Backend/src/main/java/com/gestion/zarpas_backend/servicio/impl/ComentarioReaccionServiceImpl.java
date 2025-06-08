@@ -32,31 +32,55 @@ public class ComentarioReaccionServiceImpl implements ComentarioReaccionService 
         this.comentarioRepository = comentarioRepository;
     }
     @Transactional
+    @Override
     public ComentarioReaccion crearOActualizarReaccion(Long idUsuario, Long idComentario, TipoReaccion nuevoTipoReaccion) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idUsuario));
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + idUsuario));
         Comentario comentario = comentarioRepository.findById(idComentario)
-                .orElseThrow(() -> new RuntimeException("Comentario no encontrado con ID: " + idComentario));
+                .orElseThrow(() -> new IllegalArgumentException("Comentario no encontrado con ID: " + idComentario));
 
-        Optional<ComentarioReaccion> reaccionExistente = comentarioReaccionRepository.findById_IdUsuarioAndId_IdComentario(idUsuario, idComentario);
+        Optional<ComentarioReaccion> existingReactionOptional = comentarioReaccionRepository
+                .findById_IdUsuarioAndId_IdComentario(idUsuario, idComentario);
 
-        if (reaccionExistente.isPresent()) {
-            ComentarioReaccion reaccion = reaccionExistente.get();
-            if (reaccion.getTipoReaccion() == nuevoTipoReaccion) {
-                // Si la reacción ya existe y es del mismo tipo, la eliminamos (toggle off)
-                comentarioReaccionRepository.delete(reaccion);
+        // --- INICIO DE LA LÓGICA CORREGIDA ---
+        if (nuevoTipoReaccion == null) {
+            // Si nuevoTipoReaccion es null, el usuario quiere deseleccionar/eliminar su reacción.
+            if (existingReactionOptional.isPresent()) {
+                comentarioReaccionRepository.delete(existingReactionOptional.get());
                 return null; // Indica que la reacción fue eliminada
             } else {
-                // Si la reacción es de tipo diferente, se actualiza
-                reaccion.setTipoReaccion(nuevoTipoReaccion);
-                reaccion.setFechaReaccion(new Timestamp(System.currentTimeMillis()));
-                return comentarioReaccionRepository.save(reaccion);
+                return null; // No hay reacción existente que eliminar
             }
         } else {
-            // No hay reacción existente, se crea una nueva
-            ComentarioReaccion nuevaReaccion = new ComentarioReaccion(usuario, comentario, nuevoTipoReaccion);
-            return comentarioReaccionRepository.save(nuevaReaccion);
+            // Si nuevoTipoReaccion no es null, el usuario quiere reaccionar o cambiar su reacción.
+            if (existingReactionOptional.isPresent()) {
+                ComentarioReaccion reaccion = existingReactionOptional.get();
+                if (reaccion.getTipoReaccion().equals(nuevoTipoReaccion)) {
+                    // Si el tipo de reacción existente es el mismo que el nuevo, se elimina (desactivar).
+                    comentarioReaccionRepository.delete(reaccion);
+                    return null; // Indica que la reacción fue eliminada
+                } else {
+                    // Si el tipo de reacción existente es diferente, se actualiza.
+                    reaccion.setTipoReaccion(nuevoTipoReaccion);
+                    reaccion.setFechaReaccion(Timestamp.from(Instant.now()));
+                    return comentarioReaccionRepository.save(reaccion);
+                }
+            } else {
+                // No hay reacción existente, se crea una nueva.
+                ComentarioReaccion nuevaReaccion = new ComentarioReaccion();
+                if (nuevaReaccion.getId() == null) {
+                    nuevaReaccion.setId(new ComentarioReaccionId());
+                }
+                nuevaReaccion.getId().setIdUsuario(idUsuario);
+                nuevaReaccion.getId().setIdComentario(idComentario);
+                nuevaReaccion.setUsuario(usuario);
+                nuevaReaccion.setComentario(comentario);
+                nuevaReaccion.setTipoReaccion(nuevoTipoReaccion);
+                nuevaReaccion.setFechaReaccion(Timestamp.from(Instant.now()));
+                return comentarioReaccionRepository.save(nuevaReaccion);
+            }
         }
+        // --- FIN DE LA LÓGICA CORREGIDA ---
     }
 
     public Map<TipoReaccion, Long> getConteoReaccionesByComentarioId(Long idComentario) {

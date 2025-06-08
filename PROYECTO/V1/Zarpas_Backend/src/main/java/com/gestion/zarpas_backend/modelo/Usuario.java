@@ -1,5 +1,6 @@
 package com.gestion.zarpas_backend.modelo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -42,12 +43,12 @@ public class Usuario {
     @Column(name = "foto_perfil")
     private String fotoPerfil;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("usuario-publicaciones")
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonBackReference("usuario-publicaciones")
     @JsonIgnore// Nombre único
     private List<Publicacion> publicaciones; //
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference("usuario-comentarios")
     @JsonIgnore// Nombre único
     private List<Comentario> comentarios = new ArrayList<>();
@@ -75,7 +76,7 @@ public class Usuario {
     private List<Publicacion> publicacionesGuardadas; //
 
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     @JsonManagedReference("usuario-comentarioReacciones")
     private List<ComentarioReaccion> comentarioReacciones = new ArrayList<>();
 
@@ -87,8 +88,8 @@ public class Usuario {
     private Set<UsuarioRol> usuarioRoles = new HashSet<>(); //
 
     // --- ¡AÑADE ESTO PARA LAS REACCIONES A PUBLICACIONES! ---
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("usuario-reaccionesPublicacion")
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonBackReference("usuario-reaccionesPublicacion")
     private List<ReaccionPublicacion> reaccionesPublicacion = new ArrayList<>();
 
 
@@ -100,6 +101,9 @@ public class Usuario {
         this.nombre = nombre;
         this.fechaRegistro = new Timestamp(System.currentTimeMillis());
         this.usuarioRoles = new HashSet<>(); // Inicializar roles vacíos, se asignarán después
+        this.comentarios = new ArrayList<>();
+        this.reaccionesPublicacion = new ArrayList<>();
+        this.comentarioReacciones = new ArrayList<>();
     }
 
     // Métodos equals y hashCode para UserDetailsImpl
@@ -115,4 +119,6 @@ public class Usuario {
     public int hashCode() {
         return Objects.hash(idUsuario);
     }
+
+
 }
