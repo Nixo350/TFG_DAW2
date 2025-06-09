@@ -1,23 +1,21 @@
-/* src/styles.css - Archivo de estilos global */
-
 /* --- Variables CSS Globales --- */
 :root {
-   --primary-color: #B71C1C; /* Rojo oscuro principal */
-   --accent-color: #D32F2F; /* Rojo un poco más vibrante, para acentos y botones */
-   --hover-color: #A01F1F;  /* Rojo más oscuro para estados hover */
-   --text-on-dark: #FFFFFF; /* Texto blanco para fondos oscuros */
-   --text-color: #333; /* Color de texto general */
-   --light-text-color: #666; /* Texto más claro para etiquetas, descripciones */
-   --background-color: #f0f2f5; /* Gris claro para el fondo general de la app */
-   --card-background-color: #ffffff; /* Fondo para las tarjetas/contenedores de formulario */
-   --border-color: #e0e0e0; /* Color general de bordes */
-   --border-radius: 8px; /* Radio de borde consistente */
-   --spacing-unit: 16px; /* Unidad base para márgenes y paddings */
-   --box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.08); /* Sombra ligera */
-   --box-shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.12); /* Sombra para elementos principales */
-   --error-color: #E53935; /* Rojo para errores */
-   --success-color: #4CAF50; /* Verde para mensajes de éxito */
-   --info-color: #2196F3; /* Azul para información */
+   --primary-color: #B71C1C; 
+   --accent-color: #D32F2F; 
+   --hover-color: #A01F1F;  
+   --text-on-dark: #FFFFFF; 
+   --text-color: #333; 
+   --light-text-color: #666; 
+   --background-color: #f0f2f5; 
+   --card-background-color: #ffffff; 
+   --border-color: #e0e0e0; 
+   --border-radius: 8px; 
+   --spacing-unit: 16px; 
+   --box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.08); 
+   --box-shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.12); 
+   --error-color: #E53935; 
+   --success-color: #4CAF50; 
+   --info-color: #2196F3; 
  
    --font-family: 'Roboto', sans-serif; /* Fuente principal de la aplicación */
  }
@@ -32,24 +30,17 @@
    line-height: 1.6;
  }
  
- /* --- Contenedor Principal para el Contenido Central (Tarjetas, Formularios) --- */
- /* Esta clase se aplicará a los contenedores principales de tus vistas (login, create-publicacion) */
  .main-content-card {
    background-color: var(--card-background-color);
    padding: 30px;
    border-radius: var(--border-radius);
    box-shadow: var(--box-shadow-medium);
-   margin: 40px auto; /* Centra el elemento y le da margen vertical */
-   max-width: 500px; /* Ancho máximo para formularios como login/registro/crear publicación */
-   width: 90%; /* Ocupa el 90% del ancho disponible en pantallas pequeñas */
-   box-sizing: border-box; /* Asegura que padding y border se incluyan en el ancho */
+   margin: 40px auto; 
+   max-width: 500px;
+   width: 90%; 
+   box-sizing: border-box; 
  }
  
- /* Estilos de Material Design (asegúrate de que los temas de Angular Material estén importados) */
- /* Si usas Angular Material, asegúrate de tener un tema importado en angular.json o en styles.css.
-    Por ejemplo: @import '@angular/material/prebuilt-themes/deeppurple-amber.css'; */
- 
- /* Sobreescribir estilos de Material Design para que usen tus variables */
  .mat-toolbar.mat-primary {
    background-color: var(--primary-color) !important;
  }
@@ -75,23 +66,23 @@
  }
  
  .mat-form-field.mat-focused .mat-form-field-outline {
-   color: var(--accent-color) !important; /* Rojo de acento al enfocar */
+   color: var(--accent-color) !important; 
  }
  
  .mat-form-field.mat-focused .mat-form-field-ripple {
-   background-color: var(--accent-color) !important; /* Rojo de acento para el ripple */
+   background-color: var(--accent-color) !important; 
  }
  
  .mat-form-field-label {
-   color: var(--light-text-color); /* Color por defecto del label */
+   color: var(--light-text-color); 
  }
  
  .mat-form-field.mat-focused .mat-form-field-label {
-   color: var(--accent-color) !important; /* Rojo de acento para el label enfocado */
+   color: var(--accent-color) !important; 
  }
  
  .mat-input-element {
-   color: var(--text-color); /* Color del texto del input */
+   color: var(--text-color); 
  }
  
  /* Utilidades de texto y enlaces */
@@ -113,7 +104,7 @@
  
  /* Clases para mensajes de feedback */
  .success-message {
-     background-color: rgba(76, 175, 80, 0.1); /* Verde suave */
+     background-color: rgba(76, 175, 80, 0.1); 
      color: var(--success-color);
      border: 1px solid var(--success-color);
      padding: 12px;
@@ -124,7 +115,7 @@
  }
  
  .error-message {
-     background-color: rgba(229, 57, 53, 0.1); /* Rojo suave */
+     background-color: rgba(229, 57, 53, 0.1); 
      color: var(--error-color);
      border: 1px solid var(--error-color);
      padding: 12px;

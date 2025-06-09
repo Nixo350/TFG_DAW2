@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
+//Clase para las reacciones simplificacione de ReaccionPublicacion
 public class ReaccionPublicacionRequest {
     private Long idUsuario;
     private Long idPublicacion;

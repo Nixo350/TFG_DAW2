@@ -72,7 +72,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.authService.logout(); 
     this.router.navigate(['/login']); 
   }
-
+//Clase encargada de buscar por palabras
   onSearch(): void {
     this.searchService.updateSearchTerm(this.searchTerm);
     this.router.navigate(['/dashboard']);

@@ -140,7 +140,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
-
+//Clase encargada de cargar publicaciones
 loadPosts(): void {
   this.subscriptions.add(
     this.postService.getPublicaciones().subscribe(
@@ -215,7 +215,7 @@ loadPosts(): void {
       )
     );
   }
-
+//Clase encargada de filtrar por categoria seleccionadas
   filterByCategory(): void {
     if (this.selectedCategoryId) {
       const selectedCategory = this.categories.find(
@@ -240,7 +240,7 @@ loadPosts(): void {
       this.loadPosts();
     }
   }
-
+//Clase encargada para limpiar los filtros y recargar publicaciones
   clearCategoryFilter(): void {
     this.selectedCategoryId = null;
     this.loadPosts();
@@ -393,7 +393,7 @@ loadPosts(): void {
   onDislike(publicacion: Publicacion): void {
     this.reactToPost(publicacion, TipoReaccion.dislike);
   }
-
+//Clase encargada de reaccionar a las publicaciones
   reactToPost(publicacion: Publicacion, tipo: TipoReaccion): void {
     const currentUser = this.authService.getUser();
     if (!currentUser || !currentUser.id) {
@@ -436,7 +436,7 @@ loadPosts(): void {
     );
   }
 
-
+//Clase encargada de guardar las publicaciones
   onSaveToggle(post: Publicacion): void {
     const idPublicacion = post.idPublicacion;
     const currentUser = this.authService.getUser();

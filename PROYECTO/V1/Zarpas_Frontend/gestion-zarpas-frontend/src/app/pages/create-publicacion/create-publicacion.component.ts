@@ -50,7 +50,7 @@ export class CreatePublicacionComponent implements OnInit {
   ngOnInit(): void {
     this.loadCategories();
   }
-
+//Clase encargada de cargar las categorias
   loadCategories(): void {
     const token = this.authService.getToken();
     console.log(token);
@@ -75,7 +75,7 @@ export class CreatePublicacionComponent implements OnInit {
         }
       });
   }
-
+//Clase encargada para la seleccion de imagen el la creacion
   onFileSelected(event: any): void {
     if (event.target.files && event.target.files.length > 0) {
       this.selectedImage = event.target.files[0];

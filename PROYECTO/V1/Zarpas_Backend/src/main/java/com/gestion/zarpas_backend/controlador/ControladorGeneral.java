@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/apis/")
 public class ControladorGeneral {
-
+//Clase encargada ppara pruebas no implementacion de la app
     @Autowired
     private UsuarioRepository repositorioUsuario;
 

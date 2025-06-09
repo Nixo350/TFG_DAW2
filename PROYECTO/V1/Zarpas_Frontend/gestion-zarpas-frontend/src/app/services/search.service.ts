@@ -10,7 +10,7 @@ export class SearchService {
   public searchTerm$: Observable<string> = this.searchTermSubject.asObservable();
 
   constructor() { }
-
+//Clase encargada de introducir texto para la busqueda de las publicaciones
   updateSearchTerm(term: string): void {
     this.searchTermSubject.next(term);
   }

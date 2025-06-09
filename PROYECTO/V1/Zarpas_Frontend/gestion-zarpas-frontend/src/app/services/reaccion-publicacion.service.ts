@@ -1,11 +1,9 @@
-// src/app/services/reaccion-publicacion.service.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TipoReaccion } from '../modelos/TipoReaccion';
 import { AuthService } from './auth.service';
-import { catchError, of, throwError } from 'rxjs'; // Asegúrate de importar estos operadores
+import { catchError, of, throwError } from 'rxjs'; 
 import { ReaccionPublicacionRequest } from '../modelos/ReaccionPublicacion';
 
 @Injectable({
@@ -44,6 +42,8 @@ export class ReaccionPublicacionService {
       })
     );
   }
+
+  //Clase encargada para dar LIKE O DISLIKE
   reaccionar(request: ReaccionPublicacionRequest): Observable<any> {
     return this.http.put(`${this.baseUrl}/toggle`, request);
   }

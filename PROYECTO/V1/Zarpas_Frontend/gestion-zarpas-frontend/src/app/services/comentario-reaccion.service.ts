@@ -1,8 +1,7 @@
-// src/app/services/comentario-reaccion.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Observable, of } from 'rxjs'; // Importa 'of' para errores controlados
-import { map, catchError } from 'rxjs/operators'; // Importa 'map' y 'catchError'
+import { Observable, of } from 'rxjs'; 
+import { map, catchError } from 'rxjs/operators'; 
 import { AuthService } from './auth.service';
 import { TipoReaccion } from '../modelos/TipoReaccion';
 import { ComentarioReaccionRequest } from '../modelos/ComentarioReaccion';
@@ -30,7 +29,7 @@ export class ComentarioReaccionService {
   getConteoReacciones(idComentario: number): Observable<{ like: number, dislike: number }> {
     return this.http.get<{ like: number, dislike: number }>(`${this.baseUrl}/conteo/${idComentario}`);
   }
-
+//Clase encargada mostrar reacciones tanto de comentarios y usuarios
   getReaccionByComentarioAndUsuario(idComentario: number, idUsuario: number): Observable<TipoReaccion | null> {
     return this.http.get<TipoReaccion | null>(`${this.baseUrl}/comentario/${idComentario}/usuario/${idUsuario}`, { headers: this.getAuthHeaders() });
   }

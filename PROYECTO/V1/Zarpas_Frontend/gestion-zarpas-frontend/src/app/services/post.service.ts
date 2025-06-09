@@ -36,6 +36,7 @@ export class PostService {
     return this.http.get<Publicacion[]>(`${BASE_API_URL}/todas`);
   }
 
+  //Clase encargada de buscar las publicaciones
   searchPublicaciones(searchTerm: string): Observable<Publicacion[]> {
     return this.http.get<Publicacion[]>(`${BASE_API_URL}/buscar?keyword=${searchTerm}`);
   }

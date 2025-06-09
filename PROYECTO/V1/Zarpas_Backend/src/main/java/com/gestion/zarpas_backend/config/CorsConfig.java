@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
-
+//Clase encargada de mapear y registrar la ruta del Frontend
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")

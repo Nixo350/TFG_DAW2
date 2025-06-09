@@ -14,6 +14,8 @@ const httpOptions = {
 })
 export class AuthService {
 
+  //Clase encargada del la autentificacion del usuario con un TOKEN
+
   private _isLoggedIn$ = new BehaviorSubject<boolean>(false);
   private _currentUser$ = new BehaviorSubject<any | null>(null); 
 
@@ -51,7 +53,7 @@ export class AuthService {
   }
 
 
-
+//Clase encargada de el login del usuario
   login(username: string, password_param: string): Observable<any> {
     return this.http.post(AUTH_API + 'signin', {
       username,
@@ -73,7 +75,7 @@ export class AuthService {
       catchError(this.handleError<any>('login'))
     );
   }
-
+//Clase encargada de la decodificacion del token enviado para la autenticacion
   private decodeToken(token: string): any {
     const parts = token.split('.');
     if (parts.length === 3) {
@@ -87,7 +89,7 @@ export class AuthService {
     }
     return null;
   }
-
+//Clase encargada para el cierre de sesion
   logout(redirectToLogin: boolean = true): void {
     localStorage.removeItem('auth-token');
     localStorage.removeItem('auth-user');
@@ -96,13 +98,13 @@ export class AuthService {
     
   }
 
-
+//Clase encargada de mostrar los datos del Usuario cargados por el token
   getUserFromLocalStorage(): any | null {
     const user = localStorage.getItem('auth-user');
     return user ? JSON.parse(user) : null;
   }
 
-
+//Clase encargada para mostrar si el usuario de ha autenticado
   isLoggedIn(): boolean {
     const token = this.getToken();
     if (!token) {
@@ -118,12 +120,12 @@ export class AuthService {
     }
   }
 
-
+//Clase encargada de retornar el token
   getToken(): string | null {
     return localStorage.getItem('auth-token');
   }
 
-
+//Clase encargada de los errores en estas operaciones
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.error(`${operation} failed:`, error); 

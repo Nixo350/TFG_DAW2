@@ -20,7 +20,7 @@ public class ReaccionPublicacionController {
 
     @Autowired
     private ReaccionPublicacionService reaccionPublicacionService;
-
+//Metodo para reaacionar a publicaciones
     @PutMapping("/toggle")
     public ResponseEntity<?> toggleReaccion(@RequestBody ReaccionRequest request) {
         try {

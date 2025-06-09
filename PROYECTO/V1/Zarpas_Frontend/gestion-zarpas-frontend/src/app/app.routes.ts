@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './pages/login/login.component'; // Asegúrate de que esta ruta sea correcta
-import { SignupComponent } from './pages/signup/signup.component'; // Asegúrate de que esta ruta sea correcta
+import { LoginComponent } from './pages/login/login.component'; 
+import { SignupComponent } from './pages/signup/signup.component'; 
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { CreatePublicacionComponent } from './pages/create-publicacion/create-publicacion.component'; // Importa el nuevo componente
+import { CreatePublicacionComponent } from './pages/create-publicacion/create-publicacion.component'; 
 
 
-
+//Clase encargada de relacionar las ventanas de la web
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
