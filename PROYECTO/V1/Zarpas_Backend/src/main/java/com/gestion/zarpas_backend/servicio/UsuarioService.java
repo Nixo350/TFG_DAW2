@@ -2,7 +2,6 @@ package com.gestion.zarpas_backend.servicio;
 
 import com.gestion.zarpas_backend.modelo.Rol;
 import com.gestion.zarpas_backend.modelo.Usuario;
-import org.springframework.security.crypto.password.PasswordEncoder; // Necesario para la interfaz si el método lo usa directamente
 
 import java.util.List;
 import java.util.Optional;

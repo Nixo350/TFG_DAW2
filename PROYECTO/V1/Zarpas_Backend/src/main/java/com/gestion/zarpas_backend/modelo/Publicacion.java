@@ -7,9 +7,7 @@ import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashSet; // Aunque no se usa directamente en Publicacion, se mantiene por si acaso
 import java.util.List;
-import java.util.Set; // Aunque no se usa directamente en Publicacion, se mantiene por si acaso
 
 @Entity
 @Table(name = "publicacion")
@@ -26,8 +24,8 @@ public class Publicacion {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario", nullable = false)
-    @JsonBackReference("usuario-publicaciones") // <--- ¡CORREGIDO! Ahora es JsonBackReference
-    private Usuario usuario; // El usuario que creó la publicación
+    @JsonBackReference("usuario-publicaciones")
+    private Usuario usuario;
 
     private String titulo;
 
@@ -44,17 +42,15 @@ public class Publicacion {
     private Timestamp fechaModificacion;
 
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("publicacion-comentarios") // Correcto: la publicación gestiona sus comentarios
+    @JsonManagedReference("publicacion-comentarios")
     private List<Comentario> comentarios = new ArrayList<>();
 
-    // Relación con la entidad de unión PublicacionGuardada
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("publicacion-publicacionGuardadas") // <--- ¡CORREGIDO! Ahora es JsonManagedReference
+    @JsonManagedReference("publicacion-publicacionGuardadas")
     private List<PublicacionGuardada> guardadosPorUsuarios = new ArrayList<>();
 
-    // Relación con ReaccionPublicacion
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("publicacion-reacciones") // Correcto: la publicación gestiona sus reacciones
+    @JsonManagedReference("publicacion-reacciones")
     private List<ReaccionPublicacion> reaccionesPublicacion = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)

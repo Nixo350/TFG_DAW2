@@ -2,7 +2,7 @@ package com.gestion.zarpas_backend.controlador;
 
 import com.gestion.zarpas_backend.modelo.Usuario;
 import com.gestion.zarpas_backend.modelo.Rol;
-import com.gestion.zarpas_backend.servicio.UsuarioService; // Importa la interfaz
+import com.gestion.zarpas_backend.servicio.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,19 +17,13 @@ import java.util.Set;
 @CrossOrigin(origins = "http://localhost:4200")
 public class UsuarioController {
 
-    private final UsuarioService usuarioService; // Inyecta la interfaz
+    private final UsuarioService usuarioService;
 
     @Autowired
     public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
-    // EL MÉTODO DE REGISTRO SE HA MOVIDO A AuthController.java
-    // @PostMapping
-    // public ResponseEntity<Usuario> crearUsuario(@RequestBody Usuario usuario) {
-    //     Usuario nuevoUsuario = usuarioService.guardarUsuario(usuario);
-    //     return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
-    // }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")

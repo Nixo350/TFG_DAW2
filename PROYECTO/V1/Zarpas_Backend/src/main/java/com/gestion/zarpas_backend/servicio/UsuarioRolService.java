@@ -6,9 +6,9 @@ import java.util.Optional;
 
 public interface UsuarioRolService {
     UsuarioRol guardarUsuarioRol(UsuarioRol usuarioRol);
-    Optional<UsuarioRol> obtenerUsuarioRolPorId(Long id); // ID simple para UsuarioRol
+    Optional<UsuarioRol> obtenerUsuarioRolPorId(Long id);
     List<UsuarioRol> obtenerTodosLosUsuarioRoles();
-    void eliminarUsuarioRol(Long id); // ID simple para UsuarioRol
+    void eliminarUsuarioRol(Long id);
     List<UsuarioRol> obtenerRolesPorUsuarioId(Long usuarioId);
     List<UsuarioRol> obtenerUsuariosPorRolId(Long rolId);
 }

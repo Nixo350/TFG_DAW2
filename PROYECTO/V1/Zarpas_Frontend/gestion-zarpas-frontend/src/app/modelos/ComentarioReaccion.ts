@@ -6,8 +6,6 @@ export interface ComentarioReaccion {
     tipoReaccion: TipoReaccion;
     fechaReaccion?: Date | null;
   }
-  
-  // Opcional, si necesitas la clase Id por separado
   export interface ComentarioReaccionRequest {
     idUsuario: number;
     idComentario: number;

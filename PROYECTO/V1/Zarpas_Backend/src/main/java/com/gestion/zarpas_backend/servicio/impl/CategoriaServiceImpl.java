@@ -1,4 +1,3 @@
-// src/main/java/com/gestion/zarpas_backend/servicio/impl/CategoriaServiceImpl.java
 package com.gestion.zarpas_backend.servicio.impl;
 
 import com.gestion.zarpas_backend.modelo.Categoria;

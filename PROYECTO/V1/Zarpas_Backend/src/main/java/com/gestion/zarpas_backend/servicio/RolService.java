@@ -10,5 +10,5 @@ public interface RolService {
     List<Rol> obtenerTodosLosRoles();
     Rol actualizarRol(Rol rol);
     void eliminarRol(Long id);
-    Optional<Rol> obtenerRolPorNombre(String nombre); // Añadido
+    Optional<Rol> obtenerRolPorNombre(String nombre);
 }

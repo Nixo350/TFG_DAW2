@@ -19,14 +19,12 @@ public class Rol {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_rol")
-    private Long id; // Renombrado a 'id' para consistencia en JwtResponse
+    private Long id;
     private String nombre;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "rol")
     @JsonBackReference("rol-usuarioRoles") // Nombre único
-    private Set<UsuarioRol> usuarioRoles =new HashSet<>(); //
-
-    // Puedes añadir equals y hashCode si es necesario para colecciones
+    private Set<UsuarioRol> usuarioRoles =new HashSet<>();
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

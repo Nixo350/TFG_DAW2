@@ -1,6 +1,6 @@
 package com.gestion.zarpas_backend.modelo;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference; // Asegúrate de usar esta importación
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,19 +15,18 @@ public class UsuarioRol {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long UsuarioRolId; // Un ID propio para la tabla de unión
+    private Long UsuarioRolId;
 
-    @ManyToOne(fetch = FetchType.EAGER) // Fetch EAGER para cargar roles con el usuario
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario")
-    @JsonManagedReference("usuario-usuarioRoles") // Coincide con el nombre en Usuario.java
+    @JsonManagedReference("usuario-usuarioRoles")
     private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "id_rol")
-    @JsonManagedReference("rol-usuarioRoles") // Coincide con el nombre en Rol.java
+    @JsonManagedReference("rol-usuarioRoles")
     private Rol rol;
 
-    // Si necesitas un constructor para crear fácilmente UsuarioRol
     public UsuarioRol(Usuario usuario, Rol rol) {
         this.usuario = usuario;
         this.rol = rol;

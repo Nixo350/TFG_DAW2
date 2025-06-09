@@ -21,12 +21,12 @@ public class Mensaje {
 
     @ManyToOne
     @JoinColumn(name = "id_chat", nullable = false)
-    @JsonBackReference("chat-mensajes") // Coincide con Chat.java
+    @JsonBackReference("chat-mensajes")
     private Chat chat;
 
     @ManyToOne
     @JoinColumn(name = "id_emisor", nullable = false)
-    @JsonBackReference("usuario-mensajesEnviados") // Coincide con Usuario.java
+    @JsonBackReference("usuario-mensajesEnviados")
     private Usuario emisor;
 
     @Column(nullable = false, columnDefinition = "TEXT")

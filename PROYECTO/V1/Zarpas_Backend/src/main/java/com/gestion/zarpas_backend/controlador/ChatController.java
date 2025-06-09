@@ -1,10 +1,9 @@
 package com.gestion.zarpas_backend.controlador;
 
 import com.gestion.zarpas_backend.modelo.Chat;
-import com.gestion.zarpas_backend.modelo.Usuario;
 import com.gestion.zarpas_backend.servicio.ChatService;
-import com.gestion.zarpas_backend.servicio.UsuarioChatService; // Para manejar la relación usuario-chat
-import com.gestion.zarpas_backend.servicio.UsuarioService; // Para buscar usuarios
+import com.gestion.zarpas_backend.servicio.UsuarioChatService;
+import com.gestion.zarpas_backend.servicio.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +16,8 @@ import java.util.List;
 public class ChatController {
 
     private final ChatService chatService;
-    private final UsuarioService usuarioService; // Necesario para validar usuarios
-    private final UsuarioChatService usuarioChatService; // Para manejar la relación de unión
+    private final UsuarioService usuarioService;
+    private final UsuarioChatService usuarioChatService;
 
     @Autowired
     public ChatController(ChatService chatService, UsuarioService usuarioService, UsuarioChatService usuarioChatService) {
@@ -75,14 +74,13 @@ public class ChatController {
             List<Chat> chats = chatService.obtenerChatsPorUsuarioId(usuarioId);
             return new ResponseEntity<>(chats, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Si el usuario no existe, o no tiene chats
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/{chatId}/usuarios/{usuarioId}")
     public ResponseEntity<Void> unirUsuarioAchat(@PathVariable Long chatId, @PathVariable Long usuarioId) {
         try {
-            // Unir usuario a chat a través del servicio de UsuarioChat
             usuarioChatService.unirUsuarioAchat(usuarioId, chatId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (RuntimeException e) {

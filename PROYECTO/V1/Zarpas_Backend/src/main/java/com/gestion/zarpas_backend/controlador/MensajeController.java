@@ -33,7 +33,7 @@ public class MensajeController {
     public ResponseEntity<Mensaje> crearMensaje(@RequestBody Mensaje mensaje) {
         if (mensaje.getChat() == null || mensaje.getChat().getIdChat() == null ||
                 mensaje.getEmisor() == null || mensaje.getEmisor().getIdUsuario() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Se requieren IDs de chat y emisor
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         Optional<Chat> chatOpt = chatService.obtenerChatPorId(mensaje.getChat().getIdChat());
@@ -45,7 +45,7 @@ public class MensajeController {
             Mensaje nuevoMensaje = mensajeService.guardarMensaje(mensaje);
             return new ResponseEntity<>(nuevoMensaje, HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Chat o Emisor no encontrados
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

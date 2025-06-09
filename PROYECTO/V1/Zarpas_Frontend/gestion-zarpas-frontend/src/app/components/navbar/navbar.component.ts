@@ -1,5 +1,4 @@
-// src/app/components/navbar/navbar.component.ts
-import { Component, OnInit, OnDestroy } from '@angular/core'; // <-- Importa OnDestroy
+import { Component, OnInit, OnDestroy,ChangeDetectorRef  } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -10,7 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SearchService } from '../../services/search.service';
-import { Subscription } from 'rxjs'; // <-- ¡Importa Subscription!
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -28,52 +27,50 @@ import { Subscription } from 'rxjs'; // <-- ¡Importa Subscription!
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent implements OnInit, OnDestroy { // <-- Implementa OnDestroy
+export class NavbarComponent implements OnInit, OnDestroy { 
   isLoggedIn: boolean = false;
   username: string | null = null;
   searchTerm: string = '';
-  private authSubscription: Subscription = new Subscription(); // Para gestionar las suscripciones
+  private authSubscription: Subscription = new Subscription();
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    // private cdr: ChangeDetectorRef, // Ya no es necesario si usas Observables correctamente
-    private searchService: SearchService
+    private searchService: SearchService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    // Suscribirse al estado de login
     this.authSubscription.add(
       this.authService.isLoggedIn$.subscribe(loggedIn => {
         this.isLoggedIn = loggedIn;
         console.log('Navbar: Estado de login actualizado a:', loggedIn);
+        this.cdr.detectChanges();
       })
     );
 
-    // Suscribirse al nombre de usuario
     this.authSubscription.add(
       this.authService.currentUser$.subscribe(user => {
         this.username = user ? user.username : null;
         console.log('Navbar: Nombre de usuario actualizado a:', this.username);
+        this.cdr.detectChanges();
       })
     );
 
-    // Suscribirse al término de búsqueda para mantenerlo actualizado
-    this.authSubscription.add( // Añade esta suscripción al mismo grupo
+    this.authSubscription.add( 
       this.searchService.searchTerm$.subscribe(term => {
         this.searchTerm = term;
       })
     );
   }
 
-  // Importante: Desuscribirse para evitar fugas de memoria
   ngOnDestroy(): void {
     this.authSubscription.unsubscribe();
   }
 
   logout(): void {
-    this.authService.logout(); // Llama al logout del servicio
-    this.router.navigate(['/login']); // Redirige al login después de desloguear
+    this.authService.logout(); 
+    this.router.navigate(['/login']); 
   }
 
   onSearch(): void {

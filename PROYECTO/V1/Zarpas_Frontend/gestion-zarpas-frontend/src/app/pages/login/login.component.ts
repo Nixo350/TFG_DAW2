@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
     password: ''
   };
 
-  isLoggedIn = false; // Este no es el estado reactivo, se usa internamente si lo necesitas
+  isLoggedIn = false; 
   isLoginFailed = false;
   errorMessage = '';
   roles: string[] = [];
@@ -44,15 +44,14 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Puedes suscribirte aquí al observable de login si quieres que este componente reaccione
-    // o simplemente llamar a isLoggedIn() al inicio para saber si ya está logueado
-    if (this.authService.isLoggedIn()) { // Comprueba el estado inicial
+
+    if (this.authService.isLoggedIn()) {
       this.isLoggedIn = true;
-      const user = this.authService.getUserFromLocalStorage(); // Obtiene el usuario del localStorage
+      const user = this.authService.getUserFromLocalStorage(); 
       if (user && user.roles) {
         this.roles = user.roles;
       }
-      this.router.navigate(['/dashboard']); // Redirige si ya está logueado
+      this.router.navigate(['/dashboard']); 
     }
   }
 
@@ -85,13 +84,12 @@ export class LoginComponent implements OnInit {
           duration: 3000, verticalPosition: 'top', horizontalPosition: 'right'
         });
 
-        // Estos estados internos del componente ya no son estrictamente necesarios para el Navbar
-        // ya que el Navbar se suscribe al AuthService, pero puedes mantenerlos si los usas localmente.
+       
         this.isLoginFailed = false;
         this.isLoggedIn = true;
         this.roles = data.roles;
 
-        this.router.navigate(['/dashboard']); // Redirige al usuario al dashboard
+        this.router.navigate(['/dashboard']); 
       },
       error: (e: any) => {
         console.error('Error durante el inicio de sesión:', e);

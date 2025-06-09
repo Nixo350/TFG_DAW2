@@ -1,5 +1,3 @@
-// src/app/pages/dashboard/dashboard.component.ts
-
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { PostService } from '../../services/post.service';
 import { Publicacion } from '../../modelos/Publicacion';
 import { HttpClientModule, HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { Router, RouterLink } from '@angular/router'; // Import Router
+import { Router, RouterLink } from '@angular/router'; 
 import { ReaccionPublicacionService } from '../../services/reaccion-publicacion.service';
 import { TipoReaccion } from '../../modelos/TipoReaccion';
 import { AuthService } from '../../services/auth.service';
@@ -26,7 +24,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { ReaccionPublicacionRequest } from '../../modelos/ReaccionPublicacion';
-import { PublicacionGuardada,PublicacionGuardadaRequest } from '../../modelos/PublicacionGuardada'; // Import PublicacionGuardada
+import { PublicacionGuardada,PublicacionGuardadaRequest } from '../../modelos/PublicacionGuardada'; 
 import { PublicacionGuardadaService } from '../../services/publicacion-guardada.service';
 
 
@@ -67,8 +65,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private searchService: SearchService,
     private snackBar: MatSnackBar,
-    // Aquí usamos PostService para guardar/desguardar, asumiendo que los métodos están ahí
-    // Si tuvieras un servicio específico para 'PublicacionGuardada', lo inyectarías aquí.
     private publicacionGuardadaService: PublicacionGuardadaService,
     private router: Router
   ) {}
@@ -92,15 +88,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   
 
   
-    // También aquí:
-    if (!currentUser || !currentUser.id || !post.guardadosPorUsuarios) { // <-- ¡CAMBIA AQUÍ! De idUsuario a id
+    if (!currentUser || !currentUser.id || !post.guardadosPorUsuarios) { 
       console.log('Resultado: FALSE (falta usuario o array)');
       return false;
     }
   
     const isSaved = post.guardadosPorUsuarios.some(pg => {
-      // Y aquí:
-      const match = pg.usuario?.idUsuario === currentUser.id; // <-- ¡CAMBIA AQUÍ! De idUsuario a id
+
+      const match = pg.usuario?.idUsuario === currentUser.id;
       if (match) {
         
       }
@@ -112,7 +107,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loadPosts(); // Initial load
+    this.loadPosts(); 
 
     this.loadCategories();
 
@@ -146,36 +141,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-// src/app/pages/dashboard/dashboard.component.ts
-
 loadPosts(): void {
   this.subscriptions.add(
     this.postService.getPublicaciones().subscribe(
       (data: Publicacion[]) => {
-        // Asegúrate de que posts.guardadosPorUsuarios esté inicializado para cada post
         this.posts = data.map(post => ({
           ...post,
-          guardadosPorUsuarios: post.guardadosPorUsuarios || [] // <-- ¡AÑADE O MODIFICA ESTA LÍNEA!
+          guardadosPorUsuarios: post.guardadosPorUsuarios || [] 
         }));
 
         this.loadReactionsAndCommentsForPosts(this.posts);
 
         const currentUser = this.authService.getUser();
-        if (currentUser && currentUser.id) { // Ya corregido a 'id'
+        if (currentUser && currentUser.id) { 
           this.subscriptions.add(
-            this.publicacionGuardadaService.getPublicacionesGuardadasPorUsuario(currentUser.id) // Ya corregido a 'id'
+            this.publicacionGuardadaService.getPublicacionesGuardadasPorUsuario(currentUser.id) 
               .subscribe({
                 next: (savedPublicationsBackend: any[]) => {
                   const savedPublicacionIds = new Set(savedPublicationsBackend.map(item => item.publicacion.idPublicacion));
 
                   this.posts.forEach(post => {
-                    // Si la publicación está guardada por el usuario actual
                     if (savedPublicacionIds.has(post.idPublicacion)) {
-                      // Aseguramos que el array exista (aunque ya lo hicimos arriba, no está de más)
                       if (!post.guardadosPorUsuarios) {
                         post.guardadosPorUsuarios = [];
                       }
-                      // Añade el marcador si no está ya
                       if (!post.guardadosPorUsuarios.some(pg => pg.usuario?.idUsuario === currentUser.id)) {
                         const userSavedMarker: PublicacionGuardada = {
                           usuario: { idUsuario: currentUser.id }
@@ -183,13 +172,13 @@ loadPosts(): void {
                         post.guardadosPorUsuarios.push(userSavedMarker);
                       }
                     } else {
-                      // Si NO está guardada, asegúrate de que el marcador del usuario no esté
+                    
                       post.guardadosPorUsuarios = (post.guardadosPorUsuarios || []).filter(
                         pg => pg.usuario?.idUsuario !== currentUser.id
                       );
                     }
                   });
-                  this.cdr.detectChanges(); // Fuerza a Angular a redibujar después de actualizar los arrays
+                  this.cdr.detectChanges(); 
                 },
                 error: (error) => {
                   console.error('Error al cargar las publicaciones guardadas del usuario:', error);
@@ -198,9 +187,8 @@ loadPosts(): void {
               })
           );
         } else {
-          // Si no hay usuario logueado, asegurarse de que los arrays guardadosPorUsuarios estén vacíos
           this.posts.forEach(post => {
-            post.guardadosPorUsuarios = []; // Vaciamos el array para usuarios no logueados
+            post.guardadosPorUsuarios = []; 
           });
           this.cdr.detectChanges();
         }
@@ -249,7 +237,7 @@ loadPosts(): void {
         );
       }
     } else {
-      this.loadPosts(); // Load all posts if no category is selected
+      this.loadPosts();
     }
   }
 
@@ -263,7 +251,6 @@ loadPosts(): void {
     const postDataObservables: Observable<any>[] = [];
   
     posts.forEach((post) => {
-      // Initialize if null
       if (!post.reaccionesPublicacion) {
         post.reaccionesPublicacion = [];
       }
@@ -271,18 +258,16 @@ loadPosts(): void {
         post.comentarios = [];
       }
   
-      // CAMBIO 1: Usar reaccionPublicacionService para obtener el conteo de reacciones
       const conteoReacciones$ = this.reaccionPublicacionService.getConteoReacciones(post.idPublicacion!).pipe(
         catchError(error => {
           console.error(`Error al cargar conteo de reacciones para publicación ${post.idPublicacion}:`, error);
-          return of({ like: 0, dislike: 0 }); // Default values on error
+          return of({ like: 0, dislike: 0 }); 
         })
       );
   
-      // CAMBIO 2: Usar getReaccionUsuario y pasar los parámetros en el orden correcto
       const miReaccion$ = currentUser && currentUser.id
-        ? this.reaccionPublicacionService.getReaccionUsuario(currentUser.id, post.idPublicacion!).pipe( // <--- Método y orden de parámetros corregidos
-            map((reaccion: any) => (reaccion ? reaccion : null)), // El backend devuelve el TipoReaccion directamente, no .tipoReaccion
+        ? this.reaccionPublicacionService.getReaccionUsuario(currentUser.id, post.idPublicacion!).pipe( 
+            map((reaccion: any) => (reaccion ? reaccion : null)), 
             catchError(error => {
               if (error.status !== 404 && error.status !== 204) {
                   console.error(`Error al obtener miReaccion para publicación ${post.idPublicacion}:`, error);
@@ -292,18 +277,17 @@ loadPosts(): void {
           )
         : of(null);
   
-      // Load comments for each post (this still happens independently for now)
       this.subscriptions.add(
         this.comentarioService.obtenerComentariosPorPublicacion(post.idPublicacion!).pipe(
           tap((comentarios) => {
             post.comentarios = comentarios;
-            this.loadReactionsForComments(comentarios); // Load reactions for comments
+            this.loadReactionsForComments(comentarios); 
           }),
           catchError((error) => {
             console.error(`Error al cargar comentarios para la publicación ${post.idPublicacion}:`, error);
-            return of([]); // Default empty array on error
+            return of([]); 
           })
-        ).subscribe() // Subscribe here to ensure comments are loaded regardless of forkJoin for reactions
+        ).subscribe()
       );
   
       postDataObservables.push(
@@ -315,7 +299,7 @@ loadPosts(): void {
             post.conteoLikes = conteo.like;
             post.conteoDislikes = conteo.dislike;
             post.miReaccion = miReaccion;
-            return post; // Return the updated post
+            return post; 
           })
         )
       );
@@ -325,7 +309,6 @@ loadPosts(): void {
       this.subscriptions.add(
         forkJoin(postDataObservables).subscribe({
           next: () => {
-            // All posts have been updated in place, now detect changes once
             this.cdr.detectChanges();
           },
           error: (error) => {
@@ -335,50 +318,43 @@ loadPosts(): void {
         })
       );
     } else {
-      this.cdr.detectChanges(); // If no posts, still trigger change detection if needed for other UI updates
+      this.cdr.detectChanges();
     }
   }
 
 
   loadReactionsForComments(comments: Comentario[]): void {
     const currentUser = this.authService.getUser();
-    // Si no hay usuario o no hay comentarios, no hacemos nada
     if (!currentUser || !currentUser.id || !comments || comments.length === 0) {
-      // También podrías llamar a this.cdr.detectChanges() aquí si necesitas asegurar
-      // que la vista se actualiza si no hay comentarios o usuario logueado.
       return;
     }
 
     const commentDataObservables: Observable<any>[] = comments.map(comment => {
-      // 1. Observable para obtener la reacción del usuario actual a este comentario
       const miReaccionComentario$ = this.comentarioReaccionService.getReaccionByComentarioAndUsuario(
         comment.idComentario!,
         currentUser.id
       ).pipe(
-        map((reaccion: any) => (reaccion ? reaccion : null)), // Asume que el backend devuelve TipoReaccion o null
+        map((reaccion: any) => (reaccion ? reaccion : null)), 
         catchError(error => {
           if (error.status !== 404 && error.status !== 204) {
               console.error(`Error al cargar miReaccion para comentario ${comment.idComentario}:`, error);
           }
-          return of(null); // Devuelve null si hay error o no hay reacción
+          return of(null); 
         })
       );
 
-      // 2. Observable para obtener el conteo de reacciones de este comentario
       const conteoComentario$ = this.comentarioReaccionService.getConteoReacciones(comment.idComentario!).pipe(
         catchError(error => {
           console.error(`Error al cargar conteo de reacciones para comentario ${comment.idComentario}:`, error);
-          return of({ like: 0, dislike: 0 }); // Valores por defecto en caso de error
+          return of({ like: 0, dislike: 0 }); 
         })
       );
 
-      // Combina AMBOS observables (reacción de usuario y conteo) para este comentario
       return forkJoin({
         miReaccion: miReaccionComentario$,
         conteo: conteoComentario$
       }).pipe(
         map(({ miReaccion, conteo }) => {
-          // Devuelve un objeto con la información para actualizar el comentario
           return {
             idComentario: comment.idComentario,
             miReaccion: miReaccion,
@@ -396,15 +372,14 @@ loadPosts(): void {
             const comment = comments.find(c => c.idComentario === res.idComentario);
             if (comment) {
               comment.currentUserReaction = res.miReaccion;
-              comment.conteoLikes = res.conteoLikes;    // ¡AHORA SE ASIGNA EL CONTEO DE LIKES!
-              comment.conteoDislikes = res.conteoDislikes; // ¡AHORA SE ASIGNA EL CONTEO DE DISLIKES!
+              comment.conteoLikes = res.conteoLikes;    
+              comment.conteoDislikes = res.conteoDislikes; 
             }
           });
-          this.cdr.detectChanges(); // Detecta cambios una vez que todos los comentarios están actualizados
+          this.cdr.detectChanges(); 
         },
         error: (error) => {
           console.error('Error al cargar reacciones y conteos para comentarios:', error);
-          // Puedes añadir un snackbar o alguna notificación al usuario aquí
           this.snackBar.open('Error al cargar detalles de comentarios.', 'Cerrar', { duration: 3000 });
         }
       })
@@ -426,21 +401,19 @@ loadPosts(): void {
       return;
     }
 
-    // Call the service method that handles toggling/creating/updating reaction
     this.subscriptions.add(
       this.reaccionPublicacionService.reaccionar({
         idPublicacion: publicacion.idPublicacion,
         idUsuario: currentUser.id,
         tipoReaccion: tipo
       }).pipe(
-        // After the reaction is processed, fetch updated counts and user's reaction
         switchMap(() =>
           forkJoin({
-            // CAMBIO 1: Usar reaccionPublicacionService para obtener el conteo de reacciones
+
             conteo: this.reaccionPublicacionService.getConteoReacciones(publicacion.idPublicacion!),
-            // CAMBIO 2: Usar getReaccionUsuario y pasar los parámetros en el orden correcto
+   
             miReaccion: this.reaccionPublicacionService.getReaccionUsuario(currentUser.id!, publicacion.idPublicacion!).pipe(
-              map((reaccion: any) => (reaccion ? reaccion : null)), // El backend devuelve el TipoReaccion directamente, no .tipoReaccion
+              map((reaccion: any) => (reaccion ? reaccion : null)),
               catchError(error => {
                 if (error.status !== 404 && error.status !== 204) { console.error('Error fetching user reaction after toggle:', error); }
                 return of(null);
@@ -451,7 +424,7 @@ loadPosts(): void {
         tap(({ conteo, miReaccion }) => {
           publicacion.conteoLikes = conteo.like || 0;
           publicacion.conteoDislikes = conteo.dislike || 0;
-          publicacion.miReaccion = miReaccion; // Update user's reaction
+          publicacion.miReaccion = miReaccion;
           this.cdr.detectChanges();
         }),
         catchError(error => {
@@ -476,15 +449,13 @@ loadPosts(): void {
     const isSavedCurrently = this.hasCurrentUserSavedPost(post);
   
     if (isSavedCurrently) {
-      // Lógica para desguardar
+
       this.publicacionGuardadaService.unsavePublicacion(idPublicacion).subscribe({
         next: () => {
           console.log('Publicación desguardada exitosamente.');
           this.snackBar.open('Publicación desguardada.', 'Cerrar', { duration: 3000 });
-  
-          // *** LÍNEA CORREGIDA AQUÍ (línea 191 aproximada) ***
-          // Aseguramos que guardadosPorUsuarios sea un array antes de filtrar
-          post.guardadosPorUsuarios = (post.guardadosPorUsuarios || []).filter( // <--- ¡CAMBIO CLAVE AQUÍ!
+
+          post.guardadosPorUsuarios = (post.guardadosPorUsuarios || []).filter(
             pg => pg.usuario?.idUsuario !== currentUser.id
           );
           this.cdr.detectChanges();
@@ -495,22 +466,21 @@ loadPosts(): void {
         }
       });
     } else {
-      // Lógica para guardar
+
       this.publicacionGuardadaService.savePublicacion(idPublicacion).subscribe({
         next: () => {
           console.log('Publicación guardada exitosamente.');
           this.snackBar.open('Publicación guardada.', 'Cerrar', { duration: 3000 });
   
-          // También aplica esto en la parte de "guardar" para consistencia,
-          // aunque tu código previo ya inicializaba si era null/undefined
+ 
           if (!post.guardadosPorUsuarios) {
               post.guardadosPorUsuarios = [];
           }
           const newPublicacionGuardada: PublicacionGuardada = {
             usuario: { idUsuario: currentUser.id }
           };
-          if (!(post.guardadosPorUsuarios || []).some(pg => pg.usuario?.idUsuario === currentUser.id)) { // <--- También aquí para mayor seguridad
-              (post.guardadosPorUsuarios || []).push(newPublicacionGuardada); // <--- Y aquí
+          if (!(post.guardadosPorUsuarios || []).some(pg => pg.usuario?.idUsuario === currentUser.id)) { 
+              (post.guardadosPorUsuarios || []).push(newPublicacionGuardada); 
           }
           this.cdr.detectChanges();
         },
@@ -552,8 +522,8 @@ loadPosts(): void {
               post.comentarios = [];
             }
             post.comentarios.push(comentarioCreado);
-            this.nuevoComentarioTexto[publicacionId] = ''; // Limpiar el input
-            this.loadReactionsForComments([comentarioCreado]); // Cargar reacciones para el nuevo comentario
+            this.nuevoComentarioTexto[publicacionId] = ''; 
+            this.loadReactionsForComments([comentarioCreado]);
           }
           this.cdr.detectChanges();
           this.snackBar.open('Comentario añadido.', 'Cerrar', { duration: 3000 });
@@ -607,7 +577,7 @@ loadPosts(): void {
     }
   }
 
-  // Se eliminó reaccionarPublicacion duplicado, ya que `reactToPost` lo reemplaza.
+
 
   reaccionarComentario(idComentario: number, tipo: TipoReaccion): void {
     const userFromAuth = this.authService.getUser();
@@ -626,7 +596,7 @@ loadPosts(): void {
 
     this.subscriptions.add(
       this.comentarioReaccionService.reaccionar(comentarioReaccionRequest).pipe(
-        // Después de la reacción, obtenemos los conteos actualizados y la reacción del usuario
+
         switchMap(() =>
           forkJoin({
             conteo: this.comentarioReaccionService.getConteoReacciones(idComentario),

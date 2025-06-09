@@ -28,7 +28,7 @@ public class UsuarioRolServiceImpl implements UsuarioRolService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<UsuarioRol> obtenerUsuarioRolPorId(Long id) { // ID simple
+    public Optional<UsuarioRol> obtenerUsuarioRolPorId(Long id) {
         return usuarioRolRepository.findById(id);
     }
 
@@ -40,7 +40,7 @@ public class UsuarioRolServiceImpl implements UsuarioRolService {
 
     @Override
     @Transactional
-    public void eliminarUsuarioRol(Long id) { // ID simple
+    public void eliminarUsuarioRol(Long id) {
         usuarioRolRepository.deleteById(id);
     }
 

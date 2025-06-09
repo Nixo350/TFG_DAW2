@@ -3,11 +3,9 @@ package com.gestion.zarpas_backend.modelo;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable; // Necesario para @Embeddable y @IdClass
+import java.io.Serializable;
 import java.util.Objects;
-import java.sql.Timestamp;
 
-// Clase para la clave primaria compuesta
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor

@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ComentarioServiceImpl implements ComentarioService {
@@ -30,15 +28,7 @@ public class ComentarioServiceImpl implements ComentarioService {
         this.comentarioRepository = comentarioRepository;
     }
 
-    @Override
-    @Transactional
-    public Comentario guardarComentario(Comentario comentario) {
-        if (comentario.getFechaCreacion() == null) {
-            comentario.setFechaCreacion(Timestamp.from(Instant.now()));
-        }
-        comentario.setFechaModificacion(Timestamp.from(Instant.now()));
-        return comentarioRepository.save(comentario);
-    }
+
     @Override
     @Transactional
     public Comentario crearComentario(Long idUsuario, Long idPublicacion, String texto) {
@@ -56,17 +46,6 @@ public class ComentarioServiceImpl implements ComentarioService {
         return comentarioRepository.save(comentario);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<Comentario> obtenerComentarioPorId(Long id) {
-        return comentarioRepository.findById(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Comentario> obtenerTodosLosComentarios() {
-        return comentarioRepository.findAll();
-    }
 
 
 
@@ -76,25 +55,5 @@ public class ComentarioServiceImpl implements ComentarioService {
         return comentarioRepository.findByPublicacion_IdPublicacionOrderByFechaCreacionAsc(idPublicacion);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<Comentario> obtenerComentariosPorUsuario(Usuario usuario) {
-        return comentarioRepository.findByUsuario(usuario);
-    }
 
-    @Override
-    @Transactional
-    public Comentario actualizarComentario(Long idComentario, String nuevoTexto) {
-        Comentario comentario = comentarioRepository.findById(idComentario)
-                .orElseThrow(() -> new RuntimeException("Comentario no encontrado con ID: " + idComentario));
-        comentario.setTexto(nuevoTexto);
-        comentario.setFechaModificacion(new Timestamp(System.currentTimeMillis()));
-        return comentarioRepository.save(comentario);
-    }
-
-    @Override
-    @Transactional
-    public void eliminarComentario(Long id) {
-        comentarioRepository.deleteById(id);
-    }
 }

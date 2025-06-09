@@ -10,5 +10,5 @@ public interface ChatService {
     List<Chat> obtenerTodosLosChats();
     Chat actualizarChat(Chat chat);
     void eliminarChat(Long id);
-    List<Chat> obtenerChatsPorUsuarioId(Long idUsuario); // Ajustado para recibir ID de usuario
+    List<Chat> obtenerChatsPorUsuarioId(Long idUsuario);
 }

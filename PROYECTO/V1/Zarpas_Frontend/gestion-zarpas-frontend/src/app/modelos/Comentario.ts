@@ -13,7 +13,7 @@ export interface Comentario {
   reaccionesConteo?: { like: number; dislike: number };
   currentUserReaction?: TipoReaccion | null;
 
-  conteoLikes?: number;    // Contador de "me gusta" para el comentario
+  conteoLikes?: number;    
   conteoDislikes?: number;
   }
 

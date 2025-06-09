@@ -22,7 +22,6 @@ public class UsuarioRolController {
 
     @PostMapping
     public ResponseEntity<UsuarioRol> crearUsuarioRol(@RequestBody UsuarioRol usuarioRol) {
-        // En un escenario real, deberías validar que el usuario y el rol existan
         UsuarioRol nuevoUsuarioRol = usuarioRolService.guardarUsuarioRol(usuarioRol);
         return new ResponseEntity<>(nuevoUsuarioRol, HttpStatus.CREATED);
     }

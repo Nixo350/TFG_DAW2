@@ -1,7 +1,6 @@
 package com.gestion.zarpas_backend.modelo;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -26,12 +25,12 @@ public class Comentario {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
-    @JsonBackReference("usuario-comentarios") // Coincide con Usuario.java
+    @JsonBackReference("usuario-comentarios")
     private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "id_publicacion", nullable = false)
-    @JsonBackReference("publicacion-comentarios") // Coincide con Publicacion.java
+    @JsonBackReference("publicacion-comentarios")
     private Publicacion publicacion;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -45,13 +44,11 @@ public class Comentario {
 
     // Relación con la entidad de unión ComentarioReaccion
     @OneToMany(mappedBy = "comentario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference("comentario-comentarioReacciones") // Nombre único para esta relación
+    @JsonManagedReference("comentario-comentarioReacciones")
     private List<ComentarioReaccion> comentarioReacciones = new ArrayList<>();
 
-    @JsonProperty("usernameUsuario") // Esto le dice a Jackson que cree un campo JSON llamado "usernameUsuario"
+    @JsonProperty("usernameUsuario")
     public String getUsernameFromUsuario() {
-        // Asegúrate de que el objeto usuario no sea nulo antes de intentar acceder a su username
-        // Si el usuario no se carga por LAZY loading, esto podría seguir siendo nulo.
         return (this.usuario != null) ? this.usuario.getUsername() : null;
     }
 }

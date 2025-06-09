@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/reacciones-publicacion")
-@CrossOrigin(origins = "http://localhost:4200") // Asegúrate de que tu puerto Angular sea correcto
+@CrossOrigin(origins = "http://localhost:4200")
 public class ReaccionPublicacionController {
 
     @Autowired
@@ -28,11 +28,8 @@ public class ReaccionPublicacionController {
                     request.getIdUsuario(), request.getIdPublicacion(), request.getTipoReaccion());
 
             if (reaccionGuardada != null) {
-                // Si se creó o actualizó una reacción, devuelve la reacción guardada con 200 OK
                 return new ResponseEntity<>(reaccionGuardada, HttpStatus.OK);
             } else {
-                // Si la reacción fue eliminada (reaccionGuardada es null), devuelve 204 No Content
-                // IMPORTANTE: NO incluyas un cuerpo en esta respuesta.
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
         } catch (IllegalArgumentException e) {
@@ -42,7 +39,6 @@ public class ReaccionPublicacionController {
         }
     }
 
-    // ... (Mantén el resto de tus métodos aquí)
     @GetMapping("/conteo/{idPublicacion}")
     public ResponseEntity<Map<TipoReaccion, Long>> getConteoReacciones(@PathVariable Long idPublicacion) {
         Map<TipoReaccion, Long> conteo = reaccionPublicacionService.getConteoReaccionesByPublicacionId(idPublicacion);

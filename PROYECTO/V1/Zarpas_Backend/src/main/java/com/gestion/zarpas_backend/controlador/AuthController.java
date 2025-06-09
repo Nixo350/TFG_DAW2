@@ -6,7 +6,7 @@ import com.gestion.zarpas_backend.modelo.UsuarioRol;
 import com.gestion.zarpas_backend.repositorio.RolRepository;
 import com.gestion.zarpas_backend.repositorio.UsuarioRepository;
 import com.gestion.zarpas_backend.request.LoginRequest;
-import com.gestion.zarpas_backend.request.SignupRequest; // <<-- ¡¡AÑADE ESTA LÍNEA!!
+import com.gestion.zarpas_backend.request.SignupRequest;
 import com.gestion.zarpas_backend.response.JwtResponse;
 import com.gestion.zarpas_backend.response.MessageResponse;
 import com.gestion.zarpas_backend.seguridad.jwt.JwtUtils;

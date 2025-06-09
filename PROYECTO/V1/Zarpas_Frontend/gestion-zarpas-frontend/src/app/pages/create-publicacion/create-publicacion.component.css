@@ -1,31 +1,11 @@
-/* src/app/pages/create-publicacion/create-publicacion.component.css */
-
-/* Elimina todas las variables de color de aquí, ya están en styles.css */
-/* :host { ... } */
-
-/* El estilo de .create-post-container se mueve a .main-content-card en styles.css */
-.create-post-container {
-    /* Quita todo el styling relacionado con fondo, padding, border-radius, box-shadow */
-    /* max-width: 600px; */
-    /* margin: 40px auto; */
-    /* padding: 30px; */
-    /* background-color: var(--card-background-color); */
-    /* border-radius: var(--border-radius); */
-    /* box-shadow: var(--box-shadow-medium); */
-    /* font-family: var(--font-family); */
-    /* color: var(--text-color); */
-}
-
 /* Título del formulario */
 h2 {
     text-align: center;
-    /* color: var(--primary-color);  -> ¡Se hereda de styles.css! */
     margin-bottom: 30px;
     font-size: 2.2em;
-    /* font-weight: 700; */
+
 }
 
-/* Grupos de formulario (label + input/textarea) */
 .form-group {
     margin-bottom: 20px;
 }
@@ -34,7 +14,6 @@ label {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    /* color: var(--light-text-color); -> ¡Se hereda de styles.css! */
     font-size: 1.05em;
 }
 
@@ -44,24 +23,14 @@ input[type="url"],
 textarea {
     width: 100%;
     padding: 12px;
-    /* border: 1px solid var(--border-color); -> ¡Se hereda de styles.css o Material! */
-    /* border-radius: var(--border-radius); -> ¡Se hereda de styles.css! */
     box-sizing: border-box;
     font-size: 1em;
-    /* font-family: var(--font-family); -> ¡Se hereda de styles.css! */
-    /* color: var(--text-color); -> ¡Se hereda de styles.css! */
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-
-/* Efecto de foco para inputs y textareas - ¡Se hereda de styles.css! */
-/* input[type="text"]:focus, input[type="url"]:focus, textarea:focus { ... } */
 
 textarea {
     resize: vertical;
 }
-
-/* Mensajes de validación de error - ¡Se hereda de styles.css! */
-/* .validation-error { ... } */
 
 /* Estilo para el input de tipo file */
 input[type="file"] {
@@ -69,41 +38,24 @@ input[type="file"] {
     width: 100%;
     padding: 10px 0;
     font-size: 1em;
-    /* color: var(--text-color); */
 }
 
-/* Botón de enviar - ¡La mayoría se hereda de styles.css con mat-raised-button! */
 button[type="submit"] {
     display: block;
     width: 100%;
     padding: 12px 20px;
-    /* background-color: var(--accent-color); */
-    /* color: var(--text-on-dark); */
-    /* border: none; */
-    /* border-radius: var(--border-radius); */
     font-size: 1.2em;
     font-weight: 600;
-    /* cursor: pointer; */
-    /* transition: background-color 0.3s ease, opacity 0.3s ease, transform 0.1s ease; */
     margin-top: 30px;
 }
 
-/* button[type="submit"]:hover:not(:disabled) { ... } */
-/* button[type="submit"]:disabled { ... } */
-
-/* Mensajes de feedback (éxito/error) - ¡Se heredan de styles.css! */
-/* .success-message { ... } */
-/* .error-message { ... } */
-
-/* Media Queries para responsividad - Se manejan en styles.css para .main-content-card */
+/* Media Queries para responsividad  */
 @media (max-width: 768px) {
-    /* .create-post-container { margin: 20px auto; padding: 20px; } */
     h2 { font-size: 1.8em; margin-bottom: 20px; }
     button[type="submit"] { font-size: 1.1em; padding: 10px 15px; }
 }
 
 @media (max-width: 480px) {
-    /* .create-post-container { margin: 15px; padding: 15px; } */
     h2 { font-size: 1.6em; }
     label { font-size: 1em; }
     input[type="text"], textarea { padding: 10px; font-size: 0.95em; }

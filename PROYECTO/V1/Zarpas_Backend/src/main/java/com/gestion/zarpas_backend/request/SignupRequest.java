@@ -1,10 +1,9 @@
-package com.gestion.zarpas_backend.request; // Asegúrate de que este sea el paquete correcto
+package com.gestion.zarpas_backend.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-// Esta clase representa los datos que el frontend enviará al backend para el registro
 public class SignupRequest {
 
     @NotBlank
@@ -17,13 +16,12 @@ public class SignupRequest {
     private String email;
 
     @NotBlank
-    @Size(min = 6, max = 40) // La contraseña debería tener una longitud razonable
-    private String contrasena; // Coincide con el nombre de campo en tu entidad Usuario y frontend
+    @Size(min = 6, max = 40)
+    private String contrasena;
 
     @Size(max = 100) // Campo opcional
-    private String nombre; // Coincide con el nombre de campo en tu entidad Usuario y frontend
+    private String nombre;
 
-    // Getters y Setters
     public String getUsername() {
         return username;
     }

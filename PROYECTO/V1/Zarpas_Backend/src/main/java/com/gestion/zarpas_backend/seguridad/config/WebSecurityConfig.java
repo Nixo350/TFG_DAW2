@@ -1,7 +1,7 @@
 package com.gestion.zarpas_backend.seguridad.config;
 
 import com.gestion.zarpas_backend.seguridad.jwt.AuthEntryPointJwt;
-import com.gestion.zarpas_backend.seguridad.jwt.AuthTokenFilter; // <-- Importa AuthTokenFilter
+import com.gestion.zarpas_backend.seguridad.jwt.AuthTokenFilter;
 import com.gestion.zarpas_backend.servicio.impl.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     private AuthEntryPointJwt unauthorizedHandler;
 
     @Autowired
-    private AuthTokenFilter authTokenFilter; // <-- ¡AÑADE ESTO para inyectar la instancia de AuthTokenFilter!
+    private AuthTokenFilter authTokenFilter;
 
     private static final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
 
@@ -87,14 +87,14 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 1. Rutas de autenticación y recursos públicos (siempre al principio)
+                        // 1. Rutas de autenticación y recursos públicos
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/api/usuarios/crear").permitAll()
                         .requestMatchers("/error").permitAll()
 
-                        // 2. Rutas de Publicaciones PÚBLICAS (¡TODAS DEBEN IR AQUÍ, ANTES DEL authenticated() GENERAL DE PUBLICACIONES!)
+                        // 2. Rutas de Publicaciones PÚBLICAS
                         .requestMatchers("/api/publicaciones/todas").permitAll()
                         .requestMatchers("/api/publicaciones/buscar").permitAll()
                         .requestMatchers("/api/publicaciones/{idPublicacion}").permitAll()
@@ -102,36 +102,26 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         .requestMatchers("/api/publicaciones/usuario/{idUsuario}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/publicaciones").permitAll()
 
-                        // Rutas de Categorías ESPECÍFICAS (GET de todas las categorías)
+                        // Rutas de Categorías ESPECÍFICAS
                         .requestMatchers(HttpMethod.GET, "/api/publicaciones/categorias/all").permitAll()
 
                         // 3. Rutas de comentarios (públicas)
                         .requestMatchers("/api/comentarios/publicacion/**").permitAll()
-                        // Si hay otros GETs de comentarios que deben ser públicos, ponlos aquí.
 
 
-                        // 4. Rutas de Reacciones de Publicaciones (PÚBLICAS - LAS QUE FALLAN CON 401)
-                        // **¡ESTAS SON CRÍTICAS Y DEBEN IR AQUÍ, ANTES DE CUALQUIER /api/publicaciones/**.authenticated()**
+                        // 4. Rutas de Reacciones de Publicaciones
                         .requestMatchers("/api/reacciones-publicacion/conteo/**").permitAll()
                         .requestMatchers("/api/publicaciones/reacciones/conteo/**").permitAll()
 
                         .requestMatchers("/api/reacciones-publicacion/usuario/**").permitAll()
                         .requestMatchers("/api/reacciones-publicacion/publicacion/**").permitAll()
-                        // Nota: La línea "/api/publicaciones/reacciones/conteo/**" en tu código original
-                        // parece un error tipográfico, ya tienes "/api/reacciones-publicacion/conteo/**".
-                        // Asegúrate de que no haya duplicados o rutas incorrectas.
 
                         // 5. Rutas de Reacciones de Comentarios (públicas)
                         .requestMatchers("/api/reacciones-comentario/conteo/**").permitAll()
                         .requestMatchers("/api/reacciones-comentario/usuario/**").permitAll()
-
-
-                        // A PARTIR DE AQUÍ, TODO LO QUE NO SE HAYA PERMITIDO ANTES EXPLÍCITAMENTE
-                        // Y ESTÉ BAJO /api/publicaciones, REQUERIRÁ AUTENTICACIÓN.
-                        // Ahora esta regla se aplicará SOLO a las rutas que no se hayan marcado como permitAll() previamente.
                         .requestMatchers("/api/publicaciones/**").authenticated()
 
-                        // Rutas de Categorías que requieren autenticación (POST, PUT, DELETE)
+                        // 6. Rutas de Categorías que requieren autenticación (POST, PUT, DELETE)
                         .requestMatchers(HttpMethod.POST, "/api/publicaciones/categorias").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/publicaciones/categorias/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/publicaciones/categorias/**").authenticated()
@@ -140,16 +130,15 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         .requestMatchers(HttpMethod.DELETE, "/api/publicaciones/categoria/**").authenticated()
 
 
-                        // 6. Rutas de Usuarios (requieren autenticación)
+                        // 7. Rutas de Usuarios (requieren autenticación)
                         .requestMatchers("/api/usuarios/{id}").authenticated()
                         .requestMatchers("/api/usuarios/**").authenticated()
 
-                        // 7. Cualquier otra petición no especificada requiere autenticación por defecto
+                        // 8. Cualquier otra petición no especificada requiere autenticación por defecto
                         .anyRequest().authenticated()
                 );
 
         http.authenticationProvider(authenticationProvider());
-        // ¡USA LA INSTANCIA INYECTADA, NO LA QUE CREA EL @Bean que eliminaste!
         http.addFilterBefore(authTokenFilter, AuthorizationFilter.class);
 
         return http.build();

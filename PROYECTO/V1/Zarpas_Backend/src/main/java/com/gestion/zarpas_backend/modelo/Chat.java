@@ -32,7 +32,7 @@ public class Chat {
 
     // Relación con la entidad de unión UsuarioChat
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference("chat-usuarioChats") // El Chat es el "dueño" del UsuarioChat desde su perspectiva
+    @JsonBackReference("chat-usuarioChats")
     private List<UsuarioChat> usuarioChats = new ArrayList<>();
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)

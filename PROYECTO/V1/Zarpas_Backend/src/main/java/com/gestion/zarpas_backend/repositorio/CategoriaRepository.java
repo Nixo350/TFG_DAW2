@@ -1,4 +1,3 @@
-// src/main/java/com/gestion/zarpas_backend/repositorio/CategoriaRepository.java
 package com.gestion.zarpas_backend.repositorio;
 
 import com.gestion.zarpas_backend.modelo.Categoria;

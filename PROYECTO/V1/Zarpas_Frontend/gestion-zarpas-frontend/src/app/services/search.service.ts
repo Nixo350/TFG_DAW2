@@ -1,4 +1,4 @@
-// src/app/services/search.service.ts
+
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -15,8 +15,4 @@ export class SearchService {
     this.searchTermSubject.next(term);
   }
 
-  // Optional: if you need to get the current value synchronously
-  getCurrentSearchTerm(): string {
-    return this.searchTermSubject.getValue();
-  }
 }

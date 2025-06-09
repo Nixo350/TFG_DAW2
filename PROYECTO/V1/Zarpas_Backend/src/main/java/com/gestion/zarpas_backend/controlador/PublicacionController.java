@@ -1,9 +1,7 @@
-// src/main/java/com/gestion/zarpas_backend/controlador/PublicacionController.java
 package com.gestion.zarpas_backend.controlador;
 
 import com.gestion.zarpas_backend.modelo.*;
 import com.gestion.zarpas_backend.servicio.PublicacionService;
-import com.gestion.zarpas_backend.servicio.ReaccionPublicacionService;
 import com.gestion.zarpas_backend.servicio.UsuarioService;
 import com.gestion.zarpas_backend.servicio.impl.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +19,6 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/api/publicaciones")
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
@@ -30,15 +26,13 @@ public class PublicacionController {
 
     private final PublicacionService publicacionService;
     private final UsuarioService usuarioService;
-    private final StorageService storageService; // Asegúrate de que este servicio está inyectado si manejas imágenes
-    @Autowired
-    private ReaccionPublicacionService reaccionPublicacionService;
+    private final StorageService storageService;
 
     @Autowired
     public PublicacionController(PublicacionService publicacionService, UsuarioService usuarioService, StorageService storageService) {
         this.publicacionService = publicacionService;
         this.usuarioService = usuarioService;
-        this.storageService = storageService; // Inyecta el StorageService
+        this.storageService = storageService;
     }
 
     // Método auxiliar para obtener el usuario autenticado
@@ -70,9 +64,8 @@ public class PublicacionController {
             publicacion.setContenido(contenido);
             publicacion.setUsuario(currentUser.get());
             publicacion.setFechaCreacion(Timestamp.from(Instant.now()));
-            publicacion.setFechaModificacion(Timestamp.from(Instant.now())); // Establecer también al crear
+            publicacion.setFechaModificacion(Timestamp.from(Instant.now()));
 
-            // Manejo de la categoría
             if (categoriaNombre != null && !categoriaNombre.trim().isEmpty()) {
                 Optional<Categoria> categoriaExistente = publicacionService.getAllCategorias().stream()
                         .filter(c -> c.getNombre().equalsIgnoreCase(categoriaNombre))
@@ -88,7 +81,7 @@ public class PublicacionController {
 
             if (imagen != null && !imagen.isEmpty()) {
                 String fileName = storageService.store(imagen);
-                publicacion.setImagenUrl( fileName); // Guardar la ruta relativa o absoluta si tu frontend la necesita así
+                publicacion.setImagenUrl( fileName);
             }
 
             Publicacion nuevaPublicacion = publicacionService.guardarPublicacion(publicacion);
@@ -100,20 +93,20 @@ public class PublicacionController {
     }
 
     @PostMapping("/{idPublicacion}/save")
-    @PreAuthorize("isAuthenticated()") // Requiere autenticación
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> savePublicacion(@PathVariable Long idPublicacion, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Long idUsuario = userDetails.getId(); // Asumiendo que UserDetailsImpl tiene un getId()
+        Long idUsuario = userDetails.getId();
 
         publicacionService.guardarPublicacionPorUsuario(idPublicacion, idUsuario);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{idPublicacion}/unsave")
-    @PreAuthorize("isAuthenticated()") // Requiere autenticación
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> unsavePublicacion(@PathVariable Long idPublicacion, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Long idUsuario = userDetails.getId(); // Asumiendo que UserDetailsImpl tiene un getId()
+        Long idUsuario = userDetails.getId();
 
         publicacionService.eliminarPublicacionGuardadaPorUsuario(idPublicacion, idUsuario);
         return ResponseEntity.noContent().build();
@@ -132,14 +125,7 @@ public class PublicacionController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<List<Publicacion>> obtenerPublicacionesPorUsuario(@PathVariable Long idUsuario) {
-        Optional<Usuario> usuario = usuarioService.obtenerUsuarioPorId(idUsuario);
-        return usuario.map(value -> {
-            List<Publicacion> publicaciones = publicacionService.obtenerPublicacionesPorUsuario(value);
-            return new ResponseEntity<>(publicaciones, HttpStatus.OK);
-        }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
+
 
     @GetMapping("/buscar")
     public ResponseEntity<List<Publicacion>> searchPublicaciones(@RequestParam String keyword) {
@@ -161,7 +147,7 @@ public class PublicacionController {
         List<Categoria> categorias = publicacionService.getAllCategorias();
         return ResponseEntity.ok(categorias);
     }
-
+//--------------------------------------------------------------
     @PostMapping("/categorias")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Categoria> crearCategoria(@RequestBody Categoria categoria) {
@@ -181,51 +167,10 @@ public class PublicacionController {
     }
 
 
-    // --- ¡NUEVO: Endpoint para ACTUALIZAR una publicación! ---
-    @PutMapping("/{idPublicacion}")
-    @PreAuthorize("isAuthenticated()") // Requiere que el usuario esté logueado
-    public ResponseEntity<?> actualizarPublicacion(
-            @PathVariable Long idPublicacion,
-            @RequestBody Publicacion publicacionActualizada) {
-        try {
-            Optional<Usuario> currentUserOptional = getAuthenticatedUser();
-            if (!currentUserOptional.isPresent()) {
-                return new ResponseEntity<>("Usuario no autenticado", HttpStatus.UNAUTHORIZED);
-            }
-            Usuario currentUser = currentUserOptional.get();
-
-            Publicacion publicacionExistente = publicacionService.obtenerPublicacionPorId(idPublicacion)
-                    .orElseThrow(() -> new RuntimeException("Publicación no encontrada con ID: " + idPublicacion));
-
-            // Verificar si el usuario autenticado es el propietario de la publicación o un ADMIN
-            boolean isOwner = publicacionExistente.getUsuario().getIdUsuario().equals(currentUser.getIdUsuario());
-            boolean isAdmin = currentUser.getUsuarioRoles().stream()
-                    .anyMatch(ur -> ur.getRol().getNombre().equals("ADMIN"));
-
-            if (!isOwner && !isAdmin) {
-                return new ResponseEntity<>("No tienes permiso para actualizar esta publicación.", HttpStatus.FORBIDDEN);
-            }
-
-            // Asegurarse de que el ID de la publicación en el cuerpo coincide con el ID de la URL
-            if (!publicacionActualizada.getIdPublicacion().equals(idPublicacion)) {
-                return new ResponseEntity<>("El ID de la publicación en el cuerpo no coincide con el ID de la URL.", HttpStatus.BAD_REQUEST);
-            }
-
-            // La lógica de actualización de campos y fechaModificacion ya está en el servicio
-            Publicacion publicacionGuardada = publicacionService.actualizarPublicacion(publicacionActualizada);
-            return new ResponseEntity<>(publicacionGuardada, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND); // Publicación no encontrada, etc.
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Error interno del servidor al actualizar la publicación: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
 
-    // --- ¡NUEVO: Endpoint para ELIMINAR una publicación! ---
     @DeleteMapping("/{idPublicacion}")
-    @PreAuthorize("isAuthenticated()") // Requiere que el usuario esté logueado
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> eliminarPublicacion(@PathVariable Long idPublicacion) {
         try {
             Optional<Usuario> currentUserOptional = getAuthenticatedUser();
@@ -237,7 +182,6 @@ public class PublicacionController {
             Publicacion publicacionExistente = publicacionService.obtenerPublicacionPorId(idPublicacion)
                     .orElseThrow(() -> new RuntimeException("Publicación no encontrada con ID: " + idPublicacion));
 
-            // Verificar si el usuario autenticado es el propietario de la publicación o un ADMIN
             boolean isOwner = publicacionExistente.getUsuario().getIdUsuario().equals(currentUser.getIdUsuario());
             boolean isAdmin = currentUser.getUsuarioRoles().stream()
                     .anyMatch(ur -> ur.getRol().getNombre().equals("ADMIN"));
@@ -256,15 +200,5 @@ public class PublicacionController {
         }
     }
 
-    @GetMapping("/publicacion/{idPublicacion}/usuario/{idUsuario}")
-    public ResponseEntity<TipoReaccion> getReaccionByPublicacionAndUsuario(
-            @PathVariable Long idPublicacion,
-            @PathVariable Long idUsuario) {
-        Optional<ReaccionPublicacion> reaccion = reaccionPublicacionService.findByPublicacionIdAndUsuarioId(idPublicacion, idUsuario);
-        if (reaccion.isPresent()) {
-            return ResponseEntity.ok(reaccion.get().getTipoReaccion());
-        } else {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 No Content si no hay reacción
-        }
-    }
+
 }

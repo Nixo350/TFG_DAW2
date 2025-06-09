@@ -9,7 +9,7 @@ export interface UsuarioChat {
     chat: Chat;
   }
   
-  // Opcional, si necesitas la clase Id por separado
+
   export interface UsuarioChatId {
     idUsuario: number;
     idChat: number;

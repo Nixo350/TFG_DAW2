@@ -1,4 +1,3 @@
-// src/main/java/com/gestion/zarpas_backend/response/MessageResponse.java
 package com.gestion.zarpas_backend.response;
 
 import lombok.AllArgsConstructor;

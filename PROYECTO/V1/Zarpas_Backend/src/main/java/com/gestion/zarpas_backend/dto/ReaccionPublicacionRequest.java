@@ -1,4 +1,4 @@
-package com.gestion.zarpas_backend.dto; // O el paquete donde quieras poner tus DTOs
+package com.gestion.zarpas_backend.dto;
 
 import com.gestion.zarpas_backend.modelo.TipoReaccion;
 import lombok.Getter;

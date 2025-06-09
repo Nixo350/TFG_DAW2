@@ -1,4 +1,4 @@
-import { TipoReaccion } from './TipoReaccion'; // Asume que ya tienes este enum
+import { TipoReaccion } from './TipoReaccion'; 
 import { Usuario } from './Usuario';
 import { Publicacion } from './Publicacion';
 
@@ -18,5 +18,5 @@ export interface ReaccionPublicacion {
     idPublicacion: number;
   };
   tipoReaccion: TipoReaccion | null;
-  fechaReaccion?: string; // El backend probablemente lo genera
+  fechaReaccion?: string; 
 }

@@ -1,10 +1,4 @@
-/* src/app/pages/navbar/navbar.component.css */
 
-/* ELIMINA LAS VARIABLES :host {} DE AQUÍ SI YA LAS TIENES EN styles.css */
-/* :host {
-  --primary-color: #3f51b5;
-  --text-on-dark: white;
-} */
 
 .spacer {
   flex: 1 1 auto;
@@ -13,19 +7,17 @@
 mat-toolbar {
 padding: 0 16px;
 min-height: 56px;
-/* El background-color ya se hereda de styles.css */
 }
 
 mat-toolbar a {
-color: var(--text-on-dark); /* Color de texto para enlaces en barra oscura */
+color: var(--text-on-dark); 
 text-decoration: none;
 font-weight: 500;
-margin-right: 10px; /* Pequeño margen para separar del logo */
+margin-right: 10px; 
 }
 
 mat-toolbar button {
 margin-left: 8px;
-/* Los colores de los botones se heredarán de styles.css */
 }
 
 
@@ -34,17 +26,15 @@ height: 40px;
 width: auto;
 margin-left: 16px;
 border-radius: 50%;
-object-fit: contain; /* Asegura que la imagen no se recorte o distorsione */
+object-fit: contain; 
 }
 .navbar-logo.left-logo {
 margin-right: 16px;
 }
-/* ... (tus estilos existentes) ... */
 
-/* Estilos para el buscador */
 .search-container {
   position: relative;
-  margin-right: 20px; /* Espacio antes de los botones de login/perfil */
+  margin-right: 20px; 
   display: flex;
   align-items: center;
 }
@@ -52,16 +42,16 @@ margin-right: 16px;
 .search-icon {
   position: absolute;
   left: 10px;
-  color: #666; /* Color del icono de búsqueda */
-  font-size: 20px; /* Tamaño del icono */
-  z-index: 1; /* Asegura que esté por encima del input */
+  color: #666; 
+  font-size: 20px; 
+  z-index: 1; 
 }
 
 .search-input {
-  padding: 8px 12px 8px 35px; /* Espacio para el icono */
+  padding: 8px 12px 8px 35px; 
   border-radius: 20px;
   border: 1px solid #ccc;
-  width: 250px; /* Ancho deseado del input */
+  width: 250px; 
   font-size: 1em;
   background-color: white;
   color: #333;
@@ -74,9 +64,8 @@ margin-right: 16px;
   outline: none;
 }
 
-/* Opcional: Ajustar el ancho en pantallas pequeñas */
 @media (max-width: 768px) {
   .search-input {
-    width: 150px; /* Reducir el ancho en móviles */
+    width: 150px;
   }
 }

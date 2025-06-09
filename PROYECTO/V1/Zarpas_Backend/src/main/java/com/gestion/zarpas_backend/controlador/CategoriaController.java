@@ -1,8 +1,7 @@
-// src/main/java/com/gestion/zarpas_backend/controlador/CategoriaController.java
 package com.gestion.zarpas_backend.controlador;
 
 import com.gestion.zarpas_backend.modelo.Categoria;
-import com.gestion.zarpas_backend.servicio.CategoriaService; // Necesitarás este servicio
+import com.gestion.zarpas_backend.servicio.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,27 +11,25 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/categorias") // Ruta base específica para categorías
+@RequestMapping("/api/categorias")
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 public class CategoriaController {
 
-    private final CategoriaService categoriaService; // Inyecta el nuevo servicio
+    private final CategoriaService categoriaService;
 
     @Autowired
     public CategoriaController(CategoriaService categoriaService) {
         this.categoriaService = categoriaService;
     }
 
-    // DTO simple para crear/actualizar categoría (solo nombre)
     public static class CategoriaRequest {
         public String nombre;
-        public String descripcion; // Opcional, si quieres permitir crearla también
+        public String descripcion;
     }
 
-    @PostMapping // POST /api/categorias (crear una nueva categoría)
+    @PostMapping
     public ResponseEntity<?> crearCategoria(@RequestBody CategoriaRequest request) {
         try {
-            // Verifica si ya existe una categoría con ese nombre (opcional pero buena práctica)
             Optional<Categoria> existingCategory = categoriaService.obtenerCategoriaPorNombre(request.nombre);
             if (existingCategory.isPresent()) {
                 return new ResponseEntity<>("La categoría con el nombre '" + request.nombre + "' ya existe.", HttpStatus.CONFLICT);
@@ -40,7 +37,7 @@ public class CategoriaController {
 
             Categoria nuevaCategoria = new Categoria();
             nuevaCategoria.setNombre(request.nombre);
-            nuevaCategoria.setDescripcion(request.descripcion); // Puedes setear la descripción también
+            nuevaCategoria.setDescripcion(request.descripcion);
 
             Categoria categoriaGuardada = categoriaService.guardarCategoria(nuevaCategoria);
             return new ResponseEntity<>(categoriaGuardada, HttpStatus.CREATED);
@@ -49,13 +46,12 @@ public class CategoriaController {
         }
     }
 
-    @GetMapping("/all") // GET /api/categorias/all (obtener todas las categorías)
+    @GetMapping("/all")
     public ResponseEntity<List<Categoria>> obtenerTodasLasCategorias() {
         List<Categoria> categorias = categoriaService.obtenerTodasLasCategorias();
         return new ResponseEntity<>(categorias, HttpStatus.OK);
     }
 
-    // Otros endpoints (obtener por ID, actualizar, eliminar) si los necesitas
     @GetMapping("/{id}")
     public ResponseEntity<Categoria> obtenerCategoriaPorId(@PathVariable Long id) {
         return categoriaService.obtenerCategoriaPorId(id)

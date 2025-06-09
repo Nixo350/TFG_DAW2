@@ -1,56 +1,20 @@
-/* src/app/pages/login/login.component.css */
-
-/* No es necesario definir variables de color aquí si ya están en styles.css */
-/* :host {
-  --primary-color: #B71C1C;
-  --accent-color: #D32F2F;
-  --hover-color: #A01F1F;
-  --text-on-dark: #FFFFFF;
-  --text-color: #333;
-  --light-text-color: #666;
-  --background-color: #f0f2f5;
-  --card-background-color: #ffffff;
-  --border-color: #e0e0e0;
-  --border-radius: 8px;
-  --spacing-unit: 16px;
-  --box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --box-shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.15);
-  --font-family: 'Roboto', sans-serif;
-  --error-message-bg: #ffebee;
-  --error-message-text: #c62828;
-} */
-
-/* Estas clases de Bootstrap-wrapper y container son probablemente heredadas o de tu propio layout global */
-/* Si ya no las usas a nivel de componente para el styling de la tarjeta, puedes eliminarlas de aquí */
 .bootstrap-wrapper {
-    /* background-color: var(--background-color);  */
-    padding: 0; /* Ya no es necesario tanto padding aquí */
+    padding: 0; 
     min-height: 100vh;
     display: flex;
-    align-items: center; /* Centra verticalmente */
-    justify-content: center; /* Centra horizontalmente */
-    box-sizing: border-box; /* Asegura padding y border se incluyan en el ancho */
+    align-items: center; 
+    justify-content: center; 
+    box-sizing: border-box; 
   }
   
-  /* El estilo de .container (para la tarjeta) se mueve a .main-content-card en styles.css */
   .container {
-    /* Quita estilos de fondo, padding, border-radius, box-shadow de aquí */
-    /* background-color: var(--card-background-color); */
-    /* padding: 30px; */
-    /* border-radius: var(--border-radius); */
-    /* box-shadow: var(--box-shadow-medium); */
-    max-width: 100%; /* Permitir que el .main-content-card controle el ancho */
-    /* width: 90%; */
-    /* margin: 20px auto; */
+
+    max-width: 100%; 
   }
-  
   
   /* Título del formulario */
   h1.text-center {
-    /* Los estilos de color se heredarán de styles.css, solo ajusta márgenes si es necesario */
     margin-bottom: 25px;
-    /* color: var(--primary-color); */
-    /* font-weight: bold; */
     font-size: 2.2em;
   }
   
@@ -59,16 +23,10 @@
       margin-bottom: 20px;
   }
   
-  /* Campo de formulario completo (mat-form-field) */
   .full-width {
       width: 100%;
-      margin-bottom: 15px; /* Espacio entre campos */
+      margin-bottom: 15px;
   }
-  
-  /* Los estilos específicos de mat-form-field y mat-buttons se mueven a styles.css para ser globales */
-  /* .mat-form-field-appearance-outline .mat-form-field-outline { color: var(--border-color); } */
-  /* ... y así sucesivamente para todos los estilos de Material ... */
-  
   
   /* Botones */
   .button-group {
@@ -78,36 +36,20 @@
       gap: 20px; /* Espacio entre los botones */
   }
   
-  /* Estilo para los mensajes de alerta (Bootstrap) - Se reemplaza por .error-message */
-  /* .alert.alert-danger { ... } */
-  
-  
+  /* Estilo para los mensajes de alerta */
+
   /* Enlace a la página de registro */
   .text-center.mt-3 p {
-    /* color: var(--text-color); */
     margin-top: 20px;
     font-size: 0.95em;
   }
   
-  .text-center.mt-3 a {
-    /* color: var(--accent-color); */
-    /* text-decoration: none; */
-    /* font-weight: bold; */
-    /* transition: color 0.2s ease-in-out; */
-  }
-  
-  .text-center.mt-3 a:hover {
-    /* color: var(--primary-color); */
-    /* text-decoration: underline; */
-  }
-  
   /* Media Queries para responsividad */
   @media (max-width: 576px) {
-    /* .container ya no es la tarjeta, sino main-content-card */
-    /* .container {
+    .container {
       padding: 20px;
       margin: 15px;
-    } */
+    } 
   
     h1.text-center {
       font-size: 1.8em;
@@ -120,7 +62,6 @@
   
     .mat-raised-button {
       width: 100%;
-      /* margin-left: 0 !important; */
     }
   }
 

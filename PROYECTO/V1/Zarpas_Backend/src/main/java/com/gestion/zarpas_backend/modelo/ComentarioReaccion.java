@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 public class ComentarioReaccion implements Serializable {
 
-    @EmbeddedId // ¡Añade esta anotación! Define la clave primaria compuesta
+    @EmbeddedId
     private ComentarioReaccionId id;
 
     @Enumerated(EnumType.STRING)
@@ -34,7 +34,7 @@ public class ComentarioReaccion implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_comentario", insertable = false, updatable = false)
     @MapsId("idComentario")
-    @JsonBackReference("comentario-comentarioReacciones") // Coincide con Comentario.java
+    @JsonBackReference("comentario-comentarioReacciones")
     private Comentario comentario;
 
     public ComentarioReaccion(Usuario usuario, Comentario comentario, TipoReaccion tipoReaccion) {
@@ -52,8 +52,6 @@ public class ComentarioReaccion implements Serializable {
         this.comentario = comentario;
     }
 
-    // También asegúrate de que Lombok @Data genere getters para el 'id'
-    // Puedes añadir manualmente getters para idUsuario y idComentario si los necesitas directamente
     public Long getIdUsuario() {
         return this.id != null ? this.id.getIdUsuario() : null;
     }

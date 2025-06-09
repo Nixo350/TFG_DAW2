@@ -1,49 +1,23 @@
-/* src/app/pages/dashboard/dashboard.component.css */
-
-/* --- ELIMINA LAS VARIABLES :host {} DE AQUÍ SI YA LAS TIENES EN styles.css --- */
-/* :host {
-  --primary-color: #3f51b5;
-  --accent-color: #ff4081;
-  --text-color: #333;
-  --light-text-color: #666;
-  --background-color: #f0f2f5;
-  --card-background-color: #ffffff;
-  --border-color: #e0e0e0;
-  --spacing-unit: 16px;
-  --border-radius: 8px;
-  --box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --font-family: 'Roboto', sans-serif;
-} */
-
-/* body { /* No debería haber estilos de body aquí, solo en styles.css */
-/* font-family: var(--font-family); */
-/* margin: 0; */
-/* background-color: var(--background-color); */
-/* color: var(--text-color); */
-/* } */
-
 /* Contenedor principal del Dashboard */
 .dashboard-container {
   display: flex;
-  justify-content: center; /* Centra el contenido */
+  justify-content: center; 
   padding: var(--spacing-unit);
-  gap: var(--spacing-unit); /* Espacio entre las columnas */
-  max-width: 1200px; /* Ancho máximo para el contenido del dashboard */
-  margin: 20px auto; /* Centra el dashboard horizontalmente y añade margen vertical */
-  box-sizing: border-box; /* Asegura que el padding se incluya en el ancho */
+  gap: var(--spacing-unit); 
+  max-width: 1200px;
+  margin: 20px auto; 
+  box-sizing: border-box; 
 }
 
-/* Estilos de las columnas (main-content y sidebar) */
 .main-content {
-  flex: 3; /* Ocupa más espacio */
-  min-width: 600px; /* Ancho mínimo para la columna principal */
-  /* Los posts-list ya son tarjetas por defecto */
+  flex: 3; 
+  min-width: 600px; 
 }
 
 .sidebar {
-  flex: 1; /* Ocupa menos espacio */
-  min-width: 280px; /* Ancho mínimo para la sidebar */
-  max-width: 350px; /* Ancho máximo para la sidebar */
+  flex: 1; 
+  min-width: 280px; 
+  max-width: 350px; 
   display: flex;
   flex-direction: column;
   gap: var(--spacing-unit);
@@ -54,8 +28,8 @@
   background-color: var(--card-background-color);
   padding: var(--spacing-unit);
   border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow-light); /* Sombra más ligera para los elementos individuales */
-  margin-bottom: var(--spacing-unit); /* Espacio entre tarjetas */
+  box-shadow: var(--box-shadow-light); 
+  margin-bottom: var(--spacing-unit); 
 }
 
 /* Títulos dentro del dashboard */
@@ -86,7 +60,7 @@
 .reactions-container button {
   background-color: transparent;
   border: 1px solid var(--border-color);
-  border-radius: 20px; /* Botones más redondeados */
+  border-radius: 20px; 
   padding: 8px 15px;
   cursor: pointer;
   display: flex;
@@ -104,13 +78,13 @@
 }
 
 .reactions-container button.active-like {
-  background-color: var(--success-color); /* Verde para like activo */
+  background-color: var(--success-color); 
   border-color: var(--success-color);
   color: white;
 }
 
 .reactions-container button.active-dislike {
-  background-color: var(--error-color); /* Rojo para dislike activo */
+  background-color: var(--error-color); 
   border-color: var(--error-color);
   color: white;
 }
@@ -128,8 +102,8 @@
 }
 
 .comment-item {
-  background-color: #f9f9f9; /* Fondo ligero para cada comentario */
-  border-left: 3px solid var(--accent-color); /* Barra lateral de acento */
+  background-color: #f9f9f9; 
+  border-left: 3px solid var(--accent-color); 
   padding: 10px 15px;
   border-radius: var(--border-radius);
   margin-bottom: 10px;
@@ -218,7 +192,7 @@
 
 /* Botón "Mostrar Comentarios" */
 .toggle-comments-button {
-  background-color: #f0f0f0; /* Un gris claro */
+  background-color: #f0f0f0;
   color: var(--text-color);
   border: 1px solid var(--border-color);
   padding: 8px 15px;
@@ -297,27 +271,27 @@
   text-align: center;
   border-top: 1px solid var(--border-color);
   padding-top: 15px;
-  margin-top: auto; /* Empuja el footer al final de la sidebar */
+  margin-top: auto; 
 }
 
 
-/* Media Queries para responsividad (ajusta según tus necesidades) */
-@media (max-width: 992px) { /* Para tabletas y pantallas más pequeñas */
+/* Media Queries para responsividad  */
+@media (max-width: 992px) { 
   .dashboard-container {
-    flex-direction: column; /* Apila las columnas */
-    align-items: center; /* Centra el contenido apilado */
-    padding: var(--spacing-unit); /* Asegura padding en los bordes */
+    flex-direction: column; 
+    align-items: center; 
+    padding: var(--spacing-unit); 
   }
 
   .main-content, .sidebar {
-    width: 100%; /* Ocupa todo el ancho */
-    max-width: 700px; /* Limita el ancho total en pantallas medianas */
-    min-width: unset; /* Quita el min-width */
+    width: 100%; 
+    max-width: 700px; 
+    min-width: unset;
   }
 
   .sidebar {
-    order: -1; /* Mueve la sidebar arriba en móvil si lo prefieres */
-    margin-bottom: var(--spacing-unit); /* Espacio entre sidebar y posts */
+    order: -1; 
+    margin-bottom: var(--spacing-unit); 
   }
 
   .posts-list h2, .sidebar-card h3 {
@@ -325,14 +299,14 @@
   }
 }
 
-@media (max-width: 600px) { /* Para teléfonos */
+@media (max-width: 600px) { 
   .dashboard-container {
-    padding: calc(var(--spacing-unit) / 2); /* Menos padding en pantallas muy pequeñas */
+    padding: calc(var(--spacing-unit) / 2); 
     margin: 10px auto;
   }
 
   .post-card, .sidebar-card {
-    padding: calc(var(--spacing-unit) / 1.2); /* Menos padding dentro de las tarjetas */
+    padding: calc(var(--spacing-unit) / 1.2); 
   }
 
   .posts-list h2, .sidebar-card h3 {
@@ -342,75 +316,67 @@
 
 
 .post-info {
-  display: flex; /* Para que el nombre de usuario y la fecha estén en la misma línea */
-  flex-direction: column; /* Apilar autor y fecha si hay espacio limitado */
-  margin-left: 10px; /* Espacio entre el avatar y la info del post */
+  display: flex; 
+  flex-direction: column; 
+  margin-left: 10px; 
 }
 
-/* Estilos para el autor y la fecha en la publicación (similar a los comentarios) */
 .post-author {
   font-weight: bold;
-  color: var(--primary-color); /* O el color que desees para el nombre de usuario */
+  color: var(--primary-color); 
   font-size: 1em;
 }
 
 .post-date {
-  font-size: 0.85em; /* Ligeramente más pequeño que el autor */
-  color: var(--light-text-color); /* Gris claro para la fecha */
-  margin-top: 2px; /* Pequeño espacio entre el autor y la fecha */
+  font-size: 0.85em;
+  color: var(--light-text-color); 
+  margin-top: 2px; 
 }
 
-/* ... (tus estilos existentes para .comment-header, .comment-date, etc.) ... */
-
-/* Asegúrate de que .comment-date tenga estilos similares si quieres consistencia */
 .comment-date {
-  font-size: 0.8em; /* Un poco más pequeño que el post-date si quieres */
+  font-size: 0.8em;
   color: var(--light-text-color);
 }
 .post-header {
-  display: flex; /* Para alinear el avatar y la información del usuario/fecha */
-  align-items: center; /* Centrar verticalmente el avatar y el texto */
+  display: flex;
+  align-items: center; 
   margin-bottom: 10px;
 }
 
 .post-avatar {
-  width: 40px; /* Tamaño del avatar */
+  width: 40px;
   height: 40px;
-  border-radius: 50%; /* Hacerlo circular */
+  border-radius: 50%; 
   object-fit: cover;
-  margin-right: 10px; /* Espacio entre el avatar y el texto */
+  margin-right: 10px; 
 }
 
 .post-info {
   display: flex;
-  flex-direction: column; /* Apila el contenedor de usuario/fecha bajo el avatar */
-  /* margin-left: 10px; Quitado, ya que el espacio se maneja con margin-right en post-avatar */
+  flex-direction: column; 
 }
 
 .user-and-date {
-  display: flex; /* Para que el nombre de usuario y la fecha estén en la misma línea */
-  align-items: baseline; /* Alinea los textos por su línea base */
-  gap: 8px; /* Espacio entre el nombre de usuario y la fecha */
-  /* Puedes usar margin-bottom para separar esto del título del post si es necesario */
+  display: flex;
+  align-items: baseline; 
+  gap: 8px; 
 }
 
 .post-author {
   font-weight: bold;
   color: var(--primary-color);
-  font-size: 1.05em; /* Un poco más grande para el nombre de usuario */
+  font-size: 1.05em; 
 }
 
 .post-date {
-  font-size: 0.8em; /* Más pequeño para la fecha */
+  font-size: 0.8em; 
   color: var(--light-text-color);
-  /* margin-left: 8px; Movido a gap en .user-and-date */
 }
 
-/* Estilos para los comentarios (mantener consistencia si es necesario) */
 .comment-header {
-  display: flex; /* Para alinear autor y fecha en comentarios */
+  display: flex;
   align-items: baseline;
-  gap: 8px; /* Espacio entre el autor del comentario y su fecha */
+  gap: 8px; 
   font-size: 0.9em;
   margin-bottom: 5px;
 }
@@ -428,7 +394,7 @@
   margin-top: 15px;
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Espacio entre el select y el botón */
+  gap: 10px; 
 }
 
 .category-filter select {
@@ -438,8 +404,8 @@
   background-color: var(--card-background-color);
   color: var(--text-color);
   font-size: 1em;
-  width: 100%; /* Asegura que ocupe todo el ancho disponible */
-  box-sizing: border-box; /* Incluye padding y border en el ancho total */
+  width: 100%;
+  box-sizing: border-box; 
 }
 
 .category-filter select:focus {
@@ -449,7 +415,7 @@
 }
 
 .clear-filter-button {
-  background-color: var(--accent-color); /* Color de acento para este botón */
+  background-color: var(--accent-color); 
   color: var(--text-on-dark);
   padding: 10px 15px;
   border: none;
@@ -458,8 +424,8 @@
   font-size: 0.9em;
   font-weight: 600;
   transition: background-color 0.3s ease;
-  align-self: flex-start; /* Alinea el botón a la izquierda si no ocupa todo el ancho */
-  width: fit-content; /* Ajusta el ancho al contenido */
+  align-self: flex-start; 
+  width: fit-content; 
 }
 
 .clear-filter-button:hover {
@@ -469,16 +435,15 @@
 .clear-filter-button:active {
   transform: translateY(1px);
 }
-/* Si los avatares en los comentarios usan la misma clase 'post-avatar' */
+
 .post-avatar {
-  width: 40px;  /* O el tamaño que desees, por ejemplo, 30px, 50px */
-  height: 40px; /* Mantén el mismo valor que width para que sea un cuadrado */
-  border-radius: 50%; /* Opcional: para hacerlos redondos */
-  object-fit: cover; /* Opcional: Para asegurar que la imagen cubra el espacio sin distorsionarse, recortando si es necesario */
-  display: block; /* Opcional: Si quieres que ocupe su propia línea */
+  width: 40px;  
+  height: 40px;
+  border-radius: 50%; 
+  object-fit: cover; 
+  display: block; 
 }
 
-/* Si tienes una clase específica para avatares de comentarios, por ejemplo: */
 .comment-avatar {
   width: 30px;
   height: 30px;

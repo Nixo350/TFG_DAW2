@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public interface PublicacionRepository extends JpaRepository<Publicacion, Long> {
-    List<Publicacion> findByUsuario(Usuario usuario);
     @Query("SELECT p FROM Publicacion p WHERE " +
             "LOWER(p.titulo) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(p.contenido) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
@@ -19,6 +18,5 @@ public interface PublicacionRepository extends JpaRepository<Publicacion, Long> 
     List<Publicacion> searchByKeyword(@Param("keyword") String keyword);
     List<Publicacion> findByCategoria_NombreIgnoreCaseOrderByFechaCreacionDesc(String nombre);
     List<Publicacion> findAllByOrderByFechaCreacionDesc();
-    List<Publicacion> findByTituloContainingIgnoreCaseOrContenidoContainingIgnoreCaseOrUsuarioUsernameContainingIgnoreCaseOrderByFechaCreacionDesc(String titulo, String contenido, String username);
 
 }

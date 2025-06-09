@@ -5,14 +5,11 @@ import { NgForm, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 
-// Define la interfaz para tu objeto de publicación (ajusta si tienes más campos)
 interface Publicacion {
   titulo: string;
   contenido: string;
-  // Otros campos si los tienes en tu modelo
 }
 
-// Define la interfaz para tu objeto de categoría (ajusta según tu backend)
 interface Categoria {
   idCategoria: number;
   nombre: string;
@@ -91,7 +88,6 @@ export class CreatePublicacionComponent implements OnInit {
     this.isSuccess = null;
     this.message = '';
 
-    // Primero, validar que se haya seleccionado o creado una categoría
     if ((!this.selectedCategoryId && !this.createNewCategory) || (this.createNewCategory && (!this.newCategoryName || this.newCategoryName.trim() === ''))) {
       this.message = 'Por favor, selecciona o introduce un nombre para la categoría.';
       this.isSuccess = false;
@@ -118,14 +114,11 @@ export class CreatePublicacionComponent implements OnInit {
       formData.append('imagen', this.selectedImage, this.selectedImage.name);
     }
 
-    // --- Lógica para determinar el 'categoriaNombre' a enviar al backend ---
     let categoriaNameToSend: string | undefined;
 
     if (this.createNewCategory) {
-      // Si el usuario elige crear una nueva categoría, usamos el nombre de la nueva categoría
       categoriaNameToSend = this.newCategoryName;
     } else if (this.selectedCategoryId) {
-      // Si el usuario elige una categoría existente, buscamos su nombre en la lista cargada
       const selectedCategory = this.categories.find(cat => cat.idCategoria === this.selectedCategoryId);
       if (selectedCategory) {
         categoriaNameToSend = selectedCategory.nombre;
@@ -136,16 +129,13 @@ export class CreatePublicacionComponent implements OnInit {
       }
     }
 
-    // Asegurarse de que categoriaNameToSend no sea undefined o vacío antes de enviarlo
     if (categoriaNameToSend && categoriaNameToSend.trim() !== '') {
       formData.append('categoriaNombre', categoriaNameToSend);
     } else {
-      // Esto debería ser capturado por la validación inicial, pero es un buen fallback
       this.message = 'El nombre de la categoría es obligatorio.';
       this.isSuccess = false;
       return;
     }
-    // --- Fin de la lógica de categoría ---
 
     const token = this.authService.getToken();
     console.log(token);
@@ -173,7 +163,7 @@ export class CreatePublicacionComponent implements OnInit {
           this.selectedCategoryId = undefined;
           this.newCategoryName = '';
           this.newCategoryDescription = '';
-          this.loadCategories(); // Recargar categorías por si se creó una nueva
+          this.loadCategories(); 
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {

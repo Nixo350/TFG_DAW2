@@ -1,4 +1,3 @@
-// src/main/java/com/gestion/zarpas_backend/dto/PublicacionCreacionActualizacionRequest.java
 package com.gestion.zarpas_backend.request;
 
 import jakarta.validation.constraints.NotBlank;
@@ -6,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.util.Set; // Importar Set
+import java.util.Set;
 
 @Data
 public class PublicacionCreacionActualizacionRequest {
@@ -18,10 +17,10 @@ public class PublicacionCreacionActualizacionRequest {
     @Size(min = 10, message = "El contenido debe tener al menos 10 caracteres")
     private String contenido;
 
-    private String imagenUrl; // Opcional
+    private String imagenUrl;
 
     @NotNull(message = "El ID de usuario es obligatorio")
     private Long idUsuario;
 
-    private Set<String> categorias; // Set de nombres de categorías
+    private Set<String> categorias;
 }
