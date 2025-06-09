@@ -1,0 +1,76 @@
+<div class="edit-profile-container">
+    <h2>Editar Perfil</h2>
+  
+    <form [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()">
+      <div class="form-section profile-image-section">
+        <h3>Foto de Perfil</h3>
+        <div class="image-preview-wrapper">
+          <img
+            *ngIf="currentProfileImageUrl"
+            [src]="currentProfileImageUrl"
+            alt="Foto de Perfil Actual"
+            class="profile-image-preview"
+          />
+          <mat-icon *ngIf="!currentProfileImageUrl" class="default-profile-icon">account_circle</mat-icon>
+        </div>
+  
+        <div class="file-input-group">
+          <input type="file" id="profileImage" (change)="onFileSelected($event)" accept="image/*" #fileInput hidden>
+          <button mat-stroked-button color="primary" type="button" (click)="fileInput.click()">
+            <mat-icon>upload</mat-icon> Seleccionar Archivo
+          </button>
+          <span class="file-name mat-caption">{{ selectedFileName || 'Ningún archivo seleccionado' }}</span>
+        </div>
+        <p *ngIf="fileUploadError" class="error-message mat-error">{{ fileUploadError }}</p>
+      </div>
+  
+      <div class="form-section profile-details-section">
+        <h3>Datos de Perfil</h3>
+        <mat-form-field appearance="outline"> <mat-label>Nombre de Usuario</mat-label>
+          <input matInput formControlName="username">
+          <mat-error *ngIf="profileForm.get('username')?.invalid && profileForm.get('username')?.touched">
+            El nombre de usuario es requerido.
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline"> <mat-label>Email</mat-label>
+          <input matInput formControlName="email" readonly>
+        </mat-form-field>
+      </div>
+  
+      <div class="actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!profileForm.valid && !selectedFile">
+          Guardar Cambios
+        </button>
+        <button mat-button routerLink="/profile">Cancelar</button>
+      </div>
+    </form>
+  
+    <div *ngIf="successMessage" class="success-message mat-body-2">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="error-message mat-body-2">{{ errorMessage }}</div>
+  
+    <div class="form-section password-change-section">
+      <h3>Cambiar Contraseña</h3>
+      <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
+        <mat-form-field appearance="outline"> <mat-label>Nueva Contraseña</mat-label>
+          <input matInput type="password" formControlName="newPassword">
+          <mat-error *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+            La contraseña debe tener al menos 6 caracteres.
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline"> <mat-label>Confirmar Contraseña</mat-label>
+          <input matInput type="password" formControlName="confirmPassword">
+          <mat-error *ngIf="passwordForm.get('confirmPassword')?.invalid && passwordForm.get('confirmPassword')?.touched">
+            Las contraseñas no coinciden.
+          </mat-error>
+        </mat-form-field>
+  
+        <div class="actions">
+          <button mat-raised-button color="accent" type="submit" [disabled]="!passwordForm.valid">
+            Cambiar Contraseña
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

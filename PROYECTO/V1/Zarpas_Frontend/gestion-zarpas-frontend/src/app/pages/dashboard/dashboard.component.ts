@@ -69,19 +69,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private router: Router
   ) {}
 
-  canManagePost(post: Publicacion): boolean {
-    const currentUser = this.authService.getUser();
-    if (!currentUser || !post.usuario) {
-      return false;
-    }
-    return currentUser.id === post.usuario.idUsuario;
-  }
-
-  onEditPost(post: Publicacion): void {
-    if (post.idPublicacion) {
-      this.router.navigate(['/editar-publicacion', post.idPublicacion]);
-    }
-  }
 
   hasCurrentUserSavedPost(post: Publicacion): boolean {
     const currentUser = this.authService.getUser();
@@ -540,42 +527,7 @@ loadPosts(): void {
     );
   }
 
-  onDeletePost(idPublicacion: number): void {
-    if (
-      confirm(
-        '¿Estás seguro de que quieres eliminar esta publicación? Esta acción no se puede deshacer.'
-      )
-    ) {
-      this.subscriptions.add(
-        this.postService.deletePublicacion(idPublicacion).subscribe({
-          next: () => {
-            console.log(`Publicación ${idPublicacion} eliminada correctamente.`);
-            this.posts = this.posts.filter((p) => p.idPublicacion !== idPublicacion);
-            this.snackBar.open('Publicación eliminada correctamente.', 'Cerrar', {
-              duration: 3000,
-            });
-            this.cdr.detectChanges();
-          },
-          error: (error: HttpErrorResponse) => {
-            console.error('Error al eliminar la publicación:', error);
-            if (error.status === 401 || error.status === 403) {
-              this.snackBar.open(
-                'No tienes permisos para eliminar esta publicación.',
-                'Cerrar',
-                { duration: 5000 }
-              );
-            } else {
-              this.snackBar.open(
-                'Error al eliminar la publicación: ' + (error.error?.message || 'Error desconocido.'),
-                'Cerrar',
-                { duration: 3000 }
-              );
-            }
-          },
-        })
-      );
-    }
-  }
+
 
 
 

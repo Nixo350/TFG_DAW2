@@ -1,5 +1,6 @@
 package com.gestion.zarpas_backend.servicio.impl;
 
+import com.gestion.zarpas_backend.dto.UsuarioPerfilUpdateRequest;
 import com.gestion.zarpas_backend.modelo.Rol;
 import com.gestion.zarpas_backend.modelo.Usuario;
 import com.gestion.zarpas_backend.modelo.UsuarioRol;
@@ -12,10 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -73,24 +71,30 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public Usuario actualizarUsuario(Long id, Usuario usuarioDetalles) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
+    public Usuario updateUsuarioPerfil(Long idUsuario, UsuarioPerfilUpdateRequest request) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado con ID: " + idUsuario));
 
-        usuario.setUsername(usuarioDetalles.getUsername());
-        usuario.setEmail(usuarioDetalles.getEmail());
-        if (usuarioDetalles.getContrasena() != null && !usuarioDetalles.getContrasena().isEmpty()) {
-            if (!passwordEncoder.matches(usuarioDetalles.getContrasena(), usuario.getContrasena())) {
-                usuario.setContrasena(passwordEncoder.encode(usuarioDetalles.getContrasena()));
-            } else if (!usuarioDetalles.getContrasena().startsWith("$2a$")) {
-                usuario.setContrasena(passwordEncoder.encode(usuarioDetalles.getContrasena()));
-            }
+        if (!usuario.getUsername().equals(request.getUsername()) && usuarioRepository.existsByUsername(request.getUsername())) {
+            throw new IllegalArgumentException("Error: ¡El nombre de usuario '" + request.getUsername() + "' ya está en uso!");
         }
-        usuario.setNombre(usuarioDetalles.getNombre());
-        usuario.setFotoPerfil(usuarioDetalles.getFotoPerfil());
-        usuario.setUltimoLogin(new Timestamp(System.currentTimeMillis()));
+
+        usuario.setUsername(request.getUsername());
+        usuario.setFotoPerfil(request.getFotoPerfil());
 
         return usuarioRepository.save(usuario);
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(Long idUsuario, String newContrasena) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado con ID: " + idUsuario));
+
+        String encodedPassword = passwordEncoder.encode(newContrasena);
+        usuario.setContrasena(encodedPassword);
+
+        usuarioRepository.save(usuario);
     }
 
     @Override

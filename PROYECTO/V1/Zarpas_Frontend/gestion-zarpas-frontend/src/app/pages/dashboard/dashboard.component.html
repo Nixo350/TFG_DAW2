@@ -42,26 +42,6 @@
               <mat-icon>label</mat-icon> {{ post.categoria?.nombre }}
             </span>
           </div>
-
-          <button
-            mat-icon-button
-            [matMenuTriggerFor]="postMenu"
-            aria-label="Opciones de publicación"
-            class="post-options-button"
-            *ngIf="canManagePost(post)"
-          >
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #postMenu="matMenu">
-            <button mat-menu-item (click)="onEditPost(post)">
-              <mat-icon>edit</mat-icon>
-              <span>Editar</span>
-            </button>
-            <button mat-menu-item (click)="onDeletePost(post.idPublicacion!)">
-              <mat-icon>delete</mat-icon>
-              <span>Eliminar</span>
-            </button>
-          </mat-menu>
         </div>
 
         <h3 class="post-title">{{ post.titulo }}</h3>

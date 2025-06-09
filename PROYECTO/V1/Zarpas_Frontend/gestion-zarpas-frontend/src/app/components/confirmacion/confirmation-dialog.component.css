@@ -1,0 +1,8 @@
+/* src/app/common/confirmation-dialog/confirmation-dialog.component.css */
+mat-dialog-content {
+    margin-bottom: 20px;
+  }
+  
+  mat-dialog-actions button {
+    margin-left: 8px;
+  }

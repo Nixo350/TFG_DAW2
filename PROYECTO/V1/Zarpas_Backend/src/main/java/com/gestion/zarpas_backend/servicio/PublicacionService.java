@@ -7,9 +7,7 @@ import java.util.Optional;
 
 public interface PublicacionService {
     Publicacion guardarPublicacion(Publicacion publicacion);
-    Optional<Publicacion> obtenerPublicacionPorId(Long id);
     List<Publicacion> obtenerTodasLasPublicaciones();
-    void eliminarPublicacion(Long id);
     List<Publicacion> searchPublicaciones(String keyword);
 
     List<Categoria> getAllCategorias();
@@ -17,5 +15,9 @@ public interface PublicacionService {
     Categoria crearCategoria(Categoria categoria);
     void guardarPublicacionPorUsuario(Long idPublicacion, Long idUsuario);
     void eliminarPublicacionGuardadaPorUsuario(Long idPublicacion, Long idUsuario);
+
+    List<Publicacion> getPublicacionesByUserId(Long userId);
+    void deletePublicacion(Long id);
+    boolean isPublicacionOwner(Long publicacionId, Long userId);
 
 }

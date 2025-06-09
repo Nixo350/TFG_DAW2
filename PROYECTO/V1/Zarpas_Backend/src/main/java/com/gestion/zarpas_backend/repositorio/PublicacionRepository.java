@@ -19,4 +19,6 @@ public interface PublicacionRepository extends JpaRepository<Publicacion, Long> 
     List<Publicacion> findByCategoria_NombreIgnoreCaseOrderByFechaCreacionDesc(String nombre);
     List<Publicacion> findAllByOrderByFechaCreacionDesc();
 
+    List<Publicacion> findByUsuarioIdUsuario(Long userId);
+
 }

@@ -51,13 +51,13 @@ export class PostService {
     return this.http.get<Categoria[]>(`${BASE_API_URL}/categorias/all`);
   }
 
+  getPublicacionesByUserId(userId: number): Observable<Publicacion[]> {
+    return this.http.get<Publicacion[]>(`${BASE_API_URL}/usuario/${userId}`);
+  }
 
-
-    deletePublicacion(idPublicacion: number): Observable<any> {
-      return this.http.delete(`${BASE_API_URL}/${idPublicacion}`, { headers: this.getAuthHeaders() });
-    }
-
-  
+  deletePublicacion(publicacionId: number): Observable<void> {
+    return this.http.delete<void>(`${BASE_API_URL}/${publicacionId}`);
+  }
 
 
 }

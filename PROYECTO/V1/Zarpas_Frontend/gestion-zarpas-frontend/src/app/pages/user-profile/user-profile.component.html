@@ -1,1 +1,87 @@
-<p>user-profile works!</p>
+<div class="profile-page-wrapper">
+    <mat-card class="profile-card mat-elevation-z4">
+      <mat-card-header>
+        <mat-card-title>Mi Perfil de Usuario</mat-card-title>
+      </mat-card-header>
+  
+      <mat-card-content *ngIf="currentUser" class="profile-main-content">
+        <div class="profile-header-section">
+          <div class="profile-image-container">
+            <img
+              *ngIf="currentUser.fotoPerfil"
+              [src]="currentUser.fotoPerfil"
+              alt="Imagen de perfil"
+              class="profile-image"
+            />
+            <mat-icon *ngIf="!currentUser.fotoPerfil" class="default-profile-icon">account_circle</mat-icon>
+            </div>
+  
+          <div class="user-details-section">
+            <p><strong>Nombre de Usuario:</strong> {{ currentUser.username }}</p>
+            <p><strong>Email:</strong> {{ currentUser.email }}</p>
+  
+            <button mat-raised-button color="primary" routerLink="/edit-profile" class="manage-profile-button">
+              <mat-icon>settings</mat-icon> Gestionar Perfil y Cuenta
+            </button>
+          </div>
+        </div>
+  
+        <mat-divider class="section-divider"></mat-divider>
+  
+        <div class="my-posts-section">
+          <h3>Mis Publicaciones ({{ myPublicationsCount }})</h3>
+  
+          <div *ngIf="myPublicationsCount === 0" class="empty-section-message">
+            <p>Aún no has creado ninguna publicación.</p>
+          </div>
+  
+          <div *ngIf="myPublicationsCount > 0" class="post-list">
+            <mat-card *ngFor="let post of myPublications" class="post-item mat-elevation-z2">
+              <mat-card-header>
+                <mat-card-title>
+                  <a [routerLink]="['/post', post.idPublicacion]">{{ post.titulo }}</a>
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <p class="post-content-preview">{{ post.contenido | slice:0:100 }}...</p>
+                <div class="post-meta">
+                  <span>Categoría: {{ post.categoria?.nombre || 'N/A' }}</span>
+                  <span>Reacciones: {{ post.conteoLikes || 0 }} 👍 {{ post.conteoDislikes || 0 }} 👎</span>
+                  <span>Comentarios: {{ post.comentarios?.length || 0 }}</span>
+                </div>
+              </mat-card-content>
+              <mat-card-actions class="post-actions">
+                <button mat-flat-button color="warn" (click)="onDeletePublication(post.idPublicacion!)">
+                  <mat-icon>delete</mat-icon> Eliminar
+                </button>
+                </mat-card-actions>
+            </mat-card>
+          </div>
+        </div>
+  
+        <mat-divider class="section-divider"></mat-divider>
+  
+        <div class="saved-posts-section">
+          <h3>Publicaciones Guardadas ({{ savedPublicationsCount }})</h3>
+          <div *ngIf="savedPublicationsCount === 0" class="empty-section-message">
+            <p>Aún no has guardado ninguna publicación.</p>
+          </div>
+          </div>
+  
+        <mat-divider class="section-divider"></mat-divider>
+  
+        <div class="delete-account-section">
+          <h3>Zona de Peligro</h3>
+          <p>Si deseas eliminar tu cuenta de forma permanente, haz clic en el botón de abajo.</p>
+          <button mat-raised-button color="warn" (click)="onDeleteAccount()" class="delete-account-button">
+            <mat-icon>delete_forever</mat-icon> Eliminar Cuenta
+          </button>
+        </div>
+      </mat-card-content>
+  
+      <div *ngIf="!currentUser" class="loading-message">
+        <p>Cargando información del perfil o no hay usuario logueado...</p>
+        <mat-spinner diameter="50"></mat-spinner>
+      </div>
+    </mat-card>
+  </div>

@@ -1,7 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of, BehaviorSubject } from 'rxjs'; 
+import { Observable, of, BehaviorSubject,map } from 'rxjs'; 
 import { tap, catchError } from 'rxjs/operators';
+
+
+interface User {
+  id: number;
+  username: string;
+  email: string;
+  fotoPerfil?: string; // Asegúrate de que el campo exista y sea opcional si no siempre está presente
+  // Agrega aquí otros campos que tu objeto de usuario pueda tener
+}
+
 
 const AUTH_API = 'http://localhost:9000/api/auth/';
 
@@ -9,13 +19,14 @@ const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
   //Clase encargada del la autentificacion del usuario con un TOKEN
-
+  private currentUserSubject: BehaviorSubject<User | null>;
   private _isLoggedIn$ = new BehaviorSubject<boolean>(false);
   private _currentUser$ = new BehaviorSubject<any | null>(null); 
 
@@ -23,7 +34,13 @@ export class AuthService {
   currentUser$ = this._currentUser$.asObservable();
 
   constructor(private http: HttpClient) {
+    const storedUser = localStorage.getItem('currentUser');
+    this.currentUserSubject = new BehaviorSubject<User | null>(storedUser ? JSON.parse(storedUser) : null);
     this.checkInitialLoginStatus();
+  }
+
+  public get currentUserValue(): User | null {
+    return this.currentUserSubject.value;
   }
 
   private checkInitialLoginStatus(): void {
@@ -52,6 +69,10 @@ export class AuthService {
     }
   }
 
+  public saveUserToLocalStorage(user: any): void {
+    localStorage.setItem('auth-user', JSON.stringify(user));
+    this._currentUser$.next(user); 
+  }
 
 //Clase encargada de el login del usuario
   login(username: string, password_param: string): Observable<any> {
@@ -140,5 +161,18 @@ export class AuthService {
   registerUser(userData: any): Observable<any> {
 
     return this.http.post(`${AUTH_API}signup`, userData); 
+  }
+  updateCurrentUser(updatedUserData: any): void {
+    // Obtén el valor actual del usuario
+    const currentUser = this.currentUserSubject.value;
+
+    if (currentUser) {
+      // Combina los datos actuales con los nuevos datos proporcionados
+      const newUser = { ...currentUser, ...updatedUserData };
+      // Actualiza el almacenamiento local
+      localStorage.setItem('currentUser', JSON.stringify(newUser));
+      // Emite el usuario actualizado a todos los suscriptores
+      this.currentUserSubject.next(newUser);
+    }
   }
 }

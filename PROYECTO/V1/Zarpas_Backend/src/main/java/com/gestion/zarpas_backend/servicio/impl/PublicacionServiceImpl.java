@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -58,11 +59,6 @@ public class PublicacionServiceImpl implements PublicacionService {
         return publicacionRepository.save(publicacion);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<Publicacion> obtenerPublicacionPorId(Long id) {
-        return publicacionRepository.findById(id);
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -72,11 +68,6 @@ public class PublicacionServiceImpl implements PublicacionService {
 
 
 
-    @Override
-    @Transactional
-    public void eliminarPublicacion(Long id) {
-        publicacionRepository.deleteById(id);
-    }
 
     @Override
     @Transactional
@@ -139,5 +130,27 @@ public class PublicacionServiceImpl implements PublicacionService {
         publicacionRepository.save(publicacion);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isPublicacionOwner(Long publicacionId, Long userId) {
+        return publicacionRepository.findById(publicacionId)
+                .map(publicacion -> publicacion.getUsuario() != null && publicacion.getUsuario().getIdUsuario().equals(userId))
+                .orElse(false); // Si la publicación no existe o no tiene un usuario, no es propietario
+    }
+    @Override
+    @Transactional // Esta operación modifica datos (elimina)
+    public void deletePublicacion(Long id) {
+        // Opcional: Primero verifica si la publicación existe antes de intentar eliminarla
+        if (!publicacionRepository.existsById(id)) {
+            throw new NoSuchElementException("Publicación con ID " + id + " no encontrada para eliminar.");
+        }
+        publicacionRepository.deleteById(id);
+    }
+    @Override
+    @Transactional(readOnly = true) // Esta operación solo lee datos
+    public List<Publicacion> getPublicacionesByUserId(Long userId) {
+        // Llama al método del repositorio para obtener las publicaciones
+        return publicacionRepository.findByUsuarioIdUsuario(userId);
+    }
 
 }

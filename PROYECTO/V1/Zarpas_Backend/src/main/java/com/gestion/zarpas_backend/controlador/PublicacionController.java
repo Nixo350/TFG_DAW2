@@ -18,6 +18,7 @@ import com.gestion.zarpas_backend.servicio.StorageService;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 @RestController
 @RequestMapping("/api/publicaciones")
@@ -118,12 +119,7 @@ public class PublicacionController {
         return new ResponseEntity<>(publicaciones, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Publicacion> obtenerPublicacionPorId(@PathVariable Long id) {
-        Optional<Publicacion> publicacion = publicacionService.obtenerPublicacionPorId(id);
-        return publicacion.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
+
 
 
 
@@ -147,7 +143,7 @@ public class PublicacionController {
         List<Categoria> categorias = publicacionService.getAllCategorias();
         return ResponseEntity.ok(categorias);
     }
-//--------------------------------------------------------------
+
     @PostMapping("/categorias")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Categoria> crearCategoria(@RequestBody Categoria categoria) {
@@ -166,39 +162,28 @@ public class PublicacionController {
         }
     }
 
+    @GetMapping("/usuario/{userId}")
+    public ResponseEntity<List<Publicacion>> getPublicacionesByUserId(@PathVariable Long userId) {
+        List<Publicacion> publicaciones = publicacionService.getPublicacionesByUserId(userId);
+        return ResponseEntity.ok(publicaciones);
+    }
 
-
-
-    @DeleteMapping("/{idPublicacion}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> eliminarPublicacion(@PathVariable Long idPublicacion) {
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @publicacionServiceImpl.isPublicacionOwner(#id, authentication.principal.id)")
+    public ResponseEntity<Void> deletePublicacion(@PathVariable Long id) {
         try {
-            Optional<Usuario> currentUserOptional = getAuthenticatedUser();
-            if (!currentUserOptional.isPresent()) {
-                return new ResponseEntity<>("Usuario no autenticado", HttpStatus.UNAUTHORIZED);
-            }
-            Usuario currentUser = currentUserOptional.get();
-
-            Publicacion publicacionExistente = publicacionService.obtenerPublicacionPorId(idPublicacion)
-                    .orElseThrow(() -> new RuntimeException("Publicación no encontrada con ID: " + idPublicacion));
-
-            boolean isOwner = publicacionExistente.getUsuario().getIdUsuario().equals(currentUser.getIdUsuario());
-            boolean isAdmin = currentUser.getUsuarioRoles().stream()
-                    .anyMatch(ur -> ur.getRol().getNombre().equals("ADMIN"));
-
-            if (!isOwner && !isAdmin) {
-                return new ResponseEntity<>("No tienes permiso para eliminar esta publicación.", HttpStatus.FORBIDDEN);
-            }
-
-            publicacionService.eliminarPublicacion(idPublicacion);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND); // Publicación no encontrada
+            publicacionService.deletePublicacion(id);
+            return ResponseEntity.noContent().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Error interno del servidor al eliminar la publicación: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
+
 
 
 }

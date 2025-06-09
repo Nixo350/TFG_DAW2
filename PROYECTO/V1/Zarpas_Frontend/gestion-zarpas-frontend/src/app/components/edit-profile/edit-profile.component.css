@@ -1,0 +1,172 @@
+.edit-profile-container {
+    max-width: 800px; 
+    margin: 40px auto; 
+    padding: 30px;
+    background-color: var(--background-card, #ffffff);
+    border-radius: 12px; 
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    font-family: 'Roboto', sans-serif; 
+  }
+  
+  h2 {
+    color: var(--primary-color, #3f51b5); 
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.2em;
+    font-weight: 700;
+  }
+  
+  h3 {
+    color: var(--text-color-dark, #333); 
+    margin-top: 40px;
+    margin-bottom: 20px;
+    font-size: 1.6em;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color, #eee); 
+    padding-bottom: 10px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px; 
+  }
+  
+  .form-section {
+    padding: 20px;
+    background-color: var(--background-light, #f9f9f9);
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #e0e0e0);
+  }
+  
+  .profile-image-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    gap: 20px; 
+  }
+  
+  .image-preview-wrapper {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden; 
+    border: 4px solid var(--primary-color, #3f51b5); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--background-medium, #e0e0e0); 
+  }
+  
+  .profile-image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+  }
+  
+  .default-profile-icon {
+    font-size: 120px; 
+    color: var(--text-color-light, #888); 
+  }
+  
+  .file-input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%; 
+    max-width: 300px; 
+  }
+  
+  .file-input-group .mat-stroked-button {
+    width: 100%; 
+    height: 48px; 
+    font-size: 1.1em;
+    border-color: var(--primary-color, #3f51b5);
+    color: var(--primary-color, #3f51b5);
+  }
+  
+  .file-input-group .mat-icon {
+      margin-right: 8px; 
+  }
+  
+  .file-name {
+    color: var(--text-color-medium, #555);
+    font-style: italic;
+    text-align: center;
+    word-break: break-word; 
+  }
+  
+  .mat-form-field {
+    width: 100%; 
+    margin-bottom: 15px; 
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: flex-end; 
+    gap: 15px; 
+    margin-top: 20px;
+  }
+  
+  .actions .mat-raised-button.mat-primary {
+    background-color: var(--primary-color, #3f51b5);
+    color: #fff;
+    padding: 10px 25px;
+    font-size: 1.1em;
+    border-radius: 8px; 
+  }
+  
+  .actions .mat-button {
+    color: var(--text-color-medium, #555);
+    padding: 10px 25px;
+    font-size: 1.1em;
+    border-radius: 8px;
+  }
+  
+  .success-message {
+    background-color: var(--success-background, #e8f5e9);
+    color: var(--success-color, #2e7d32); 
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--success-border, #a5d6a7);
+    text-align: center;
+  }
+  
+  .error-message {
+    background-color: var(--error-background, #ffebee); 
+    color: var(--error-color, #c62828); 
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--error-border, #ef9a9a);
+    text-align: center;
+  }
+  
+  /* Variables CSS para facilitar la personalización */
+  :root {
+    --primary-color: #5C6BC0; 
+    --accent-color: #FFC107; 
+    --warn-color: #F44336;   
+  
+    --background-body: #f0f2f5;
+    --background-card: #ffffff; 
+    --background-light: #fafafa; 
+    --background-medium: #e0e0e0;
+  
+    --text-color-dark: #212121;  
+    --text-color-medium: #616161; 
+    --text-color-light: #9e9e9e;
+  
+    --border-color: #e0e0e0; 
+    --divider-color: #bdbdbd; 
+  
+    --success-background: #e8f5e9;
+    --success-color: #2e7d32;
+    --success-border: #a5d6a7;
+  
+    --error-background: #ffebee;
+    --error-color: #c62828;
+    --error-border: #ef9a9a;
+  }
