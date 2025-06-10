@@ -87,17 +87,17 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 1. Rutas de autenticación y recursos públicos
-
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/uploads/**").permitAll()
+                        // ***** 1. RUTAS PÚBLICAS Y HEALTHCHECK (PONLAS AL PRINCIPIO) *****
+                        .requestMatchers("/").permitAll() // <--- ¡MANTÉN ESTA ARRIBA DEL TODO!
+                        .requestMatchers("/health").permitAll() // Si decides usar /health para Healthcheck
+                        .requestMatchers("/api/auth/**").permitAll() // Rutas de autenticación
+                        .requestMatchers("/uploads/**").permitAll()   // Recursos estáticos
                         .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/api/usuarios/crear").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
 
-                        // 2. Rutas de Publicaciones PÚBLICAS
+                        // Rutas de Publicaciones PÚBLICAS
                         .requestMatchers("/api/publicaciones/todas").permitAll()
                         .requestMatchers("/api/publicaciones/buscar").permitAll()
                         .requestMatchers("/api/publicaciones/{idPublicacion}").permitAll()
@@ -109,23 +109,25 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         // Rutas de Categorías ESPECÍFICAS
                         .requestMatchers(HttpMethod.GET, "/api/publicaciones/categorias/all").permitAll()
 
-                        // 3. Rutas de comentarios (públicas)
+                        // Rutas de comentarios (públicas)
                         .requestMatchers("/api/comentarios/publicacion/**").permitAll()
 
-
-                        // 4. Rutas de Reacciones de Publicaciones
+                        // Rutas de Reacciones de Publicaciones (públicas)
                         .requestMatchers("/api/reacciones-publicacion/conteo/**").permitAll()
                         .requestMatchers("/api/publicaciones/reacciones/conteo/**").permitAll()
-
                         .requestMatchers("/api/reacciones-publicacion/usuario/**").permitAll()
                         .requestMatchers("/api/reacciones-publicacion/publicacion/**").permitAll()
 
-                        // 5. Rutas de Reacciones de Comentarios (públicas)
+                        // Rutas de Reacciones de Comentarios (públicas)
                         .requestMatchers("/api/reacciones-comentario/conteo/**").permitAll()
                         .requestMatchers("/api/reacciones-comentario/usuario/**").permitAll()
-                        .requestMatchers("/api/publicaciones/**").authenticated()
 
-                        // 6. Rutas de Categorías que requieren autenticación (POST, PUT, DELETE)
+                        // ***** 2. RUTAS PROTEGIDAS (después de las públicas) *****
+                        // Todas las rutas de /api/publicaciones (incluyendo las GET que ya permitiste antes)
+                        // ESTA LÍNEA DEBE IR DESPUÉS DE LAS PERMITIDAS ESPECÍFICAS DE /api/publicaciones GET
+                        .requestMatchers("/api/publicaciones/**").authenticated() // Asegúrate de que esta no sea muy restrictiva
+
+                        // Rutas de Categorías que requieren autenticación (POST, PUT, DELETE)
                         .requestMatchers(HttpMethod.POST, "/api/publicaciones/categorias").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/publicaciones/categorias/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/publicaciones/categorias/**").authenticated()
@@ -134,12 +136,15 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         .requestMatchers(HttpMethod.DELETE, "/api/publicaciones/categoria/**").authenticated()
 
 
-                        // 7. Rutas de Usuarios (requieren autenticación)
+                        // Rutas de Usuarios (requieren autenticación)
                         .requestMatchers("/api/usuarios/{id}").authenticated()
                         .requestMatchers("/api/usuarios/**").authenticated()
 
-                        // 8. Cualquier otra petición no especificada requiere autenticación por defecto
+
+                        // ***** 3. CUALQUIER OTRA COSA POR DEFECTO REQUIERE AUTENTICACIÓN *****
+                        // Esta debe ser la ÚLTIMA regla
                         .anyRequest().authenticated()
+                
                 );
 
         http.authenticationProvider(authenticationProvider());
