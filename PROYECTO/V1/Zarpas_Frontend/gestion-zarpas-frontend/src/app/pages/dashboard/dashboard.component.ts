@@ -26,6 +26,7 @@ import { MatInputModule } from '@angular/material/input';
 import { ReaccionPublicacionRequest } from '../../modelos/ReaccionPublicacion';
 import { PublicacionGuardada,PublicacionGuardadaRequest } from '../../modelos/PublicacionGuardada'; 
 import { PublicacionGuardadaService } from '../../services/publicacion-guardada.service';
+import { environment } from '../../../enviroments/environment.prod';
 
 
 
@@ -93,6 +94,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return isSaved;
   }
 
+  getAbsoluteImageUrl(relativePath: string | null | undefined): string {
+    if (relativePath) {
+      // Asegúrate de que apiUrl no termine con '/' y relativePath empiece con '/'
+      // para evitar "//" dobles o URL's incorrectas.
+      const baseUrl = environment.apiUrl.endsWith('/')
+        ? environment.apiUrl.slice(0, -1)
+        : environment.apiUrl;
+      return `<span class="math-inline">\{baseUrl\}</span>{relativePath}`;
+    }
+    return 'assets/default-avatar.png'; // Ruta por defecto si no hay imagen
+  }
+
   ngOnInit(): void {
     this.loadPosts(); 
 
@@ -145,7 +158,11 @@ loadPosts(): void {
             this.publicacionGuardadaService.getPublicacionesGuardadasPorUsuario(currentUser.id) 
               .subscribe({
                 next: (savedPublicationsBackend: any[]) => {
-                  const savedPublicacionIds = new Set(savedPublicationsBackend.map(item => item.publicacion.idPublicacion));
+                  const savedPublicacionIds = new Set(
+                    savedPublicationsBackend
+                      .filter(item => item && item.publicacion) 
+                      .map(item => item.publicacion.idPublicacion)
+                  );
 
                   this.posts.forEach(post => {
                     if (savedPublicacionIds.has(post.idPublicacion)) {

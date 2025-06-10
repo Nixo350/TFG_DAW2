@@ -5,12 +5,13 @@ import { TipoReaccion } from '../modelos/TipoReaccion';
 import { AuthService } from './auth.service';
 import { catchError, of, throwError } from 'rxjs'; 
 import { ReaccionPublicacionRequest } from '../modelos/ReaccionPublicacion';
+import { environment } from '../../enviroments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReaccionPublicacionService {
-  private baseUrl = 'http://localhost:9000/api/reacciones-publicacion';
+  private baseUrl = `${environment.apiUrl}/reacciones-publicacion`;
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 

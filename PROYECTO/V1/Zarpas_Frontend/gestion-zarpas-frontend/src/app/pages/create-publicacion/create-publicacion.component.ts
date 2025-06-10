@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NgForm, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../enviroments/environment.prod';
 
 interface Publicacion {
   titulo: string;
@@ -62,7 +63,7 @@ export class CreatePublicacionComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
-    this.http.get<Categoria[]>('http://localhost:9000/api/publicaciones/categorias/all', { headers })
+    this.http.get<Categoria[]>(`${environment.apiUrl}/publicaciones/categorias/all`, { headers })
       .subscribe({
         next: (data) => {
           this.categories = data;
@@ -150,7 +151,7 @@ export class CreatePublicacionComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
-    this.http.post('http://localhost:9000/api/publicaciones/crear-con-imagen', formData, { headers: headers })
+    this.http.post(`${environment.apiUrl}/publicaciones/crear-con-imagen`, formData, { headers: headers })
       .subscribe({
         next: (response) => {
           console.log('Publicación creada exitosamente', response);

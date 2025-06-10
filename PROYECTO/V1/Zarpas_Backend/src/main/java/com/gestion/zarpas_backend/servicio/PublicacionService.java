@@ -2,8 +2,8 @@ package com.gestion.zarpas_backend.servicio;
 
 import com.gestion.zarpas_backend.modelo.Categoria;
 import com.gestion.zarpas_backend.modelo.Publicacion;
+
 import java.util.List;
-import java.util.Optional;
 
 public interface PublicacionService {
     Publicacion guardarPublicacion(Publicacion publicacion);

@@ -23,17 +23,13 @@
       <div *ngFor="let post of posts" class="post-card">
         <div class="post-header">
           <img
-            [src]="
-              post.usuario?.fotoPerfil
-                ? ('http://localhost:9000' + post.usuario.fotoPerfil)
-                : 'assets/default-avatar.png'
-            "
-            alt="Avatar"
-            class="post-avatar"
-          />
+          [src]="getAbsoluteImageUrl(post.usuario?.fotoPerfil)"
+          alt="Avatar"
+          class="post-avatar"
+        />
           <div class="post-info">
             <div class="user-and-date">
-              <span class="post-author">{{ post.usuario?.username }}</span>
+              <span class="post-author">Creado Por {{ post.usuario?.username }}</span>
               <span class="post-date"
                 >{{ post.fechaCreacion | date : 'short' }}</span
               >
@@ -47,11 +43,11 @@
         <h3 class="post-title">{{ post.titulo }}</h3>
         <p class="post-content">{{ post.contenido }}</p>
         <img
-          *ngIf="post.imagenUrl"
-          [src]="'http://localhost:9000' + post.imagenUrl"
-          alt="Imagen de la publicación"
-          class="post-image"
-        />
+        *ngIf="post.imagenUrl"
+        [src]="getAbsoluteImageUrl(post.imagenUrl)"
+        alt="Imagen de la publicación"
+        class="post-image"
+      />
 
         <div class="post-actions">
           <button
@@ -107,17 +103,13 @@
             <div *ngFor="let comment of post.comentarios" class="comment-item">
               <div class="comment-header">
                 <img
-                  [src]="
-                    comment.usuario?.fotoPerfil
-                      ? ('http://localhost:9000' + comment.usuario.fotoPerfil)
-                      : 'assets/default-avatar.png'
-                  "
-                  alt="Avatar"
-                  class="comment-avatar"
-                />
+                [src]="getAbsoluteImageUrl(comment.usuario?.fotoPerfil)"
+                alt="Avatar"
+                class="comment-avatar"
+              />
                 <div class="comment-info">
                   <span class="comment-author"
-                    >{{ comment.usuario?.username }}
+                    >{{ comment.usernameUsuario }}
                   </span>
                   <span class="comment-date"
                     >{{ comment.fechaCreacion | date : 'short' }}</span

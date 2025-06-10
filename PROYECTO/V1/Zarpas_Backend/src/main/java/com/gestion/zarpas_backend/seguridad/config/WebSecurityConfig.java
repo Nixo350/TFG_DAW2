@@ -93,6 +93,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/api/usuarios/crear").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/favicon.ico").permitAll()
 
                         // 2. Rutas de Publicaciones PÚBLICAS
                         .requestMatchers("/api/publicaciones/todas").permitAll()
@@ -100,6 +101,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         .requestMatchers("/api/publicaciones/{idPublicacion}").permitAll()
                         .requestMatchers("/api/publicaciones/categoria/{nombreCategoria}").permitAll()
                         .requestMatchers("/api/publicaciones/usuario/{idUsuario}").permitAll()
+                        .requestMatchers("/api/publicaciones/usuario/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/publicaciones").permitAll()
 
                         // Rutas de Categorías ESPECÍFICAS

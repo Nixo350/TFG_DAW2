@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PublicacionGuardadaRequest } from '../modelos/PublicacionGuardada'; 
+import { environment } from '../../enviroments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PublicacionGuardadaService {
-  private apiUrl = 'http://localhost:9000/api/publicaciones'; 
+  private apiUrl = `${environment.apiUrl}/publicaciones`;
 
   constructor(private http: HttpClient) { }
 

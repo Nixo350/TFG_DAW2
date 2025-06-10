@@ -6,13 +6,14 @@ import { Publicacion } from '../modelos/Publicacion';
 import { Categoria } from '../modelos/Categoria';
 import { AuthService } from './auth.service';
 import { map } from 'rxjs/operators';
+import { environment } from '../../enviroments/environment.prod';
 
 interface PublicacionGuardadaRequest {
   idPublicacion: number;
   idUsuario: number;
 }
 
-const BASE_API_URL = 'http://localhost:9000/api/publicaciones';
+const BASE_API_URL = `${environment.apiUrl}/publicaciones`;
 
 @Injectable({
   providedIn: 'root'

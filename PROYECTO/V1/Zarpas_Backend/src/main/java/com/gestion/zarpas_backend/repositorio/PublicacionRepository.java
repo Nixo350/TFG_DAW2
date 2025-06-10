@@ -1,7 +1,7 @@
 package com.gestion.zarpas_backend.repositorio;
 
 import com.gestion.zarpas_backend.modelo.Publicacion;
-import com.gestion.zarpas_backend.modelo.Usuario;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +17,7 @@ public interface PublicacionRepository extends JpaRepository<Publicacion, Long> 
             "LOWER(p.usuario.username) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Publicacion> searchByKeyword(@Param("keyword") String keyword);
     List<Publicacion> findByCategoria_NombreIgnoreCaseOrderByFechaCreacionDesc(String nombre);
+    @EntityGraph(attributePaths = "usuario")
     List<Publicacion> findAllByOrderByFechaCreacionDesc();
 
     List<Publicacion> findByUsuarioIdUsuario(Long userId);

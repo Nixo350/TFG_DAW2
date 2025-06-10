@@ -6,12 +6,13 @@ import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Comentario, ComentarioRequest } from '../modelos/Comentario';
 import { map } from 'rxjs/operators';
+import { environment } from '../../enviroments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ComentarioService {
-  private baseUrl = 'http://localhost:9000/api/comentarios'; // ASEGÚRATE DE QUE ESTA BASE URL SEA CORRECTA
+  private baseUrl = `${environment.apiUrl}/comentarios`;
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, BehaviorSubject,map } from 'rxjs'; 
 import { tap, catchError } from 'rxjs/operators';
+import { environment } from '../../enviroments/environment.prod';
 
 
 interface User {
@@ -13,7 +14,7 @@ interface User {
 }
 
 
-const AUTH_API = 'http://localhost:9000/api/auth/';
+const AUTH_API = `${environment.apiUrl}/auth/`;
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })

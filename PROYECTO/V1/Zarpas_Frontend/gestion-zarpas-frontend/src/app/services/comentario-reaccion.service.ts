@@ -5,12 +5,14 @@ import { map, catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { TipoReaccion } from '../modelos/TipoReaccion';
 import { ComentarioReaccionRequest } from '../modelos/ComentarioReaccion';
+import { environment } from '../../enviroments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ComentarioReaccionService {
-  private baseUrl = 'http://localhost:9000/api/reacciones-comentario';
+  
+  private baseUrl = `${environment.apiUrl}/reacciones-comentario`;
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
