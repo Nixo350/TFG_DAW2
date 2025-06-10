@@ -144,11 +144,11 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         // ***** 3. CUALQUIER OTRA COSA POR DEFECTO REQUIERE AUTENTICACIÓN *****
                         // Esta debe ser la ÚLTIMA regla
                         .anyRequest().authenticated()
-                
+
                 );
 
         http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(authTokenFilter, AuthorizationFilter.class);
+        http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
