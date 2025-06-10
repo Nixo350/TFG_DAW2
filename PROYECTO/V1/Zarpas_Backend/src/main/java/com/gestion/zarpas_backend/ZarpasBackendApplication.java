@@ -8,14 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Optional;
 
 @SpringBootApplication
 public class ZarpasBackendApplication implements CommandLineRunner {
-
+    private static final Logger log = LoggerFactory.getLogger(ZarpasBackendApplication.class);
     private final UsuarioService usuarioService;
     private final RolService rolService;
 
@@ -26,7 +27,10 @@ public class ZarpasBackendApplication implements CommandLineRunner {
     }
 
     public static void main(String[] args) {
+
+        log.info("Starting ZarpasBackendApplication...");
         SpringApplication.run(ZarpasBackendApplication.class, args);
+        log.info("ZarpasBackendApplication finished running SpringApplication.run().");
     }
 
     @Override
