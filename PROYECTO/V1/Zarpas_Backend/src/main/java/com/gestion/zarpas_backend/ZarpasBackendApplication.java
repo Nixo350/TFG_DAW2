@@ -31,7 +31,7 @@ public class ZarpasBackendApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        String emailUsuarioInicial = "zarpas@gmail.com";
+        /*String emailUsuarioInicial = "zarpas@gmail.com";
         String nombreUsuarioInicial = "Zarpas";
 
         Optional<Usuario> usuarioExistenteOpt = usuarioService.obtenerUsuarioPorEmail(emailUsuarioInicial);
@@ -87,6 +87,6 @@ public class ZarpasBackendApplication implements CommandLineRunner {
             } catch (Exception e) {
                 System.err.println("Error al verificar/asignar rol al usuario existente: " + e.getMessage());
             }
-        }
+        }*/
     }
 }
