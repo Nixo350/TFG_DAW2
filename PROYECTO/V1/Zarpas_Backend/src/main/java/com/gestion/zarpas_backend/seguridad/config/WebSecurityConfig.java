@@ -45,6 +45,4 @@ public class WebSecurityConfig { // Quité `implements WebMvcConfigurer` tempora
         return http.build();
     }
 
-    // Comenta todos los otros @Bean de seguridad (authenticationProvider, authenticationManager, passwordEncoder)
-    // También comenta o elimina addResourceHandlers
 }
