@@ -88,10 +88,10 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // ***** 1. RUTAS PÚBLICAS Y HEALTHCHECK (PONLAS AL PRINCIPIO) *****
-                        .requestMatchers("/").permitAll() // <--- ¡MANTÉN ESTA ARRIBA DEL TODO!
-                        .requestMatchers("/health").permitAll() // Si decides usar /health para Healthcheck
-                        .requestMatchers("/api/auth/**").permitAll() // Rutas de autenticación
-                        .requestMatchers("/uploads/**").permitAll()   // Recursos estáticos
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/health").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/api/usuarios/crear").permitAll()
                         .requestMatchers("/error").permitAll()

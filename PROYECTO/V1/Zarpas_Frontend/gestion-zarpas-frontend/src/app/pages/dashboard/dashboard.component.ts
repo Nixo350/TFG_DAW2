@@ -94,17 +94,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return isSaved;
   }
 
-  getAbsoluteImageUrl(relativePath: string | null | undefined): string {
-    if (relativePath) {
-      // Asegúrate de que apiUrl no termine con '/' y relativePath empiece con '/'
-      // para evitar "//" dobles o URL's incorrectas.
-      const baseUrl = environment.apiUrl.endsWith('/')
-        ? environment.apiUrl.slice(0, -1)
-        : environment.apiUrl;
-      return `<span class="math-inline">\{baseUrl\}</span>{relativePath}`;
-    }
-    return 'assets/default-avatar.png'; // Ruta por defecto si no hay imagen
-  }
+    getAbsoluteImageUrl(relativePath: string | null | undefined): string {
+        if (relativePath) {
+          let baseUrl = environment.apiUrl;
+  
+          if (baseUrl.endsWith('/api')) {
+            baseUrl = baseUrl.slice(0, -4); 
+          }
+    
+          baseUrl = baseUrl.endsWith('/')
+            ? baseUrl.slice(0, -1)
+            : baseUrl;
+    
+          const cleanRelativePath = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
+    
+          return `${baseUrl}${cleanRelativePath}`; 
+        }
+        return 'assets/default-avatar.png';
+      }
 
   ngOnInit(): void {
     this.loadPosts(); 
