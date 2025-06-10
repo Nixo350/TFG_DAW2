@@ -1,4 +1,4 @@
-package com.gestion.zarpas_backend.controlador; // Asegúrate de que este sea tu paquete base de controladores
+package com.gestion.zarpas_backend.controlador; // Asegúrate de que este es el paquete correcto donde Spring lo pueda escanear
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -6,14 +6,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HealthCheckController {
 
-    @GetMapping("/")
-    public String healthCheck() {
-        return "OK"; // Una respuesta simple "OK" o "Hello"
+    @GetMapping("/") // Este es el endpoint que Railway intentará contactar
+    public String rootEndpoint() {
+        return "Zarpas Backend está en línea y funcionando.";
     }
 
-    // Opcional: Si quieres un endpoint más específico para salud
+    // Opcional: Si quieres un endpoint /health para un chequeo más específico
     @GetMapping("/health")
-    public String customHealth() {
-        return "Application is up and running!";
+    public String customHealthCheck() {
+        return "Aplicación Zarpas Backend saludable.";
     }
 }
